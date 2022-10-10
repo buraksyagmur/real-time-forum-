@@ -36,6 +36,11 @@
         transition: 0.5s;
       
 }
+#openButDiv{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
 .login-btn{
     float:left
 }

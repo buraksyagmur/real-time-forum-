@@ -7,6 +7,7 @@ const regBut = document.querySelector(".reg-btn");
 const formPage = document.querySelector(".form-page")
 const openBut = document.createElement("button")
 const openButDiv = document.createElement("div")
+openButDiv.setAttribute("id", "openButDiv" )
 const closeBut = document.createElement("button")
 const closeButDiv = document.createElement("div")
 const loginOrReg= document.querySelector(".login-or-reg")
@@ -21,7 +22,7 @@ closeBut.textContent= String.fromCodePoint(0x274C)
 body.append(openButDiv)
 openBut.addEventListener("click", function(){
     console.log("openpge")
-    formPage.style.height = "100%";
+    formPage.style.height = "50%";
 });
 closeBut.addEventListener("click", function(){
     console.log("openpge")
