@@ -16,8 +16,8 @@ closeButDiv.append(closeBut)
 regBut.append(RegisterForm)
 loginBut.append(loginForm)
 openBut.setAttribute("id", "openPageButton")
-openBut.textContent= "open"
-closeBut.textContent= "close"
+openBut.textContent= "Login / Register"
+closeBut.textContent= String.fromCodePoint(0x274C)
 body.append(openButDiv)
 openBut.addEventListener("click", function(){
     console.log("openpge")
