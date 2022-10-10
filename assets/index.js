@@ -4,11 +4,32 @@ import loginForm from "./login.js";
 const formDiv = document.querySelector(".form-div");
 const loginBut = document.querySelector(".login-btn");
 const regBut = document.querySelector(".reg-btn");
-
-// formDiv.append(loginForm);
+const formPage = document.querySelector(".form-page")
+const openBut = document.createElement("button")
+const openButDiv = document.createElement("div")
+const closeBut = document.createElement("button")
+const closeButDiv = document.createElement("div")
+const loginOrReg= document.querySelector(".login-or-reg")
+const body= document.querySelector("body")
+openButDiv.append(openBut)
+closeButDiv.append(closeBut)
 regBut.append(RegisterForm)
 loginBut.append(loginForm)
+openBut.setAttribute("id", "openPageButton")
+openBut.textContent= "open"
+closeBut.textContent= "close"
+body.append(openButDiv)
+openBut.addEventListener("click", function(){
+    console.log("openpge")
+    formPage.style.height = "100%";
+});
+closeBut.addEventListener("click", function(){
+    console.log("openpge")
+    formPage.style.height = "0%";
+});
 
+
+loginOrReg.append(closeButDiv)
 document.addEventListener("DOMContentLoaded", function() {
     formDiv.classList.add("show");
 });
