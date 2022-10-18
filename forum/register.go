@@ -2,128 +2,99 @@ package forum
 
 import (
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
-	"strings"
 
-	uuid "github.com/satori/go.uuid"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/gorilla/websocket"
 )
 
-// var forumUser user
+type WsRegisterResponse struct {
+	Label   string `json:"label"`
+	Content string `json:"content"`
+	Pass    bool   `json:"pass"`
+}
+type WsRegisterPayload struct {
+	Label     string `json:"label"`
+	FirstName string `json:"name"`
+	LastName  string `json:"lastname"`
+	NickName  string `json:"nickname"`
+	Age       string `json:"age"`
+	Email     string `json:"email"`
+	Password  string `json:"pw"`
+	Gender    string `json:"gender"`
 
-func regNewUser(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	// Conn          *websocket.Conn `json:"-"`
+}
+
+func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal(err)
-	}
-	uname := r.PostForm.Get("username")
-	email := r.PostForm.Get("email")
-	password := []byte(r.PostForm.Get("password"))
-	image := r.PostForm.Get("ProfilePic")
-	if image == "" {
-		tpl, err := template.ParseFiles("./templates/regUnfilledFields.gohtml")
-		if err != nil {
-			http.Error(w, "Parsing Error", http.StatusInternalServerError)
-		}
-		tpl.Execute(w, nil)
+		log.Println(err)
 		return
 	}
-	if strings.Trim(uname, " ") == "" {
-		tpl, err := template.ParseFiles("./templates/regUnfilledFields.gohtml")
-		if err != nil {
-			http.Error(w, "Parsing Error", http.StatusInternalServerError)
+	fmt.Println("Connected")
+	var firstResponse WsLoginResponse
+	firstResponse.Label = "Greet"
+	firstResponse.Content = "Please register to the Forum"
+	conn.WriteJSON(firstResponse)
+	// insert conn into db with empty userID, fill in the userID when registered or logged in
+	// stmt, err := db.Prepare(`INSERT INTO websockets (userID, websocketAdd) VALUES (?, ?);`)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// defer stmt.Close()
+	// stmt.Exec("", conn)
+	listenToRegWs(conn)
+}
+
+func listenToRegWs(conn *websocket.Conn) {
+	defer func() {
+		fmt.Println("Ws Conn Closed")
+	}()
+
+	var regPayload WsRegisterPayload
+
+	for {
+		err := conn.ReadJSON(&regPayload)
+		if err == nil {
+			// loginPayload.Conn = conn
+			fmt.Printf("payload received: %v\n", regPayload)
+			ProcessAndReplyReg(conn, regPayload)
 		}
-		tpl.Execute(w, nil)
-		return
 	}
+}
 
-	emailSlice := strings.Split(email, "@")
-	if len(emailSlice) != 2 {
-		tpl, err := template.ParseFiles("./templates/regInvalidEmail.gohtml")
-		if err != nil {
-			http.Error(w, "Parsing Error", http.StatusInternalServerError)
-		}
-		tpl.Execute(w, nil)
-		return
-	}
+func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
+	if regPayload.Label == "reg" {
+		fmt.Printf("reg- FirstN: %s, LastN: %s, NickN : %s, age: %s, email %s, pw: %s, gender: %s\n",
+			regPayload.FirstName, regPayload.LastName, regPayload.NickName,
+			regPayload.Age, regPayload.Email, regPayload.Password, regPayload.Gender)
 
-	if !strings.ContainsRune(emailSlice[1], 46) {
-		tpl, err := template.ParseFiles("./templates/regInvalidEmail.gohtml")
-		if err != nil {
-			http.Error(w, "Parsing Error", http.StatusInternalServerError)
-		}
-		tpl.Execute(w, nil)
-		return
-	}
-
-	// check if already exists
-	rows, err := db.Query("SELECT username, email FROM users WHERE username = ? OR email = ?;", uname, email)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if rows.Next() {
-		// http.Error(w, "username or email is already taken", http.StatusConflict)
-		// http.Redirect(w, r, "/register", http.StatusSeeOther)
-
-		// render faildeReg template
-		tpl, err := template.ParseFiles("./templates/failedReg.gohtml")
+		fmt.Printf("%s creating user\n", regPayload.NickName)
+		rows, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn) VALUES(?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
-		tpl.Execute(w, nil)
-		return
+		defer rows.Close()
+		rows.Exec(regPayload.NickName, regPayload.Age, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, regPayload.Password, false)
+
+		fmt.Println("Register successfully")
+
+		var successResponse WsRegisterResponse
+		successResponse.Label = "reg"
+		successResponse.Content = fmt.Sprintf("%s Login successfully", regPayload.NickName)
+		successResponse.Pass = true
+		conn.WriteJSON(successResponse)
+
 	}
-
-	hash, err := bcrypt.GenerateFromPassword(password, 10)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	stmt, err := db.Prepare("INSERT INTO users (username, image, email, password, access, loggedIn, likedPosts, dislikedPosts, likedComments2, dislikedComments2, notifyView, notifyMsg, likedComments) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-	stmt.Exec(uname, image, email, hash, 1, true, "", "", "", "", "", "", "")
-
-	// test
-	var u string
-	var i string
-	var e string
-	var p []byte
-	var a int
-	var l bool
-
-	rows, err = db.Query("SELECT * FROM users")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		rows.Scan(&u, &i, &e, &p, &a, &l)
-	}
-	fmt.Printf("uname: %s i: %s e: %s pw: %s, ac: %d, log: %t\n", u, i, e, p, a, l)
-
-	// forumUser.Username = uname
-	// forumUser.LoggedIn = true
-	// forumUser.Access = 1
-	// forumUser.Image = image
-
-	sid := uuid.NewV4()
-	http.SetCookie(w, &http.Cookie{
-		Name:   "session",
-		Value:  sid.String(),
-		MaxAge: 1800,
-	})
-	fmt.Printf("reg sid: %s\n", sid)
-	fmt.Printf("Reg and login as %s\n", uname)
-
-	stmt, err = db.Prepare("INSERT INTO sessions (sessionID, username) VALUES (?,?);")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-	stmt.Exec(sid.String(), uname)
 }
+
+// func testReg() {
+// 	stmt, err := db.Prepare("INSERT INTO users (userID, nickname, age, gender, firstname, lastname, email, password, loggedIn) VALUES (?,?,?,?,?,?,?,?,?);")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	testpw := "supersecret"
+// 	testpwHash, err := bcrypt.GenerateFromPassword([]byte(testpw), 10)
+// 	stmt.Exec(0o07, "doubleOhSeven", 42, 1, "James", "Bond", "secretagent@mi5.com", testpwHash, false)
+// }
