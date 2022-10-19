@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type WsRegisterResponse struct {
@@ -13,6 +16,7 @@ type WsRegisterResponse struct {
 	Content string `json:"content"`
 	Pass    bool   `json:"pass"`
 }
+
 type WsRegisterPayload struct {
 	Label     string `json:"label"`
 	FirstName string `json:"name"`
@@ -21,9 +25,7 @@ type WsRegisterPayload struct {
 	Age       string `json:"age"`
 	Email     string `json:"email"`
 	Password  string `json:"pw"`
-	Gender    string `json:"gender"`
-
-	// Conn          *websocket.Conn `json:"-"`
+	Gender    string `json:"gender_option"`
 }
 
 func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -37,13 +39,6 @@ func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	firstResponse.Label = "Greet"
 	firstResponse.Content = "Please register to the Forum"
 	conn.WriteJSON(firstResponse)
-	// insert conn into db with empty userID, fill in the userID when registered or logged in
-	// stmt, err := db.Prepare(`INSERT INTO websockets (userID, websocketAdd) VALUES (?, ?);`)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer stmt.Close()
-	// stmt.Exec("", conn)
 	listenToRegWs(conn)
 }
 
@@ -57,7 +52,6 @@ func listenToRegWs(conn *websocket.Conn) {
 	for {
 		err := conn.ReadJSON(&regPayload)
 		if err == nil {
-			// loginPayload.Conn = conn
 			fmt.Printf("payload received: %v\n", regPayload)
 			ProcessAndReplyReg(conn, regPayload)
 		}
@@ -65,18 +59,30 @@ func listenToRegWs(conn *websocket.Conn) {
 }
 
 func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
+	dob, err := time.Parse("2006-01-02", regPayload.Age)
+	if err != nil {
+		log.Fatal(err)
+	}
+	year := time.Time.Year(dob)
+	age := time.Now().Year() - year
+	ageStr := strconv.Itoa(age)
+	password:= []byte(regPayload.Password)
+	cryptPw, err := bcrypt.GenerateFromPassword(password, 10)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if regPayload.Label == "reg" {
 		fmt.Printf("reg- FirstN: %s, LastN: %s, NickN : %s, age: %s, email %s, pw: %s, gender: %s\n",
 			regPayload.FirstName, regPayload.LastName, regPayload.NickName,
-			regPayload.Age, regPayload.Email, regPayload.Password, regPayload.Gender)
+			ageStr, regPayload.Email, cryptPw, regPayload.Gender)
 
 		fmt.Printf("%s creating user\n", regPayload.NickName)
-		rows, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn) VALUES(?,?,?,?,?,?,?);")
+		rows, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn) VALUES(?,?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer rows.Close()
-		rows.Exec(regPayload.NickName, regPayload.Age, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, regPayload.Password, false)
+		rows.Exec(regPayload.NickName, ageStr, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, cryptPw, true)
 
 		fmt.Println("Register successfully")
 
@@ -88,13 +94,3 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 
 	}
 }
-
-// func testReg() {
-// 	stmt, err := db.Prepare("INSERT INTO users (userID, nickname, age, gender, firstname, lastname, email, password, loggedIn) VALUES (?,?,?,?,?,?,?,?,?);")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	testpw := "supersecret"
-// 	testpwHash, err := bcrypt.GenerateFromPassword([]byte(testpw), 10)
-// 	stmt.Exec(0o07, "doubleOhSeven", 42, 1, "James", "Bond", "secretagent@mi5.com", testpwHash, false)
-// }

@@ -25,17 +25,9 @@ const regHandler = function(e) {
     regSocket.send(JSON.stringify(payloadObj));
 };
 
-
-
-
-
-
-
-
+// login form//
 const RegisterForm = document.createElement("form");
 RegisterForm.addEventListener("submit", regHandler);
-
-// login form//
 
 
 // name label
@@ -167,6 +159,7 @@ RgenderOptionDiv.append(
     RgenderInputOpt2,RgenderLabelOpt2,
     RgenderInputOpt3,RgenderLabelOpt3,
     RgenderInputOpt4,RgenderLabelOpt4);
+
 RgenderOptionDiv.setAttribute("id", "gender");
 
 const regSubmitDiv = document.createElement('div');
