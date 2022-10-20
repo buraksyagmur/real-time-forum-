@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -52,10 +53,11 @@ func listenToPostWs(conn *websocket.Conn) {
 }
 
 func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
-	if postPayload.Label == "reg" {
+	if postPayload.Label == "post" {
+		fmt.Println("LABEL WORK--------------------------------")
 		fmt.Printf("post - title:%s, cat:%s, Content:%s", postPayload.Title, postPayload.Category, postPayload.Content)
 
-		rows, err := db.Prepare("INSERT INTO users(title,content,category,postTime) VALUES(?,?,?,?);")
+		rows, err := db.Prepare("INSERT INTO posts(title,content,category,postTime) VALUES(?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -63,7 +65,7 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		rows.Exec(postPayload.Title, postPayload.Content, postPayload.Category, time.Now())
 		fmt.Println("Posted successfully")
 		var successResponse WsPostResponse
-		successResponse.Label = "reg"
+		successResponse.Label = "post"
 		successResponse.Content = fmt.Sprintf("%s Posted successfully", postPayload.Title)
 
 		successResponse.Pass = true
