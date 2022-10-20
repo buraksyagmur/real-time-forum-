@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -28,6 +29,8 @@ type WsRegisterPayload struct {
 	Gender    string `json:"gender_option"`
 }
 
+var userID int
+
 func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -40,6 +43,7 @@ func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	firstResponse.Content = "Please register to the Forum"
 	conn.WriteJSON(firstResponse)
 	listenToRegWs(conn)
+	createSession(w, userID)
 }
 
 func listenToRegWs(conn *websocket.Conn) {
@@ -66,7 +70,7 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 	year := time.Time.Year(dob)
 	age := time.Now().Year() - year
 	ageStr := strconv.Itoa(age)
-	password:= []byte(regPayload.Password)
+	password := []byte(regPayload.Password)
 	cryptPw, err := bcrypt.GenerateFromPassword(password, 10)
 	if err != nil {
 		log.Fatal(err)
@@ -92,5 +96,30 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
 
+		rows3, err := db.Query(`SELECT userID FROM users WHERE nickname = ?`, regPayload.NickName)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows3.Close()
+		for rows3.Next() {
+			rows3.Scan(&userID)
+		}
+
 	}
+}
+
+func createSession(w http.ResponseWriter, userID int) {
+	sid := uuid.NewV4()
+	http.SetCookie(w, &http.Cookie{
+		Name:   "session",
+		Value:  sid.String(),
+		MaxAge: 1800,
+	})
+	fmt.Printf("reg sid: %s\n", sid)
+	stmt, err := db.Prepare("INSERT INTO sessions (sessionID, userID) VALUES (?,?);")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	stmt.Exec(sid.String(), userID)
 }

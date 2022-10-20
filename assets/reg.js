@@ -2,9 +2,9 @@ let regSocket = null;
 document.addEventListener("DOMContentLoaded", function() {
     regSocket = new WebSocket("ws://localhost:8080/regWs/");
     console.log("JS attempt to connect");
-    regSocket.onopen = () => console.log("connected");
-    regSocket.onclose = () => console.log("Bye");
-    regSocket.onerror = (err) => console.log("Error!");
+    regSocket.onopen = () => console.log("connected-reg");
+    regSocket.onclose = () => console.log("Bye-reg");
+    regSocket.onerror = (err) => console.log("Error!-reg");
     regSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
         console.log({resp});

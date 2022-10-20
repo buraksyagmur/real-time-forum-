@@ -3,9 +3,9 @@ let loginSocket = null;
 document.addEventListener("DOMContentLoaded", function() {
     loginSocket = new WebSocket("ws://localhost:8080/loginWs/");
     console.log("JS attempt to connect");
-    loginSocket.onopen = () => console.log("connected");
-    loginSocket.onclose = () => console.log("Bye");
-    loginSocket.onerror = (err) => console.log("Error!");
+    loginSocket.onopen = () => console.log("connected-login");
+    loginSocket.onclose = () => console.log("Bye-login");
+    loginSocket.onerror = (err) => console.log("Error!-login");
     loginSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
         console.log({resp});
