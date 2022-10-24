@@ -1,4 +1,5 @@
 let postSocket = null; 
+const body = document.getElementsByTagName("BODY")[0]
 document.addEventListener("DOMContentLoaded", function() {
     postSocket = new WebSocket("ws://localhost:8080/postWs/");
     console.log("JS attempt to connect");
@@ -9,13 +10,49 @@ document.addEventListener("DOMContentLoaded", function() {
         const resp = JSON.parse(msg.data);
         console.log({resp});
         if (resp.label === "Greet") {
-            console.log(resp.content);
+            console.log("this is the content",resp.content);
+            console.log("this is the keys",Object.keys(resp.content));
+            console.log("this is the values",Object.values(resp.content));
+            console.log("this is the entries",Object.entries(resp.content));
+            console.log("this is the experiment",resp.content[1]);
+            createPost(resp.content)
         } else if (resp.label === "post") {
             console.log(resp.content);
         }
     }
 });
-
+function createPost(arr){
+    for (let i= 0; i< arr.length; i++){
+    const postDiv = document.createElement("div");
+    const titleDiv = document.createElement("div");
+    const contentDiv = document.createElement("div");
+    const categoryDiv = document.createElement("div");
+    const userIdDiv = document.createElement("div");
+    postDiv.id = `post-${i}`;
+    titleDiv.id = `title-${i}`;
+    contentDiv.id = `content-${i}`;
+    categoryDiv.id = `category-${i}`;
+    userIdDiv.id = `id-${i}`;
+    const titleText = document.createElement("p")
+    const contentText = document.createElement("p")
+    const categoryText = document.createElement("p")
+    const userIdText = document.createElement("p")
+    const titletextNode = document.createTextNode(arr[i].title) 
+    titleText.appendChild(titletextNode)
+    const contenttextNode = document.createTextNode(arr[i].Content) 
+    contentText.appendChild(contenttextNode)
+    const categorytextNode = document.createTextNode(arr[i].category_option) 
+    categoryText.appendChild(categorytextNode)
+    const userIdtextNode = document.createTextNode(arr[i].userID) 
+    userIdText.appendChild(userIdtextNode)
+    titleDiv.append(titleText)
+    contentDiv.append(contentText)
+    categoryDiv.append(categoryText)
+    userIdDiv.append(userIdText)
+    postDiv.append(titleDiv,contentDiv,categoryDiv,userIdDiv)
+    body.append(postDiv)
+  }
+}
 const PostHandler = function(e) {
     e.preventDefault();
     const formFields = new FormData(e.target);

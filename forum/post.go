@@ -10,16 +10,41 @@ import (
 )
 
 type WsPostResponse struct {
-	Label   string `json:"label"`
-	Content string `json:"content"`
-	Pass    bool   `json:"pass"`
+	Label   string   `json:"label"`
+	Content []WsPostPayload `json:"content"`
+	Pass    bool     `json:"pass"`
 }
 
 type WsPostPayload struct {
 	Label    string `json:"label"`
+	UserID string `json:"userID"`
 	Title    string `json:"title"`
 	Category string `json:"category_option"`
 	Content  string `json:"Content"`
+	PostTime string `json:"PostTime"`
+}
+
+
+func findAllPosts() []WsPostPayload {
+	var pos []WsPostPayload
+
+	rows, err := db.Query("SELECT title,content,category,postTime FROM posts GROUP BY postID;")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// ----------------------- DONT FORGET --------------------
+	// after session done, i will add userID there.
+	defer rows.Close()
+	for rows.Next() {
+		var po WsPostPayload
+		var postTime time.Time
+		rows.Scan(&(po.Title), &(po.Content), &(po.Category), &postTime)
+		po.PostTime = postTime.Format("Mon 02-01-2006 15:04:05")
+		fmt.Println(postTime)
+		pos = append(pos, po)
+		fmt.Println("THIS IS POST",po)
+	}
+	return pos
 }
 
 func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +56,8 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Connected")
 	var firstResponse WsPostResponse
 	firstResponse.Label = "Greet"
-	firstResponse.Content = "Please post to the Forum"
+	allPosts := findAllPosts()
+	firstResponse.Content = allPosts
 	conn.WriteJSON(firstResponse)
 	listenToPostWs(conn)
 }
@@ -66,7 +92,7 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		fmt.Println("Posted successfully")
 		var successResponse WsPostResponse
 		successResponse.Label = "post"
-		successResponse.Content = fmt.Sprintf("%s Posted successfully", postPayload.Title)
+		// successResponse.Content = fmt.Sprintf("%s Posted successfully", postPayload.Title)
 
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
