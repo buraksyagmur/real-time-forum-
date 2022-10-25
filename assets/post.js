@@ -5,22 +5,28 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("JS attempt to connect");
     postSocket.onopen = () => console.log("connected-postCreate");
     postSocket.onclose = () => console.log("Bye-postCreate");
-    postSocket.onerror = (err) => console.log("Error!-postCreate");
+    postSocket.onerror = (err) => console.log("Error!-postCreate", err);
     postSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
         console.log({resp});
         if (resp.label === "Greet") {
+            console.log("label greeeeet")
             let jsonFile = JSON.parse(resp.content)
-            console.log("values",Object.values(jsonFile))
             createPost(jsonFile)
         } else if (resp.label === "post") {
+            console.log("label poooooooooooooooooooooost")
             let jsonFile = JSON.parse(resp.content)
+            while ( allPost.firstChild ) allPost.removeChild( allPost.firstChild );
             createPost(jsonFile)
-
         }
     }
 });
 function createPost(arr){
+    const removeallPost = document.querySelector("allPost")
+    if (removeallPost !== null) {
+        console.log("thats not empty")
+        allPost.remove();
+    }
     const allPost = document.createElement("div")
     allPost.id = "allPost"
     for (let i= 0; i< arr.length; i++){

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("JS attempt to connect");
     loginSocket.onopen = () => console.log("connected-login");
     loginSocket.onclose = () => console.log("Bye-login");
-    loginSocket.onerror = (err) => console.log("Error!-login");
+    loginSocket.onerror = (err) => console.log("Error!-login", err);
     loginSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
         console.log({resp});

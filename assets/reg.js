@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("JS attempt to connect");
     regSocket.onopen = () => console.log("connected-reg");
     regSocket.onclose = () => console.log("Bye-reg");
-    regSocket.onerror = (err) => console.log("Error!-reg");
+    regSocket.onerror = (err) => console.log("Error!-reg",err);
     regSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
         console.log({resp});
