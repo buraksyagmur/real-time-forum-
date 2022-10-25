@@ -1,6 +1,7 @@
 package forum
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,24 +11,28 @@ import (
 )
 
 type WsPostResponse struct {
-	Label   string   `json:"label"`
-	Content []WsPostPayload `json:"content"`
-	Pass    bool     `json:"pass"`
+	Label   string `json:"label"`
+	Content string `json:"content"`
+	Pass    bool   `json:"pass"`
+}
+
+type Ind struct {
+	Index int           `json:"index"`
+	Post  WsPostPayload `json:"postinfo"`
 }
 
 type WsPostPayload struct {
 	Label    string `json:"label"`
-	UserID string `json:"userID"`
+	UserID   string `json:"userID"`
 	Title    string `json:"title"`
 	Category string `json:"category_option"`
 	Content  string `json:"Content"`
 	PostTime string `json:"PostTime"`
 }
 
-
-func findAllPosts() []WsPostPayload {
+func findAllPosts() string {
 	var pos []WsPostPayload
-
+	var everyPost []Ind
 	rows, err := db.Query("SELECT title,content,category,postTime FROM posts GROUP BY postID;")
 	if err != nil {
 		log.Fatal(err)
@@ -42,9 +47,16 @@ func findAllPosts() []WsPostPayload {
 		po.PostTime = postTime.Format("Mon 02-01-2006 15:04:05")
 		fmt.Println(postTime)
 		pos = append(pos, po)
-		fmt.Println("THIS IS POST",po)
+		fmt.Println("THIS IS POST", po)
 	}
-	return pos
+	for i := 0; i < len(pos); i++ {
+		var singlePost Ind
+		singlePost.Index = i
+		singlePost.Post = pos[i]
+		everyPost = append(everyPost, singlePost)
+	}
+	j, err := json.Marshal(everyPost)
+	return string(j)
 }
 
 func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -92,8 +104,7 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		fmt.Println("Posted successfully")
 		var successResponse WsPostResponse
 		successResponse.Label = "post"
-		// successResponse.Content = fmt.Sprintf("%s Posted successfully", postPayload.Title)
-
+		successResponse.Content = findAllPosts()
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
 

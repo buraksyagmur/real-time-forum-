@@ -10,18 +10,19 @@ document.addEventListener("DOMContentLoaded", function() {
         const resp = JSON.parse(msg.data);
         console.log({resp});
         if (resp.label === "Greet") {
-            console.log("this is the content",resp.content);
-            console.log("this is the keys",Object.keys(resp.content));
-            console.log("this is the values",Object.values(resp.content));
-            console.log("this is the entries",Object.entries(resp.content));
-            console.log("this is the experiment",resp.content[1]);
-            createPost(resp.content)
+            let jsonFile = JSON.parse(resp.content)
+            console.log("values",Object.values(jsonFile))
+            createPost(jsonFile)
         } else if (resp.label === "post") {
-            console.log(resp.content);
+            let jsonFile = JSON.parse(resp.content)
+            createPost(jsonFile)
+
         }
     }
 });
 function createPost(arr){
+    const allPost = document.createElement("div")
+    allPost.id = "allPost"
     for (let i= 0; i< arr.length; i++){
     const postDiv = document.createElement("div");
     const titleDiv = document.createElement("div");
@@ -37,21 +38,22 @@ function createPost(arr){
     const contentText = document.createElement("p")
     const categoryText = document.createElement("p")
     const userIdText = document.createElement("p")
-    const titletextNode = document.createTextNode(arr[i].title) 
+    const titletextNode = document.createTextNode(arr[i].postinfo.title) 
     titleText.appendChild(titletextNode)
-    const contenttextNode = document.createTextNode(arr[i].Content) 
+    const contenttextNode = document.createTextNode(arr[i].postinfo.Content) 
     contentText.appendChild(contenttextNode)
-    const categorytextNode = document.createTextNode(arr[i].category_option) 
+    const categorytextNode = document.createTextNode(arr[i].postinfo.category_option) 
     categoryText.appendChild(categorytextNode)
-    const userIdtextNode = document.createTextNode(arr[i].userID) 
+    const userIdtextNode = document.createTextNode(arr[i].postinfo.userID) 
     userIdText.appendChild(userIdtextNode)
     titleDiv.append(titleText)
     contentDiv.append(contentText)
     categoryDiv.append(categoryText)
     userIdDiv.append(userIdText)
     postDiv.append(titleDiv,contentDiv,categoryDiv,userIdDiv)
-    body.append(postDiv)
-  }
+    allPost.append(postDiv)
+}
+body.append(allPost)
 }
 const PostHandler = function(e) {
     e.preventDefault();
