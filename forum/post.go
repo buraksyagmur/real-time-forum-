@@ -56,6 +56,9 @@ func findAllPosts() string {
 		everyPost = append(everyPost, singlePost)
 	}
 	j, err := json.Marshal(everyPost)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return string(j)
 }
 
