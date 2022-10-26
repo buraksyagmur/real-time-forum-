@@ -10,23 +10,18 @@ document.addEventListener("DOMContentLoaded", function() {
         const resp = JSON.parse(msg.data);
         console.log({resp});
         if (resp.label === "Greet") {
-            console.log("label greeeeet")
             let jsonFile = JSON.parse(resp.content)
             createPost(jsonFile)
         } else if (resp.label === "post") {
-            console.log("label poooooooooooooooooooooost")
             let jsonFile = JSON.parse(resp.content)
-            while ( allPost.firstChild ) allPost.removeChild( allPost.firstChild );
             createPost(jsonFile)
         }
     }
 });
 function createPost(arr){
-    const removeallPost = document.querySelector("allPost")
-    if (removeallPost !== null) {
-        console.log("thats not empty")
-        allPost.remove();
-    }
+    document.querySelectorAll("#allPost").forEach(e =>{
+        e.remove();
+    });
     const allPost = document.createElement("div")
     allPost.id = "allPost"
     for (let i= 0; i< arr.length; i++){
@@ -59,7 +54,7 @@ function createPost(arr){
     postDiv.append(titleDiv,contentDiv,categoryDiv,userIdDiv)
     allPost.append(postDiv)
 }
-body.append(allPost)
+body.appendChild(allPost)
 }
 const PostHandler = function(e) {
     e.preventDefault();
