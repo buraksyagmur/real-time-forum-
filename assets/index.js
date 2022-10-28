@@ -23,17 +23,9 @@ openBut.textContent= "Login / Register"
 closeBut.textContent= String.fromCodePoint(0x274C)
 body.append(openButDiv)
 openBut.addEventListener("click", function(){
-    console.log("openpge")
     formPage.style.height = "100%";
 });
 closeBut.addEventListener("click", function(){
-    console.log("openpge")
     formPage.style.height = "0%";
-});
-
-
-loginOrReg.append(closeButDiv)
-document.addEventListener("DOMContentLoaded", function() {
-    formDiv.classList.add("show");
 });
 body.append(PostForm)
