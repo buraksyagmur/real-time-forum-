@@ -96,6 +96,8 @@ func listenToPostWs(conn *websocket.Conn) {
 }
 
 func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
+	fmt.Printf("postPayload: %v\n", postPayload)
+	fmt.Printf("postPayload.Label: %v\n", postPayload.Label)
 	if postPayload.Label == "post" {
 		fmt.Println("LABEL WORK--------------------------------")
 		fmt.Printf("post - title:%s, cat:%s, Content:%s", postPayload.Title, postPayload.Category, postPayload.Content)
@@ -110,11 +112,11 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		var successResponse WsPostResponse
 		successResponse.Label = "post"
 		successResponse.Content = findAllPosts()
-		successResponse.Pass = true
+		successResponse.Pass = true // no need?
 		conn.WriteJSON(successResponse)
 
 	} else if postPayload.Label == "comment" {
-		rows, err := db.Prepare("INSERT INTO comments (content, postID) VALUES (?,?);")
+		rows, err := db.Prepare("INSERT INTO comments (content, postID) VALUES (?,?);") // no commentTime?
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -123,6 +125,7 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		fmt.Println("comment saved successfully")
 		var successResponse WsPostResponse
 		successResponse.Label = "comment"
+		fmt.Printf("postPayload.PostID (comment): %s\n", postPayload.PostID)
 		successResponse.Content = findAllComments(postPayload.PostID)
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)

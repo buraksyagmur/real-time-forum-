@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 function createPost(arr) {
+    // add an if block? unable to select when 1st called since id is added below?
+    // or add one in html?
     document.querySelectorAll("#allPost").forEach(e => {
         e.remove();
     });
@@ -37,11 +39,12 @@ function createPost(arr) {
         const titleButton = document.createElement("button")
         titleButton.setAttribute("value", i)
         titleButton.addEventListener("click", function (e) {
+            console.log("titled clicked");
             showcommentHandler
             console.log("lastjsonfile",jsonFile)
-            let valu = e.explicitOriginalTarget.value
+            let valu = e.target.value 
             const comment = document.querySelector(".comment")
-            comment.style.height = "%100"
+            comment.style.height = "100%"
             let chosenPost = document.querySelector(`#post-${valu}`)
             console.log("post is choosen")
             let clone = chosenPost.cloneNode(true)
