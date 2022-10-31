@@ -28,4 +28,9 @@ openBut.addEventListener("click", function(){
 closeBut.addEventListener("click", function(){
     formPage.style.height = "0%";
 });
+
+loginOrReg.append(closeButDiv)
+document.addEventListener("DOMContentLoaded", function() {
+    formDiv.classList.add("show");
+});
 body.append(PostForm)
