@@ -54,6 +54,8 @@ func findAllPosts() string {
 	for i := 0; i < len(pos); i++ {
 		var singlePost Ind
 		singlePost.Index = i
+		strI := strconv.Itoa(i + 1)
+		pos[i].PostID = strI
 		singlePost.Post = pos[i]
 		everyPost = append(everyPost, singlePost)
 	}
@@ -114,6 +116,7 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		conn.WriteJSON(successResponse)
 
 	} else if postPayload.Label == "comment" {
+		fmt.Println("commmentAllDetails", postPayload)
 		rows, err := db.Prepare("INSERT INTO comments (content, postID) VALUES (?,?);")
 		if err != nil {
 			log.Fatal(err)
@@ -127,10 +130,13 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
 	} else if postPayload.Label == "showComment" {
+		fmt.Println("commmentAllDetails", postPayload)
 		var successResponse WsPostResponse
 		successResponse.Label = "comment"
 		successResponse.Content = findAllComments(postPayload.PostID)
+		fmt.Println(successResponse.Content, "allcomments")
 		successResponse.Pass = true
+		conn.WriteJSON(successResponse)
 	}
 }
 
@@ -139,6 +145,7 @@ func findAllComments(postIDstr string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(postID, "check this post ID")
 	var pos []WsPostPayload
 	var everyPost []Ind
 	rows, err := db.Query("SELECT content  FROM comments WHERE postID = ?;", postID)

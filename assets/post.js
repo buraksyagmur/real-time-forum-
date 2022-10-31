@@ -14,14 +14,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (resp.label === "Greet") {
         jsonFile = JSON.parse(resp.content)
             console.log("this is resp content", resp.content)
-            createPost(jsonFile)
+            if (resp.Content != null){
+            createPost(jsonFile)}
         } else if (resp.label === "post") {
          jsonFile = JSON.parse(resp.content)
             createPost(jsonFile)
         } else if (resp.label === "comment") {
          jsonFile = JSON.parse(resp.content)
             console.log("label is now comment----------------------")
-            CreateComments(jsonFile)
+            if (resp.Content != null){
+                CreateComments(jsonFile)
+            }
         }
     }
 });
@@ -35,9 +38,11 @@ function createPost(arr) {
         const postDiv = document.createElement("div")
         const titleDiv = document.createElement("div");
         const titleButton = document.createElement("button")
+        const titleForm = document.createElement("form")
+        titleForm.addEventListener("submit", showcommentHandler)
         titleButton.setAttribute("value", i)
+        titleButton.setAttribute("type", "submit")
         titleButton.addEventListener("click", function (e) {
-            showcommentHandler
             console.log("lastjsonfile",jsonFile)
             let valu = e.explicitOriginalTarget.value
             const comment = document.querySelector(".comment")
@@ -88,10 +93,11 @@ function createPost(arr) {
         userIdText.appendChild(userIdtextNode)
         // titleDiv.append(titleText)
         titleDiv.append(titleButton)
+        titleForm.append(titleDiv)
         contentDiv.append(contentText)
         categoryDiv.append(categoryText)
         userIdDiv.append(userIdText)
-        postDiv.append(titleDiv, contentDiv, categoryDiv, userIdDiv)
+        postDiv.append(titleForm, contentDiv, categoryDiv, userIdDiv)
         allPost.append(postDiv)
     }
     body.appendChild(allPost)
@@ -108,14 +114,12 @@ const PostHandler = function (e) {
 const PostForm = document.createElement("form");
 PostForm.addEventListener("submit", PostHandler);
 
-// login form
-// name label
+
 const titleLabelDiv = document.createElement('div');
 const titleLabel = document.createElement('label');
 titleLabel.textContent = "title";
 titleLabel.setAttribute("for", "title");
 titleLabelDiv.append(titleLabel);
-// name input
 const titleInputDiv = document.createElement('div');
 const titleInput = document.createElement('input');
 titleInput.setAttribute("type", "text");
@@ -226,13 +230,16 @@ const commentHandler = function (e) {
     const formFields = new FormData(e.target);
     const payloadObj = Object.fromEntries(formFields.entries());
     payloadObj["label"] = "comment";
+    payloadObj["postID"]= e.submitter.value
     postSocket.send(JSON.stringify(payloadObj));
 };
 const showcommentHandler = function (e) {
     e.preventDefault();
     const formFields = new FormData(e.target);
     const payloadObj = Object.fromEntries(formFields.entries());
+    console.log(payloadObj, "lastpayload......")
     payloadObj["label"] = "showComment";
+    payloadObj["postID"]= e.submitter.value
     postSocket.send(JSON.stringify(payloadObj));
 };
 function CreateComments(arr) {
