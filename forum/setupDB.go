@@ -61,6 +61,7 @@ func createCommentsTable() {
 		userID INTEGER, 
 		postID INTEGER, 
 		content VARCHAR(2000), 
+		comTime DATETIME,
 		FOREIGN KEY(userID) REFERENCES users(userID),
 		FOREIGN KEY(postID) REFERENCES posts(postID));`)
 	if err != nil {
