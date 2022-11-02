@@ -21,10 +21,12 @@ type Ind struct {
 	Index int           `json:"index"`
 	Post  WsPostPayload `json:"postinfo"`
 }
+
 type IndCom struct {
-	Index   int          `json:"indexCom"`
-	Comment WsComPayload `json:"comInfo"`
+	Index       int          `json:"indexCom"`
+	CommentInfo WsComPayload `json:"comInfo"`
 }
+
 type WsPostPayload struct {
 	Label         string `json:"label"`
 	UserID        string `json:"userID"`
@@ -35,6 +37,7 @@ type WsPostPayload struct {
 	PostID        string `json:"postID"`
 	CommentOfPost string `json:"commentOfPost"`
 }
+
 type WsComPayload struct {
 	Label   string `json:"label"`
 	UserID  string `json:"userID"`
@@ -97,14 +100,22 @@ func listenToPostWs(conn *websocket.Conn) {
 	defer func() {
 		fmt.Println("Ws Conn Closed")
 	}()
-
 	var postPayload WsPostPayload
-
 	for {
 		err := conn.ReadJSON(&postPayload)
 		if err == nil {
-			fmt.Printf("payload received: %v\n", postPayload)
-			ProcessAndReplyPost(conn, postPayload)
+			if postPayload.Label == "post" {
+				fmt.Printf("payload received: %v\n", postPayload)
+				ProcessAndReplyPost(conn, postPayload)
+			} else if postPayload.Label == "Createcomment" {
+
+				fmt.Println("THIS IS PAYLOAD ----------------", postPayload)
+				ProcessAndReplyPost(conn, postPayload)
+			} else if postPayload.Label == "showComment" {
+
+				fmt.Println("THIS IS PAYLOAD ----------------", postPayload)
+				ProcessAndReplyPost(conn, postPayload)
+			}
 		}
 	}
 }
@@ -128,24 +139,28 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		successResponse.Pass = true
 		broadcast(successResponse)
 
-	} else if postPayload.Label == "comment" {
+	} else if postPayload.Label == "Createcomment" {
 		fmt.Println("commmentAllDetails", postPayload)
-		rows, err := db.Prepare("INSERT INTO comments (content, postID) VALUES (?,?);")
+		rows, err := db.Prepare("INSERT INTO comments (content, postID, comTime) VALUES (?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer rows.Close()
-		rows.Exec(postPayload.Content, postPayload.PostID)
+		var comUnmars WsComPayload
+		json.Unmarshal([]byte(postPayload.CommentOfPost), &comUnmars)
+
+		rows.Exec(comUnmars.Comment, postPayload.PostID, (time.Now()))
 		fmt.Println("comment saved successfully")
 		var successResponse WsPostResponse
 		successResponse.Label = "comment"
 		successResponse.Content = findAllPosts()
 		successResponse.Pass = true
+		conn.WriteJSON(successResponse)
 		broadcast(successResponse)
 	} else if postPayload.Label == "showComment" {
-		fmt.Println("commmentAllDetails", postPayload)
+		fmt.Println("****show all comment*", postPayload)
 		var successResponse WsPostResponse
-		successResponse.Label = "comment"
+		successResponse.Label = "showComment"
 		successResponse.Content = findAllPosts()
 		fmt.Println(successResponse.Content, "allcomments")
 		successResponse.Pass = true
@@ -179,7 +194,7 @@ func findAllComments(postID int) string {
 	for i := 0; i < len(com); i++ {
 		var singleCom IndCom
 		singleCom.Index = i
-		singleCom.Comment = com[i]
+		singleCom.CommentInfo = com[i]
 		everyCom = append(everyCom, singleCom)
 	}
 	j, err := json.Marshal(everyCom)

@@ -12,20 +12,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const resp = JSON.parse(msg.data);
         console.log({ resp });
         if (resp.label === "Greet") {
-        jsonFile = JSON.parse(resp.content)
-        if (jsonFile !== null){
-                console.log("this is resp content", resp.content)
-            createPost(jsonFile)}
+            jsonFile = JSON.parse(resp.content)
+            if (jsonFile !== null) {
+                createPost(jsonFile)
+            }
         } else if (resp.label === "post") {
-         jsonFile = JSON.parse(resp.content)
+            jsonFile = JSON.parse(resp.content)
             createPost(jsonFile)
-        } 
-        // else if (resp.label === "comment") {
-        //     console.log("label is now comment----------------------")
-        //     if (resp.Content != null){
-        //         CreateComments(jsonFile)
-        //     }
-        // }
+        }
+        else if (resp.label === "comment") {
+            console.log("label is now comment----------------------")
+            if (resp.Content != null) {
+                CreateComments(jsonFile)
+            }
+        }
     }
 });
 function createPost(arr) {
@@ -43,7 +43,7 @@ function createPost(arr) {
         titleButton.setAttribute("value", i)
         titleButton.setAttribute("type", "submit")
         titleButton.addEventListener("click", function (e) {
-            console.log("lastjsonfile",jsonFile)
+            console.log("lastjsonfile", jsonFile)
             let valu = e.explicitOriginalTarget.value
             const comment = document.querySelector(".comment")
             comment.style.height = "%100"
@@ -60,8 +60,8 @@ function createPost(arr) {
                 }
             })
             let comForm = CreateCommentForm(valu)
-            let comments= CreateComments(jsonFile,i)
-            comment.append(clone,comments,comForm, closeComments)
+            let comments = CreateComments(jsonFile, i)
+            comment.append(clone, comments, comForm, closeComments)
             comment.style.height = "100%";
         })
         titleButton.innerText = (arr[i].postinfo.title)
@@ -107,7 +107,7 @@ const PostHandler = function (e) {
     const formFields = new FormData(e.target);
     const payloadObj = Object.fromEntries(formFields.entries());
     payloadObj["label"] = "post";
-    console.log({ payloadObj });
+    console.log("checking target", payloadObj)
     postSocket.send(JSON.stringify(payloadObj));
 };
 
@@ -194,10 +194,29 @@ PostSubmit.setAttribute("type", "submit");
 PostSubmitDiv.append(PostSubmit);
 
 PostForm.append(titleLabelDiv, titleInputDiv, CatDiv, CatOptionDiv, contLabelDiv, contInputDiv, PostSubmitDiv);
-
+const commentHandler = function (e) {
+    e.preventDefault();
+    console.log("checking e", e.target[0])
+    // const formFields = new FormData(e.target);
+    // console.log("checking form", formFields)
+    // const payloadObj = Object.fromEntries((e.target[0].value).entries());
+    // const payloadObj =Object.create(Object.prototype)
+    const payloadObj = Object.create(Object.prototype)
+    const payloadObjCom = Object.create(Object.prototype)
+    payloadObj["label"] = "Createcomment";
+    payloadObj["postID"] = (parseInt(e.submitter.value) + 1) + ""
+    payloadObjCom["comment"] = e.target[0].value
+    let strCom = JSON.stringify(payloadObjCom)
+    payloadObj["commentOfPost"] = strCom
+    console.log("checking target", payloadObj)
+    postSocket.send(JSON.stringify(payloadObj));
+};
 function CreateCommentForm(value) {
     const commentForm = document.createElement("form")
+    commentForm.setAttribute("target", "_self")
+    console.log("this is before using handler")
     commentForm.addEventListener("submit", commentHandler);
+    console.log("this is after using handler")
     const commentLabelDiv = document.createElement('div');
     const commentLabel = document.createElement('label');
     commentLabel.textContent = "create a comment:";
@@ -214,62 +233,58 @@ function CreateCommentForm(value) {
     const commentSubmit = document.createElement("button");
     commentSubmit.textContent = "comment";
     commentSubmit.setAttribute("type", "submit");
-    commentSubmit.setAttribute("value",value)
+    commentSubmit.setAttribute("value", value)
     commentSubmitDiv.append(commentSubmit);
     commentForm.append(commentLabelDiv, commentInputDiv, commentSubmitDiv)
     return commentForm
 }
-const commentHandler = function (e) {
-    e.preventDefault();
-    const formFields = new FormData(e.target);
-    console.log("checking form", formFields)
-    const payloadObj = Object.fromEntries(formFields.entries());
-    // const payloadObj =Object.create(Object.prototype)
-    payloadObj["label"] = "comment";
-    payloadObj["postID"]= (parseInt(e.submitter.value)+1) +""
-    postSocket.send(JSON.stringify(payloadObj));
-};
+
 const showcommentHandler = function (e) {
-     e.preventDefault();
-    const formFields = new FormData(e.target);
+    e.preventDefault();
+    // const formFields = new FormData(e.target);
     // const payloadObj = Object.fromEntries(formFields.entries());
-    const payloadObj =Object.create(Object.prototype)
+    const payloadObj = Object.create(Object.prototype)
     payloadObj["label"] = "showComment";
-    payloadObj["postID"]= (parseInt(e.submitter.value)+1) +""
-    payloadObj["content"]= jsonFile[e.submitter.value].postinfo.commentOfPost
+    payloadObj["postID"] = (parseInt(e.submitter.value) + 1) + ""
+    payloadObj["commentOfPost"] = jsonFile[e.submitter.value].postinfo.commentOfPost
     postSocket.send(JSON.stringify(payloadObj));
+
 };
-function CreateComments(arr,value) {
+function CreateComments(arr, value) {
     document.querySelectorAll("#allComments").forEach(e => {
         e.remove();
     });
 
-    console.log(value,"func check", arr)
-    if (arr[value].postinfo.commentOfPost === null){
-        return ""
+    console.log(value, "func check", arr[value])
+    if (arr[value].postinfo.commentOfPost === "null") {
+        console.log("comment of post empty")
+
+    } else {
+        console.log()
+        let comJson = JSON.parse(arr[value].postinfo.commentOfPost)
+        const allComments = document.createElement("div")
+        allComments.id = "allComments"
+        for (let i = 0; i < comJson.length; i++) {
+            console.log("*****************************",comJson[i].comInfo.comment)
+            const comDiv = document.createElement("div")
+            const comContentDiv = document.createElement("div");
+            const comUserIdDiv = document.createElement("div");
+            comDiv.id = `comment-${i}`;
+            comContentDiv.id = `comment-${i}`;
+            comUserIdDiv.id = `userId-${i}`;
+            const commentText = document.createElement("p")
+            const comUserIdText = document.createElement("p")
+            let commenTextNode = document.createTextNode(comJson[i].comInfo.comment)
+            let comUserIdtextNode = document.createTextNode(comJson[i].comInfo.userID)
+            commentText.appendChild(commenTextNode)
+            comUserIdText.appendChild(comUserIdtextNode)
+            comContentDiv.append(commentText)
+            comUserIdDiv.append(comUserIdText)
+            comDiv.append(comContentDiv, comUserIdDiv)
+            allComments.append(comDiv)
+        }
+        return allComments
     }
-    let comJson = JSON.parse(arr[value].postinfo.commentOfPost)
-    const allComments = document.createElement("div")
-    allComments.id = "allComments"
-    for (let i = 0; i < (arr[value].postinfo.commentOfPost).length; i++) {
-        const comDiv = document.createElement("div")
-        const comContentDiv = document.createElement("div");
-        const comUserIdDiv = document.createElement("div");
-        comDiv.id = `comment-${i}`;
-        comContentDiv.id = `comment-${i}`;
-        comUserIdDiv.id = `userId-${i}`;
-        const commentText = document.createElement("p")
-        const comUserIdText = document.createElement("p")
-        const coommenTextNode = document.createTextNode(comJson[0].comInfo.comment)
-        const comUserIdtextNode = document.createTextNode(comJson[0].comInfo.userID)
-        commentText.appendChild(coommenTextNode)
-        comUserIdText.appendChild(comUserIdtextNode)
-        comContentDiv.append(commentText)
-        comUserIdDiv.append(comUserIdText)
-        comDiv.append(comContentDiv, comUserIdDiv)
-        allComments.append(comDiv)
-    }
-    return allComments
 }
 
 export default PostForm;
