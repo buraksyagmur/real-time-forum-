@@ -45,7 +45,7 @@ type WsComPayload struct {
 	ComTime string `json:"comTime"`
 }
 
-func findAllPosts() string {
+func findAllPosts() []Ind {
 	var pos []WsPostPayload
 	var everyPost []Ind
 	var id int
@@ -74,11 +74,12 @@ func findAllPosts() string {
 		singlePost.Post = pos[i]
 		everyPost = append(everyPost, singlePost)
 	}
-	j, err := json.Marshal(everyPost)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(j)
+	// j, err := json.Marshal(everyPost)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// return string(j)
+	return everyPost
 }
 
 func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +92,11 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	var firstResponse WsPostResponse
 	firstResponse.Label = "Greet"
 	allPosts := findAllPosts()
-	firstResponse.Content = allPosts
+	firstJson, err := json.Marshal(allPosts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	firstResponse.Content = string(firstJson)
 	conn.WriteJSON(firstResponse)
 	listenToPostWs(conn)
 }
@@ -135,8 +140,14 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 
 		var successResponse WsPostResponse
 		successResponse.Label = "post"
-		successResponse.Content = findAllPosts()
+		allPosts := findAllPosts()
+		postJson, err := json.Marshal(allPosts)
+		if err != nil {
+			log.Fatal(err)
+		}
+		successResponse.Content = string(postJson)
 		successResponse.Pass = true
+		conn.WriteJSON(successResponse)
 		broadcast(successResponse)
 
 	} else if postPayload.Label == "Createcomment" {
@@ -148,20 +159,31 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		defer rows.Close()
 		var comUnmars WsComPayload
 		json.Unmarshal([]byte(postPayload.CommentOfPost), &comUnmars)
-
-		rows.Exec(comUnmars.Comment, postPayload.PostID, (time.Now()))
+		comTime := time.Now()
+		rows.Exec(comUnmars.Comment, postPayload.PostID, comTime)
 		fmt.Println("comment saved successfully")
 		var successResponse WsPostResponse
-		successResponse.Label = "comment"
-		successResponse.Content = findAllPosts()
+		successResponse.Label = "Createcomment"
+		allPosts := findAllPosts()
+		postJson, err := json.Marshal(allPosts)
+		if err != nil {
+			log.Fatal(err)
+		}
+		successResponse.Content = string(postJson)
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
 		broadcast(successResponse)
 	} else if postPayload.Label == "showComment" {
 		fmt.Println("****show all comment*", postPayload)
+
 		var successResponse WsPostResponse
 		successResponse.Label = "showComment"
-		successResponse.Content = findAllPosts()
+		allPosts := findAllPosts()
+		postJson, err := json.Marshal(allPosts)
+		if err != nil {
+			log.Fatal(err)
+		}
+		successResponse.Content = string(postJson)
 		fmt.Println(successResponse.Content, "allcomments")
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
@@ -177,7 +199,7 @@ func findAllComments(postID int) string {
 	var com []WsComPayload
 	var everyCom []IndCom
 	var timeofCom time.Time
-	rows, err := db.Query("SELECT userID, content, comTime FROM comments WHERE postID = ?;", postID)
+	rows, err := db.Query("SELECT content, comTime FROM comments WHERE postID = ?;", postID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -186,7 +208,7 @@ func findAllComments(postID int) string {
 	defer rows.Close()
 	for rows.Next() {
 		var co WsComPayload
-		rows.Scan(&(co.UserID), &(co.Comment), timeofCom)
+		rows.Scan(&(co.Comment), timeofCom)
 		co.ComTime = timeofCom.Format("Mon 02-01-2006 15:04:05")
 		com = append(com, co)
 		fmt.Println("THIS IS comments", co)

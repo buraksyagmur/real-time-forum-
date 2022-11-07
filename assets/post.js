@@ -2,6 +2,7 @@ let postSocket = null;
 let jsonFile
 const body = document.getElementsByTagName("BODY")[0]
 const comment = document.getElementsByClassName("comment")
+var commentPostId 
 document.addEventListener("DOMContentLoaded", function () {
     postSocket = new WebSocket("ws://localhost:8080/postWs/");
     console.log("JS attempt to connect");
@@ -20,11 +21,21 @@ document.addEventListener("DOMContentLoaded", function () {
             jsonFile = JSON.parse(resp.content)
             createPost(jsonFile)
         }
-        else if (resp.label === "comment") {
+        else if (resp.label === "Createcomment") {
             console.log("label is now comment----------------------")
-            if (resp.Content != null) {
-                CreateComments(jsonFile)
+            jsonFile = JSON.parse(resp.content)
+            console.log("thats json",jsonFile, "and thats resp.content", resp.content)
+            if (resp.Content !== null) {
+                const comment = document.querySelector(".comment")
+              let newCom= CreateComments(jsonFile,parseInt(commentPostId)-1)
+            //    comment.append(newCom)
+            comment.insertBefore(newCom, comment.children[1])
+               console.log("function now over")
             }
+        }else if (resp.label=== "showComment"){
+            console.log("----------------------------------------- label show")
+            jsonFile= JSON.parse(resp.content)
+            console.log("and new Json", jsonFile)
         }
     }
 });
@@ -59,8 +70,9 @@ function createPost(arr) {
                     comment.removeChild(comment.firstChild)
                 }
             })
-            let comForm = CreateCommentForm(valu)
+            console.log("functions working***")
             let comments = CreateComments(jsonFile, i)
+            let comForm = CreateCommentForm(valu)
             comment.append(clone, comments, comForm, closeComments)
             comment.style.height = "100%";
         })
@@ -209,6 +221,7 @@ const commentHandler = function (e) {
     let strCom = JSON.stringify(payloadObjCom)
     payloadObj["commentOfPost"] = strCom
     console.log("checking target", payloadObj)
+    commentPostId= payloadObj.postID
     postSocket.send(JSON.stringify(payloadObj));
 };
 function CreateCommentForm(value) {
@@ -251,13 +264,16 @@ const showcommentHandler = function (e) {
 
 };
 function CreateComments(arr, value) {
+    console.log("CREATING COMMENTS")
     document.querySelectorAll("#allComments").forEach(e => {
         e.remove();
     });
 
     console.log(value, "func check", arr[value])
+    console.log(arr)
     if (arr[value].postinfo.commentOfPost === "null") {
         console.log("comment of post empty")
+        return ""
 
     } else {
         console.log()
@@ -275,7 +291,9 @@ function CreateComments(arr, value) {
             const commentText = document.createElement("p")
             const comUserIdText = document.createElement("p")
             let commenTextNode = document.createTextNode(comJson[i].comInfo.comment)
-            let comUserIdtextNode = document.createTextNode(comJson[i].comInfo.userID)
+            // let commenTextNode = document.createTextNode(" comment")
+            // let comUserIdtextNode = document.createTextNode(comJson[i].comInfo.userID)
+            let comUserIdtextNode = document.createTextNode(" userID ")
             commentText.appendChild(commenTextNode)
             comUserIdText.appendChild(comUserIdtextNode)
             comContentDiv.append(commentText)
