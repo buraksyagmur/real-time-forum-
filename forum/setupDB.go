@@ -14,7 +14,7 @@ func createUsersTable() {
 		userID INTEGER PRIMARY KEY AUTOINCREMENT,
 		nickname VARCHAR(30),
 		age INTEGER,
-		gender BOOLEAN,
+		gender VARCHAR(30),
 		firstname VARCHAR(30),
 		lastname VARCHAR(30),
 		email VARCHAR(50),

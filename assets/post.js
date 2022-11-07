@@ -1,7 +1,6 @@
 let postSocket = null;
 let jsonFile
 const body = document.getElementsByTagName("BODY")[0]
-const comment = document.getElementsByClassName("comment")
 var commentPostId 
 document.addEventListener("DOMContentLoaded", function () {
     postSocket = new WebSocket("ws://localhost:8080/postWs/");

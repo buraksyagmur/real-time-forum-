@@ -184,6 +184,4 @@ func testLogin() {
 	testpwHash, err := bcrypt.GenerateFromPassword([]byte(testpw), 10)
 	stmt.Exec(0o07, "doubleOhSeven", 42, 1, "James", "Bond", "secretagent@mi5.com", testpwHash, false)
 }
-func findCurUser(){
-	
-}
+

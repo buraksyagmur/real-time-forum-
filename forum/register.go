@@ -29,7 +29,28 @@ type WsRegisterPayload struct {
 	Gender    string `json:"gender_option"`
 }
 
+type User struct {
+	UserId    int
+	Nickname  string
+	Age       int
+	Gender    string
+	FirstName string
+	LastName  string
+	Email     string
+	LoggedIn  bool
+}
+
 var userID int
+
+func findCurUser() {
+	var curUser User
+	rows3, err := db.Query(`SELECT nickname, age, gender, firstname, lastname,email, loggedIn FROM users WHERE nickname = ?`, userID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows3.Close()
+	rows3.Scan(&curUser.Nickname, curUser.Age, curUser.Gender, curUser.FirstName, curUser.LastName, curUser.Email, curUser.LoggedIn)
+}
 
 func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
