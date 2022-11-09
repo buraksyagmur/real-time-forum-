@@ -27,6 +27,7 @@ const regHandler = function(e) {
 
 // login form//
 const RegisterForm = document.createElement("form");
+RegisterForm.className = "formPage"
 RegisterForm.addEventListener("submit", regHandler);
 
 

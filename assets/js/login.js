@@ -28,6 +28,7 @@ const loginHandler = function(e) {
 
 
 const loginForm = document.createElement("form");
+loginForm.className = "formPage"
 loginForm.addEventListener("submit", loginHandler);
 
 // login form
