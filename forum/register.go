@@ -40,11 +40,13 @@ type User struct {
 	LoggedIn  bool
 }
 
-var userID int
+var (
+	userID  int
+	curUser User
+)
 
-func findCurUser() {
-	var curUser User
-	rows3, err := db.Query(`SELECT nickname, age, gender, firstname, lastname,email, loggedIn FROM users WHERE nickname = ?`, userID)
+func findCurUser(userid int) {
+	rows3, err := db.Query(`SELECT nickname, age, gender, firstname, lastname,email, loggedIn FROM users WHERE userID = ?`, userid)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,11 +65,10 @@ func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	firstResponse.Label = "Greet"
 	firstResponse.Content = "Please register to the Forum"
 	conn.WriteJSON(firstResponse)
-	listenToRegWs(conn)
-	createSession(w, userID)
+	listenToRegWs(conn, w)
 }
 
-func listenToRegWs(conn *websocket.Conn) {
+func listenToRegWs(conn *websocket.Conn, w http.ResponseWriter) {
 	defer func() {
 		fmt.Println("Ws Conn Closed")
 	}()
@@ -78,12 +79,13 @@ func listenToRegWs(conn *websocket.Conn) {
 		err := conn.ReadJSON(&regPayload)
 		if err == nil {
 			fmt.Printf("payload received: %v\n", regPayload)
-			ProcessAndReplyReg(conn, regPayload)
+			ProcessAndReplyReg(conn, regPayload, w)
 		}
 	}
 }
 
-func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
+func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload, w http.ResponseWriter) {
+	var emailCheck string
 	dob, err := time.Parse("2006-01-02", regPayload.Age)
 	if err != nil {
 		log.Fatal(err)
@@ -100,7 +102,19 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 		fmt.Printf("reg- FirstN: %s, LastN: %s, NickN : %s, age: %s, email %s, pw: %s, gender: %s\n",
 			regPayload.FirstName, regPayload.LastName, regPayload.NickName,
 			ageStr, regPayload.Email, cryptPw, regPayload.Gender)
-
+		// checking duplicate
+		rows2, err := db.Query(`SELECT email FROM users WHERE email = ?`, regPayload.Email)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		defer rows2.Close()
+		rows2.Scan(&emailCheck)
+		if emailCheck != "" {
+			fmt.Println("already registered")
+			return
+		}
+		// insert newuser  into database
 		fmt.Printf("%s creating user\n", regPayload.NickName)
 		rows, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn) VALUES(?,?,?,?,?,?,?,?);")
 		if err != nil {
@@ -110,14 +124,14 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 		rows.Exec(regPayload.NickName, ageStr, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, cryptPw, true)
 
 		fmt.Println("Register successfully")
-
+		createSession(w, userID)
 		var successResponse WsRegisterResponse
 		successResponse.Label = "reg"
 		successResponse.Content = fmt.Sprintf("%s Login successfully", regPayload.NickName)
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
-
-		rows3, err := db.Query(`SELECT userID FROM users WHERE nickname = ?`, regPayload.NickName)
+		// finding userID of newUser
+		rows3, err := db.Query(`SELECT userID FROM users WHERE email = ?`, regPayload.Email)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -125,7 +139,6 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 		for rows3.Next() {
 			rows3.Scan(&userID)
 		}
-
 	}
 }
 

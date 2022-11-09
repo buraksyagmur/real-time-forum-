@@ -1,6 +1,8 @@
-
-let loginSocket = null; 
-document.addEventListener("DOMContentLoaded", function() {
+let loginSocket = null;
+let json
+const navbar = document.querySelector(".navbar")
+const logout = document.querySelector("#logout")
+document.addEventListener("DOMContentLoaded", function () {
     loginSocket = new WebSocket("ws://localhost:8080/loginWs/");
     console.log("JS attempt to connect");
     loginSocket.onopen = () => console.log("connected-login");
@@ -8,21 +10,38 @@ document.addEventListener("DOMContentLoaded", function() {
     loginSocket.onerror = (err) => console.log("Error!-login", err);
     loginSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
-        console.log({resp});
+        console.log({ resp });
         if (resp.label === "Greet") {
+            console.log(navbar.children[0])
+            navbar.children[0].style.display = "block"
+            navbar.children[1].style.display = "block"
+            navbar.children[2].style.display = "none"
             console.log(resp.content);
         } else if (resp.label === "login") {
+            json = resp.content
             console.log(resp.content);
+            if (resp.pass) {
+                navbar.childNodes[0].style.display = "none"
+                navbar.childNodes[1].style.display = "none"
+                navbar.childNodes[2].style.display = "block"
+            }
         }
     }
 });
-
-const loginHandler = function(e) {
+const logouthandler = function (e) {
+    e.preventDefault();
+    const payloadObj = Object.prototype
+    payloadObj["label"] = "logout";
+    payloadObk["name"] = json.name
+    loginSocket.send(JSON.stringify(payloadObj));
+};
+logout.addEventListener("click", logouthandler)
+const loginHandler = function (e) {
     e.preventDefault();
     const formFields = new FormData(e.target);
     const payloadObj = Object.fromEntries(formFields.entries());
     payloadObj["label"] = "login";
-    console.log({payloadObj});
+    console.log({ payloadObj });
     loginSocket.send(JSON.stringify(payloadObj));
 };
 
