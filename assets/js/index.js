@@ -2,6 +2,8 @@ import RegisterForm from "./reg.js";
 import loginForm from "./login.js";
 import PostForm from "./post.js";
 
+import logoutBtn from "./logout.js";
+import chatForm from "./chat.js";
 
 const formDiv = document.querySelector(".form-div");
 const loginBut = document.querySelector(".login-btn");
@@ -23,14 +25,23 @@ openBut.textContent= "Login / Register"
 closeBut.textContent= String.fromCodePoint(0x274C)
 body.append(openButDiv)
 openBut.addEventListener("click", function(){
+    console.log("openpge")
     formPage.style.height = "100%";
 });
 closeBut.addEventListener("click", function(){
+    console.log("openpge")
     formPage.style.height = "0%";
 });
+
+formDiv.append(logoutBtn);
+formDiv.append(loginForm);
 
 loginOrReg.append(closeButDiv)
 document.addEventListener("DOMContentLoaded", function() {
     formDiv.classList.add("show");
 });
-body.append(PostForm)
+body.append(PostForm);
+
+const chatBox = document.createElement("div")
+chatBox.append(chatForm);
+body.append(chatBox);

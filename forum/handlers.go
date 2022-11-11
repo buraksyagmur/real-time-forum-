@@ -22,27 +22,44 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	err = tpl.ExecuteTemplate(w, "index.html", nil)
 }
 
-// func LoginHandler(w http.ResponseWriter, r *http.Request) {
-// 	// fmt.Println("logged in", loggedIn(r))
-// 	if r.Method != http.MethodGet && r.Method != http.MethodPost {
-// 		http.Error(w, "Bad request", http.StatusBadRequest)
-// 	}
-// 	// if loggedIn(r) {
-// 	// http.Redirect(w, r, "/", http.StatusSeeOther)
-// 	// return
-// 	// w.Header().Set("Content-Type", "application/json")
-// 	// w.WriteHeader(http.StatusOK)
-// 	// w.Write(js)
-// 	// }
-// 	// if r.Method == "GET" {
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("logged in", loggedInCheck(r))
+	if r.Method != http.MethodGet {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+	if r.Method == "GET" && !loggedInCheck(r) {
+		LoginWsEndpoint(w, r)
+	}
+}
 
-// 	// }
-// 	if r.Method == http.MethodPost {
-// 		fmt.Printf("----login-POST-----\n")
-// 		// processLogin(w, r)
-// 		// http.Redirect(w, r, "/", http.StatusSeeOther)
-// 	}
-// }
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+	if r.Method == http.MethodGet && !loggedInCheck(r) {
+		RegWsEndpoint(w, r)
+	}
+}
+
+func UserListHandler(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("logged in", loggedInCheck(r))
+	if r.Method != http.MethodGet {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+	if r.Method == "GET" && !loggedInCheck(r) {
+		userListWsEndpoint(w, r)
+	}
+}
+
+func ChatHandler(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("logged in", loggedInCheck(r))
+	if r.Method != http.MethodGet {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+	}
+	if r.Method == "GET" && !loggedInCheck(r) {
+		chatWsEndpoint(w, r)
+	}
+}
 
 // // func HomeHandler(w http.ResponseWriter, r *http.Request) {
 // // 	if r.URL.Path != "/" {
@@ -199,11 +216,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 // // }
 
 // func LoginHandler(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Println("logged in", loggedIn(r))
+// 	fmt.Println("logged in", loggedInCheck(r))
 // 	if r.Method != http.MethodGet && r.Method != http.MethodPost {
 // 		http.Error(w, "Bad request", http.StatusBadRequest)
 // 	}
-// 	if loggedIn(r) {
+// 	if loggedInCheck(r) {
 // 		http.Redirect(w, r, "/", http.StatusSeeOther)
 // 		return
 // 	}
@@ -224,44 +241,21 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 // 		http.Redirect(w, r, "/", http.StatusSeeOther)
 // 	}
 // }
-
-// func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodGet && r.Method != http.MethodPost {
-// 		http.Error(w, "Bad request", http.StatusBadRequest)
-// 	}
-// 	if loggedIn(r) {
-// 		http.Redirect(w, r, "/", http.StatusSeeOther)
-// 		return
-// 	}
-// 	if r.Method == http.MethodGet {
-// 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-// 		tpl, err := template.ParseFiles("./templates/header.gohtml", "./templates/footer.gohtml", "./templates/register.gohtml")
-// 		if err != nil {
-// 			http.Error(w, "Parsing Error", http.StatusInternalServerError)
-// 			return
-// 		}
-// 		err = tpl.ExecuteTemplate(w, "register.gohtml", nil)
-// 		if err != nil {
-// 			http.Error(w, "Executing Error", http.StatusInternalServerError)
-// 			return
-// 		}
-// 	}
-// 	if r.Method == http.MethodPost {
-// 		regNewUser(w, r)
-// 		http.Redirect(w, r, "/", http.StatusSeeOther)
-// 	}
-// }
-
-// func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodGet {
-// 		http.Error(w, "Bad request", http.StatusBadRequest)
-// 		return
-// 	}
-// 	//	if loggedIn(r) {
-// 	processLogout(w, r)
-// 	//	}
+// if r.Method == http.MethodPost {
+// 	regNewUser(w, r)
 // 	http.Redirect(w, r, "/", http.StatusSeeOther)
 // }
+// }
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+	if loggedInCheck(r) {
+		processLogout(w, r)
+	}
+}
 
 // func PostPageHandler(w http.ResponseWriter, r *http.Request) {
 // 	var strID string

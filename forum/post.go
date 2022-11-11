@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -29,7 +28,6 @@ type WsPostPayload struct {
 	Category string `json:"category_option"`
 	Content  string `json:"Content"`
 	PostTime string `json:"PostTime"`
-	PostID   string `json:"postID"`
 }
 
 func findAllPosts() string {
@@ -70,7 +68,7 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	fmt.Println("Connected")
+	fmt.Println("Post Connected")
 	var firstResponse WsPostResponse
 	firstResponse.Label = "Greet"
 	allPosts := findAllPosts()
@@ -81,7 +79,7 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 func listenToPostWs(conn *websocket.Conn) {
 	defer func() {
-		fmt.Println("Ws Conn Closed")
+		fmt.Println("Post Ws Conn Closed")
 	}()
 
 	var postPayload WsPostPayload
@@ -96,8 +94,6 @@ func listenToPostWs(conn *websocket.Conn) {
 }
 
 func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
-	fmt.Printf("postPayload: %v\n", postPayload)
-	fmt.Printf("postPayload.Label: %v\n", postPayload.Label)
 	if postPayload.Label == "post" {
 		fmt.Println("LABEL WORK--------------------------------")
 		fmt.Printf("post - title:%s, cat:%s, Content:%s", postPayload.Title, postPayload.Category, postPayload.Content)
@@ -108,64 +104,12 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		}
 		defer rows.Close()
 		rows.Exec(postPayload.Title, postPayload.Content, postPayload.Category, time.Now())
-		fmt.Println("Post saved successfully")
+		fmt.Println("Posted successfully")
 		var successResponse WsPostResponse
 		successResponse.Label = "post"
 		successResponse.Content = findAllPosts()
-		successResponse.Pass = true // no need?
-		conn.WriteJSON(successResponse)
-
-	} else if postPayload.Label == "comment" {
-		rows, err := db.Prepare("INSERT INTO comments (content, postID) VALUES (?,?);") // no commentTime?
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer rows.Close()
-		rows.Exec(postPayload.Content, postPayload.PostID)
-		fmt.Println("comment saved successfully")
-		var successResponse WsPostResponse
-		successResponse.Label = "comment"
-		fmt.Printf("postPayload.PostID (comment): %s\n", postPayload.PostID)
-		successResponse.Content = findAllComments(postPayload.PostID)
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
-	} else if postPayload.Label == "showComment" {
-		var successResponse WsPostResponse
-		successResponse.Label = "comment"
-		successResponse.Content = findAllComments(postPayload.PostID)
-		successResponse.Pass = true
-	}
-}
 
-func findAllComments(postIDstr string) string {
-	postID, err := strconv.Atoi(postIDstr)
-	if err != nil {
-		log.Fatal(err)
 	}
-	var pos []WsPostPayload
-	var everyPost []Ind
-	rows, err := db.Query("SELECT content  FROM comments WHERE postID = ?;", postID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// ----------------------- DONT FORGET --------------------
-	// after session done, i will add userID there.
-	defer rows.Close()
-	for rows.Next() {
-		var po WsPostPayload
-		rows.Scan(&(po.Content))
-		pos = append(pos, po)
-		fmt.Println("THIS IS comments", po)
-	}
-	for i := 0; i < len(pos); i++ {
-		var singlePost Ind
-		singlePost.Index = i
-		singlePost.Post = pos[i]
-		everyPost = append(everyPost, singlePost)
-	}
-	j, err := json.Marshal(everyPost)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(j)
 }
