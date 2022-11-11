@@ -14,11 +14,7 @@ func createUsersTable() {
 		userID INTEGER PRIMARY KEY AUTOINCREMENT,
 		nickname VARCHAR(30),
 		age INTEGER,
-<<<<<<< HEAD
-		gender VARCHAR(30),
-=======
 		gender VARCHAR(10),
->>>>>>> d
 		firstname VARCHAR(30),
 		lastname VARCHAR(30),
 		email VARCHAR(50),
@@ -65,11 +61,7 @@ func createCommentsTable() {
 		userID INTEGER, 
 		postID INTEGER, 
 		content VARCHAR(2000), 
-<<<<<<< HEAD
 		comTime DATETIME,
-=======
-		commentTime DATETIME, 
->>>>>>> d
 		FOREIGN KEY(userID) REFERENCES users(userID),
 		FOREIGN KEY(postID) REFERENCES posts(postID));`)
 	if err != nil {

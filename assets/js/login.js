@@ -1,5 +1,7 @@
 import userListSocket from "./userList.js";
 let loginSocket = null;
+let nameInput = null;
+let pwInput = null;
 const navbar = document.querySelector(".navbar")
 const logout = document.querySelector("#logout")
 console.log(userListSocket);
@@ -19,9 +21,13 @@ document.addEventListener("DOMContentLoaded", function() {
         } else if (resp.label === "login") {
             console.log("uid: ",resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
             document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
-            navbar.childNodes[0].style.display = "none"
-            navbar.childNodes[1].style.display = "none"
-            navbar.childNodes[2].style.display = "block"
+            if (resp.pass== true){
+            navbar.children[0].style.display = "none"
+            navbar.children[1].style.display = "none"
+            navbar.children[2].style.display = "block"
+            nameInput.value = "";
+            pwInput.value = "";
+            }
             // update user list after a user login
             if (resp.pass) {
                 let uListPayload = {};
@@ -59,11 +65,11 @@ nameLabel.setAttribute("for", "name");
 nameLabelDiv.append(nameLabel);
 // name input
 const nameInputDiv = document.createElement('div');
-const nameInput = document.createElement('input');
+nameInput = document.createElement('input');
 nameInput.setAttribute("type", "text");
 nameInput.setAttribute("name", "name");
 nameInput.setAttribute("id", "name");
-nameInput.setAttribute("placeholder", "eg: Nick or abc@def.com")
+nameInput.setAttribute("placeholder", "eg: deathstar123 or abc@def.com")
 nameInputDiv.append(nameInput);
 
 // pw label
@@ -74,7 +80,7 @@ pwLabel.setAttribute("for", "pw");
 pwLabelDiv.append(pwLabel);
 // password input
 const pwInputDiv = document.createElement('div');
-const pwInput = document.createElement('input');
+pwInput = document.createElement('input');
 pwInput.setAttribute("type", "password");
 pwInput.setAttribute("name", "pw");
 pwInput.setAttribute("id", "pw");
@@ -87,5 +93,4 @@ loginSubmit.setAttribute("type", "submit");
 loginSubmitDiv.append(loginSubmit);
 
 loginForm.append(nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
-
 export default loginForm;

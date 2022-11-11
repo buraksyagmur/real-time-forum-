@@ -148,7 +148,6 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		successResponse.Content = string(postJson)
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
-		broadcast(successResponse)
 
 	} else if postPayload.Label == "Createcomment" {
 		fmt.Println("commmentAllDetails", postPayload)
@@ -172,7 +171,6 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		successResponse.Content = string(postJson)
 		successResponse.Pass = true
 		conn.WriteJSON(successResponse)
-		broadcast(successResponse)
 	} else if postPayload.Label == "showComment" {
 		fmt.Println("****show all comment*", postPayload)
 
@@ -224,21 +222,4 @@ func findAllComments(postID int) string {
 		log.Fatal(err)
 	}
 	return string(j)
-}
-
-func broadcast(successResponse WsPostResponse) {
-	rows, err := db.Query(`SELECT websocketAdd FROM websockets`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-	var wsArr []*websocket.Conn
-	for rows.Next() {
-		var wsAdd *websocket.Conn
-		rows.Scan(&wsAdd)
-		wsArr = append(wsArr, wsAdd)
-	}
-	for _, wsAddress := range wsArr {
-		wsAddress.WriteJSON(successResponse)
-	}
 }
