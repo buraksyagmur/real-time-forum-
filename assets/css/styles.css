@@ -225,3 +225,11 @@ button.button:hover {
 .form-page {
     display: none;
 }
+
+
+/* --------------- */
+
+.user-list {
+    display: block;
+    height: 30px;
+}
