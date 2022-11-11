@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type WsRegisterResponse struct {
-	Label   string `json:"label"`
-	Content string `json:"content"`
-	Pass    bool   `json:"pass"`
+	Label   string        `json:"label"`
+	Content string        `json:"content"`
+	Pass    bool          `json:"pass"`
+	Cookie  SessionCookie `json:"cookie"`
 }
 
 type WsRegisterPayload struct {
@@ -60,17 +60,28 @@ func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	fmt.Println("Connected")
+	fmt.Println("Reg Connected")
 	var firstResponse WsLoginResponse
-	firstResponse.Label = "Greet"
+	firstResponse.Label = "greet"
 	firstResponse.Content = "Please register to the Forum"
 	conn.WriteJSON(firstResponse)
+<<<<<<< HEAD
 	listenToRegWs(conn, w)
 }
 
 func listenToRegWs(conn *websocket.Conn, w http.ResponseWriter) {
+=======
+
+	regSuccess := false
+	for !regSuccess {
+		regSuccess = listenToRegWs(conn)
+	}
+}
+
+func listenToRegWs(conn *websocket.Conn) bool {
+>>>>>>> d
 	defer func() {
-		fmt.Println("Ws Conn Closed")
+		fmt.Println("Reg Ws Conn Closed")
 	}()
 
 	var regPayload WsRegisterPayload
@@ -79,13 +90,22 @@ func listenToRegWs(conn *websocket.Conn, w http.ResponseWriter) {
 		err := conn.ReadJSON(&regPayload)
 		if err == nil {
 			fmt.Printf("payload received: %v\n", regPayload)
+<<<<<<< HEAD
 			ProcessAndReplyReg(conn, regPayload, w)
+=======
+			regSuccess := ProcessAndReplyReg(conn, regPayload)
+			return regSuccess
+>>>>>>> d
 		}
 	}
 }
 
+<<<<<<< HEAD
 func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload, w http.ResponseWriter) {
 	var emailCheck string
+=======
+func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) bool {
+>>>>>>> d
 	dob, err := time.Parse("2006-01-02", regPayload.Age)
 	if err != nil {
 		log.Fatal(err)
@@ -116,6 +136,7 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload, w ht
 		}
 		// insert newuser  into database
 		fmt.Printf("%s creating user\n", regPayload.NickName)
+<<<<<<< HEAD
 		rows, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn) VALUES(?,?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
@@ -132,13 +153,43 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload, w ht
 		conn.WriteJSON(successResponse)
 		// finding userID of newUser
 		rows3, err := db.Query(`SELECT userID FROM users WHERE email = ?`, regPayload.Email)
+=======
+		stmt, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn) VALUES(?,?,?,?,?,?,?,?);")
+>>>>>>> d
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer rows3.Close()
-		for rows3.Next() {
-			rows3.Scan(&userID)
+		defer stmt.Close()
+		stmt.Exec(regPayload.NickName, ageStr, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, cryptPw, true)
+		if regPayload.NickName != "" && ageStr != "" && regPayload.Gender != "" && regPayload.FirstName != "" && regPayload.LastName != "" && regPayload.Email != "" && cryptPw != nil {
+
+			fmt.Println("Register successfully")
+
+			var successResponse WsRegisterResponse
+			successResponse.Label = "reg"
+			successResponse.Content = fmt.Sprintf("%s Login successfully", regPayload.NickName)
+			successResponse.Pass = true
+
+			rows3, err := db.Query(`SELECT userID FROM users WHERE nickname = ?`, regPayload.NickName)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows3.Close()
+			for rows3.Next() {
+				rows3.Scan(&userID)
+			}
+
+			successResponse.Cookie = genCookie(conn, userID)
+			conn.WriteJSON(successResponse)
+		} else {
+			var failedResponse WsRegisterResponse
+			failedResponse.Label = "reg"
+			failedResponse.Content = fmt.Sprintf("Please check your credentials")
+			failedResponse.Pass = false
+			conn.WriteJSON(failedResponse)
+			return false
 		}
+<<<<<<< HEAD
 	}
 }
 
@@ -153,7 +204,8 @@ func createSession(w http.ResponseWriter, userID int) {
 	stmt, err := db.Prepare("INSERT INTO sessions (sessionID, userID) VALUES (?,?);")
 	if err != nil {
 		log.Fatal(err)
+=======
+>>>>>>> d
 	}
-	defer stmt.Close()
-	stmt.Exec(sid.String(), userID)
+	return true
 }

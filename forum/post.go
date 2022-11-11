@@ -87,14 +87,7 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		return
-	} 
-	rows, err := db.Prepare("INSERT INTO websockets(websocketAdd,userID) VALUES(?,?);")
-	if err != nil {
-		log.Fatal(err)
 	}
-	defer rows.Close()
-	// rows.Exec(conn, postPayload.Content, postPayload.Category, time.Now())
-
 	fmt.Println("Connected")
 	var firstResponse WsPostResponse
 	firstResponse.Label = "Greet"
@@ -110,7 +103,7 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 func listenToPostWs(conn *websocket.Conn) {
 	defer func() {
-		fmt.Println("Ws Conn Closed")
+		fmt.Println("Post Ws Conn Closed")
 	}()
 	var postPayload WsPostPayload
 	for {

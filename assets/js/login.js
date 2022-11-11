@@ -1,41 +1,41 @@
+import userListSocket from "./userList.js";
 let loginSocket = null;
-let json
 const navbar = document.querySelector(".navbar")
 const logout = document.querySelector("#logout")
-document.addEventListener("DOMContentLoaded", function () {
+console.log(userListSocket);
+document.addEventListener("DOMContentLoaded", function() {
     loginSocket = new WebSocket("ws://localhost:8080/loginWs/");
-    console.log("JS attempt to connect");
-    loginSocket.onopen = () => console.log("connected-login");
-    loginSocket.onclose = () => console.log("Bye-login");
-    loginSocket.onerror = (err) => console.log("Error!-login", err);
+    console.log("JS attempt to connect to login");
+    loginSocket.onopen = () => console.log("login connected");
+    loginSocket.onclose = () => console.log("Bye login");
+    loginSocket.onerror = (err) => console.log("login ws Error!");
     loginSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
-        console.log({ resp });
-        if (resp.label === "Greet") {
-            console.log(navbar.children[0])
+        if (resp.label === "greet") {
+            console.log(resp.content);
             navbar.children[0].style.display = "block"
             navbar.children[1].style.display = "block"
             navbar.children[2].style.display = "none"
-            console.log(resp.content);
         } else if (resp.label === "login") {
-            json = resp.content
-            console.log(resp.content);
+            console.log("uid: ",resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
+            document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
+            navbar.childNodes[0].style.display = "none"
+            navbar.childNodes[1].style.display = "none"
+            navbar.childNodes[2].style.display = "block"
+            // update user list after a user login
             if (resp.pass) {
-                navbar.childNodes[0].style.display = "none"
-                navbar.childNodes[1].style.display = "none"
-                navbar.childNodes[2].style.display = "block"
+                let uListPayload = {};
+                uListPayload["label"] = "update";
+                uListPayload["cookie_value"] = resp.cookie.sid;
+                console.log("login UL sending: ", uListPayload);
+                userListSocket.send(JSON.stringify(uListPayload));
             }
+            
         }
     }
 });
-const logouthandler = function (e) {
-    e.preventDefault();
-    const payloadObj = Object.prototype
-    payloadObj["label"] = "logout";
-    payloadObk["name"] = json.name
-    loginSocket.send(JSON.stringify(payloadObj));
-};
-logout.addEventListener("click", logouthandler)
+
+// logout.addEventListener("click", logouthandler)
 const loginHandler = function (e) {
     e.preventDefault();
     const formFields = new FormData(e.target);

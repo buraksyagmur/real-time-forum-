@@ -14,7 +14,11 @@ func createUsersTable() {
 		userID INTEGER PRIMARY KEY AUTOINCREMENT,
 		nickname VARCHAR(30),
 		age INTEGER,
+<<<<<<< HEAD
 		gender VARCHAR(30),
+=======
+		gender VARCHAR(10),
+>>>>>>> d
 		firstname VARCHAR(30),
 		lastname VARCHAR(30),
 		email VARCHAR(50),
@@ -61,7 +65,11 @@ func createCommentsTable() {
 		userID INTEGER, 
 		postID INTEGER, 
 		content VARCHAR(2000), 
+<<<<<<< HEAD
 		comTime DATETIME,
+=======
+		commentTime DATETIME, 
+>>>>>>> d
 		FOREIGN KEY(userID) REFERENCES users(userID),
 		FOREIGN KEY(postID) REFERENCES posts(postID));`)
 	if err != nil {
@@ -78,6 +86,7 @@ func createMessageTable() {
 		receiverID INTEGER,
 		messageTIme DATETIME,
 		content VARCHAR(2000),
+		seen BOOLEAN,
 		FOREIGN KEY(senderID) REFERENCES users(userID),
 		FOREIGN KEY(receiverID) REFERENCES users(userID));`)
 	if err != nil {
@@ -87,18 +96,19 @@ func createMessageTable() {
 	stmt.Exec()
 }
 
-func createWebsocketsTable() {
-	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS websockets
-	(websocketID INTEGER PRIMARY KEY AUTOINCREMENT,
-		userID INTEGER,
-		websocketAdd VARCHAR(8),
-		FOREIGN KEY(userID) REFERENCES users(userID));`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-	stmt.Exec()
-}
+// func createWebsocketsTable() {
+// 	stmt, err := db.Prepare(`CREATE TABLE IF NOT EXISTS websockets
+// 	(websocketID INTEGER PRIMARY KEY AUTOINCREMENT,
+// 		userID INTEGER,
+// 		websocketAdd VARCHAR(2000),
+// 		usage VARCHAR(10),
+// 		FOREIGN KEY(userID) REFERENCES users(userID));`)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer stmt.Close()
+// 	stmt.Exec()
+// }
 
 func InitDB() {
 	db, _ = sql.Open("sqlite3", "./forum.db")
@@ -110,5 +120,5 @@ func InitDB() {
 	createPostsTable()
 	createCommentsTable()
 	createMessageTable()
-	createWebsocketsTable()
+	// createWebsocketsTable()
 }
