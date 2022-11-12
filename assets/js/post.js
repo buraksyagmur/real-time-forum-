@@ -176,11 +176,21 @@ CatLabelOpt1.textContent = "1";
 CatLabelOpt2.textContent = "2";
 CatLabelOpt3.textContent = "3";
 CatLabelOpt4.textContent = "4";
-CatOptionDiv.append(
-    CatInputOpt1, CatLabelOpt1,
-    CatInputOpt2, CatLabelOpt2,
-    CatInputOpt3, CatLabelOpt3,
-    CatInputOpt4, CatLabelOpt4);
+
+const CatOpt1Div = document.createElement("div");
+CatOpt1Div.id = "cat-div-1";
+const CatOpt2Div = document.createElement("div");
+CatOpt1Div.id = "cat-div-2";
+const CatOpt3Div = document.createElement("div");
+CatOpt1Div.id = "cat-div-3";
+const CatOpt4Div = document.createElement("div");
+CatOpt1Div.id = "cat-div-4";
+
+CatOpt1Div.append(CatInputOpt1, CatLabelOpt1);
+CatOpt2Div.append(CatInputOpt2, CatLabelOpt2);
+CatOpt3Div.append(CatInputOpt3, CatLabelOpt3);
+CatOpt4Div.append(CatInputOpt4, CatLabelOpt4);
+CatOptionDiv.append(CatOpt1Div, CatOpt2Div, CatOpt3Div, CatOpt4Div);
 
 CatOptionDiv.setAttribute("id", "category");
 //=-----------------------

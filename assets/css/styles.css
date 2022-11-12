@@ -8,10 +8,11 @@
 
 body {
     /*THIS CSS SECTION IS FOR THE BODY OF THE MAIN PAGE*/
-    align-items: center;
-    flex-direction: column;
+    /* margin: 20px; */
+    /* align-items: center; */
+    /* flex-direction: column; */
     /* padding: 10px; */
-    margin: 0px;
+    /* margin: 0px; */
     height: 100%;
     /* overflow: hidden; */
     background-color: rgb(250, 234, 214);
@@ -25,9 +26,11 @@ body {
     background: -o-linear-gradient(to bottom right, rgba(190, 186, 182, 0.5), rgb(199, 150, 91));
     /* for standard syntax */
     background: linear-gradient(to bottom right, rgba(190, 186, 182, 0.5), rgb(199, 150, 91))
+    
 }
 
-ul {
+.nav-bar {
+    padding: 20px;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -107,6 +110,22 @@ li a:hover:not(.active) {
     margin-top: 0;
     margin-bottom: 0;
 }
+#category {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+#category > div {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+}
+#category > div > input {
+    margin: 10px;
+}
+#category > div > label {
+    margin: 10px;
+}
 
 .PostCategory {
     width: 90%;
@@ -145,6 +164,7 @@ li a:hover:not(.active) {
     margin: 50px auto;
     border: 1px solid #999;
     width: 60%;
+    border: #a99567;
 }
 
 h2,
@@ -173,6 +193,7 @@ textarea {
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #1c87c9;
+    border-radius: 0.5rem;
     outline: none;
 }
 
