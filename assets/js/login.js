@@ -2,8 +2,7 @@ import userListSocket from "./userList.js";
 let loginSocket = null;
 let nameInput = null;
 let pwInput = null;
-const navbar = document.querySelector(".navbar")
-const logout = document.querySelector("#logout")
+const navbar = document.querySelector(".nav-bar")
 console.log(userListSocket);
 document.addEventListener("DOMContentLoaded", function() {
     loginSocket = new WebSocket("ws://localhost:8080/loginWs/");
