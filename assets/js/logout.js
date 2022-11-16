@@ -31,7 +31,9 @@ const logoutHandler = function() {
 
 
 const logoutBtn = document.createElement("button");
-logoutBtn.textContent= "logout"
+logoutBtn.textContent = "Logout";
+const logoutDiv = document.querySelector("#logout");
+logoutDiv.append(logoutBtn);
 logoutBtn.addEventListener("click", logoutHandler);
 
 export default logoutBtn;

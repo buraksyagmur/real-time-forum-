@@ -4,6 +4,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: 'poppins', sans-serif;
 }
 
 body {
@@ -29,8 +30,9 @@ body {
     
 }
 
+
 .nav-bar {
-    padding: 20px;
+    /* padding: 20px; */
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -38,31 +40,27 @@ body {
     background-color: #333;
 }
 
+
 li {
     float: left;
+    padding-right: 10%;
 }
 
 li a {
     display: block;
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 28px 14px 10px 24px;
     text-decoration: none;
 }
 
 li a:hover:not(.active) {
-    background-color: #111;
-}
-li button {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-li button:hover:not(.active) {
-    background-color: #111;
+    color: crimson;
+    border-radius: 20%;
+    transition: 0.7s;
+    /* transition-property: inherit; */
+    /* margin-top: 30%; */
+    background-color: #fff;
 }
 
 /* THIS FILD IS NOT READY FOR USE YET */
@@ -117,10 +115,22 @@ li button:hover:not(.active) {
 }
 
 .PostContent>p {
-
     margin-top: 0;
     margin-bottom: 0;
 }
+
+.postPage{
+    padding-left: 2%;
+    padding-right: 2%;
+    max-width: 50%;
+}
+
+#allPost{
+    padding-left: 2%;
+    padding-right: 2%;
+    max-width: 50%;
+}
+
 #category {
     display: flex;
     flex-direction: column;
@@ -255,7 +265,7 @@ button.button:hover {
 
 
 .form-page {
-    display: none;
+   color: red;
 }
 
 
