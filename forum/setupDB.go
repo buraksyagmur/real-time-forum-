@@ -76,7 +76,7 @@ func createMessageTable() {
 	(messageID INTEGER PRIMARY KEY AUTOINCREMENT,
 		senderID INTEGER,
 		receiverID INTEGER,
-		messageTIme DATETIME,
+		messageTime DATETIME,
 		content VARCHAR(2000),
 		seen BOOLEAN,
 		FOREIGN KEY(senderID) REFERENCES users(userID),

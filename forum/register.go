@@ -63,17 +63,16 @@ func RegWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Reg Connected")
 	var firstResponse WsLoginResponse
 	firstResponse.Label = "greet"
-	// firstResponse.Content = "Please register to the Forum"
+	firstResponse.Content = "Please register to the Forum"
 	conn.WriteJSON(firstResponse)
 
-	// regSuccess := false
-	// for !regSuccess {
-	// 	regSuccess = listenToRegWs(conn)
-	// }
-	listenToRegWs(conn)
+	regSuccess := false
+	for !regSuccess {
+		regSuccess = listenToRegWs(conn)
+	}
 }
 
-func listenToRegWs(conn *websocket.Conn) {
+func listenToRegWs(conn *websocket.Conn) bool {
 	defer func() {
 		fmt.Println("Reg Ws Conn Closed")
 	}()
@@ -84,14 +83,13 @@ func listenToRegWs(conn *websocket.Conn) {
 		err := conn.ReadJSON(&regPayload)
 		if err == nil {
 			fmt.Printf("payload received: %v\n", regPayload)
-			// regSuccess := ProcessAndReplyReg(conn, regPayload)
-			// return regSuccess
-			ProcessAndReplyReg(conn, regPayload)
+			regSuccess := ProcessAndReplyReg(conn, regPayload)
+			return regSuccess
 		}
 	}
 }
 
-func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
+func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) bool {
 	var emailCheck string
 	dob, err := time.Parse("2006-01-02", regPayload.Age)
 	if err != nil {
@@ -113,13 +111,13 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 		rows2, err := db.Query(`SELECT email FROM users WHERE email = ?`, regPayload.Email)
 		if err != nil {
 			log.Fatal(err)
-			// return false
+			return false
 		}
 		defer rows2.Close()
 		rows2.Scan(&emailCheck)
 		if emailCheck != "" {
 			fmt.Println("already registered")
-			// return false
+			return false
 		}
 		// insert newuser  into database
 		fmt.Printf("%s creating user\n", regPayload.NickName)
@@ -135,8 +133,7 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 
 			var successResponse WsRegisterResponse
 			successResponse.Label = "reg"
-			// no need the form is closed after success
-			// successResponse.Content = fmt.Sprintf("%s Login successfully", regPayload.NickName)
+			successResponse.Content = fmt.Sprintf("%s Login successfully", regPayload.NickName)
 			successResponse.Pass = true
 
 			rows3, err := db.Query(`SELECT userID FROM users WHERE nickname = ?`, regPayload.NickName)
@@ -156,8 +153,8 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 			failedResponse.Content = fmt.Sprintf("Please check your credentials")
 			failedResponse.Pass = false
 			conn.WriteJSON(failedResponse)
-			// return false
+			return false
 		}
 	}
-	// return true
+	return true
 }

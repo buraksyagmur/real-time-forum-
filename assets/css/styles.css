@@ -29,7 +29,7 @@ body {
     
 }
 
-.navbar {
+.nav-bar {
     padding: 20px;
     list-style-type: none;
     margin: 0;
@@ -51,6 +51,17 @@ li a {
 }
 
 li a:hover:not(.active) {
+    background-color: #111;
+}
+li button {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li button:hover:not(.active) {
     background-color: #111;
 }
 

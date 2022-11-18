@@ -45,7 +45,7 @@ func LoginWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Login Connected")
 	var firstResponse WsLoginResponse
 	firstResponse.Label = "greet"
-	// firstResponse.Content = "Please login to the Forum"
+	firstResponse.Content = "Please login to the Forum"
 	conn.WriteJSON(firstResponse)
 	// insert conn into db with empty userID, fill in the userID when registered or logged in
 	// stmt, err := db.Prepare(`INSERT INTO websockets (userID, websocketAdd) VALUES (?, ?);`)
@@ -54,22 +54,20 @@ func LoginWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	// }
 	// defer stmt.Close()
 	// stmt.Exec("", conn)
+	loginSuccess := false
 
-	// loginSuccess := false
-	// // keep running until login success
-	// for !loginSuccess {
-	// loginSuccess = listenToLoginWs(conn)
-	// }
-	// conn.Close()
+	// keep running until login success
+	for !loginSuccess {
+		loginSuccess = listenToLoginWs(conn)
+	}
+	conn.Close()
 
 	// if loginSuccess {
 	// 	userIsOnline()
 	// }
-
-	listenToLoginWs(conn)
 }
 
-func listenToLoginWs(conn *websocket.Conn) {
+func listenToLoginWs(conn *websocket.Conn) bool {
 	defer func() {
 		fmt.Println("Login Ws Conn Closed")
 	}()
@@ -82,14 +80,13 @@ func listenToLoginWs(conn *websocket.Conn) {
 			// loginPayload.Conn = conn
 			fmt.Printf("login payload received: %v\n", loginPayload)
 			// testLogin() // just for testing, can be removed in production
-			// loginSuccess := ProcessAndReplyLogin(conn, loginPayload)
-			// return loginSuccess
-			ProcessAndReplyLogin(conn, loginPayload)
+			loginSuccess := ProcessAndReplyLogin(conn, loginPayload)
+			return loginSuccess
 		}
 	}
 }
 
-func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
+func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) bool {
 	fmt.Printf("login u: %s: , login pw: %s\n", loginPayload.NicknameEmail, loginPayload.Password)
 
 	// // get user data from db
@@ -130,24 +127,21 @@ func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
 		failedResponse.Content = "Please check your credentials"
 		failedResponse.Pass = false
 		conn.WriteJSON(failedResponse)
-		return // v important
-		// return false
-	} else {
-		// Login successfully
-		fmt.Printf("%s (name from DB) Login successfully\n", loginPayload.NicknameEmail)
-
-		// update login status in users
-
-		var successResponse WsLoginResponse
-		successResponse.Label = "login"
-		// no need the form is closed after success
-		// successResponse.Content = fmt.Sprintf("%s Login successfully", nicknameDB)
-		successResponse.Pass = true
-		successResponse.Cookie = genCookie(conn, userIDDB)
-		conn.WriteJSON(successResponse)
-		return
+		return false
 	}
-	// return true
+	// Login successfully
+	fmt.Printf("%s (name from DB) Login successfully\n", loginPayload.NicknameEmail)
+
+	// update login status in users
+
+	var successResponse WsLoginResponse
+	successResponse.Label = "login"
+	successResponse.Content = fmt.Sprintf("%s Login successfully", nicknameDB)
+	successResponse.Pass = true
+	successResponse.Cookie = genCookie(conn, userIDDB)
+	conn.WriteJSON(successResponse)
+
+	return true
 }
 
 // func testLogin() {
