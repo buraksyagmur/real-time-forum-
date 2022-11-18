@@ -8,7 +8,7 @@
     <link type="text/css" rel="stylesheet" href="../assets/css/styles.css">
     <title>Document</title>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-
+    <link type="text/css" rel="stylesheet" href="../assets/css/livemessage.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
@@ -31,8 +31,9 @@
     </header>
 
     <!---home--->
-    <div class="form-page"></div>
+    <!-- <div class="form-page"></div> -->
     <!-- popup page -->
+    <div class="postPage">
     <div id="userPopUpPOne" class="userPopUpP">
         <div class="userPopUpP-content">
             <a class="close">&times;</a>
@@ -43,9 +44,45 @@
             <span class="close">&times;</span>
         </div>
     </div>
+    <div class="comment"></div>
+    </div>
     <!-- end popup page -->
-<div class="comment"></div>
-<ul class="user-list"></ul>
+    <div class="container">
+        <div class="hana">Friends contact</div>
+        <div class="chatbox">
+            <div class="col-1">
+                <div class="msg-row">
+                    <div class="msg-text">
+                        <h2>User 1 Name</h2>
+                        <p>Text any time </p>
+                    </div>
+                    <img src="../assets/images/her3.png" class="msg-img" alt="../assets/images/him3.png">
+                    <!-- https://www.pngwing.com/en/free-png-vconp -->
+                </div>
+                <div class="msg-row msg-row2">
+                    <img src="../assets/images/him3.png" class="msg-img" alt="../assets/images/him3.png">
+                    <!-- https://www.pngwing.com/en/free-png-vconp -->
+                    <div class="msg-text">
+                        <h2>User 2 Name</h2>
+                        <p>Respond Text any time </p>
+                    </div>
+                </div>
+                <div class="msg-row">
+                    <div class="msg-text">
+                        <h2>User 1 Name</h2>
+                        <p>continuation Text </p>
+                    </div>
+                    <img src="../assets/images/her3.png" class="msg-img" alt="../assets/images/him3.png">
+                    <!-- https://www.pngwing.com/en/free-png-vconp -->
+                </div>
+                <input type="text" placeholder="Type your messages here....">
+            </div>
+            <div class="col-2">
+                <h3> Friend List</h3>
+                    <!-- <li class="online"><img src="../assets/images/him3.png"> Name user 1</li> -->
+    <ul class="user-list"></ul>
+            </div>
+            <!-- end chat -->
     <script type="module" src="../assets/js/index.js"></script>
     <script src="../assets/js/popupform.js"></script>
 </body>

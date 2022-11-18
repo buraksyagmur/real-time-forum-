@@ -53,11 +53,9 @@ function createPost(arr) {
         titleButton.setAttribute("value", i)
         titleButton.setAttribute("type", "submit")
         titleButton.addEventListener("click", function (e) {
-            console.log("lastjsonfile", jsonFile)
-            let valu = e.explicitOriginalTarget.value
             const comment = document.querySelector(".comment")
             comment.style.height = "%100"
-            let chosenPost = document.querySelector(`#post-${valu}`)
+            let chosenPost = document.querySelector(`#post-${titleButton.value}`)
             console.log("post is choosen")
             let clone = chosenPost.cloneNode(true)
             const closeComments = document.createElement("button")
@@ -71,7 +69,7 @@ function createPost(arr) {
             })
             console.log("functions working***")
             let comments = CreateComments(jsonFile, i)
-            let comForm = CreateCommentForm(valu)
+            let comForm = CreateCommentForm(titleButton.value)
             comment.append(clone, comments, comForm, closeComments)
             comment.style.height = "100%";
         })

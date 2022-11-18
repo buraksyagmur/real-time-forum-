@@ -1,5 +1,5 @@
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
-
+const chatBox = document.querySelector(".col-1")
 document.addEventListener("DOMContentLoaded", function(e) {
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
     console.log("JS attempt to connect to user list");
@@ -15,14 +15,32 @@ document.addEventListener("DOMContentLoaded", function(e) {
             // remove list item
             uList.textContent = "";
             // add new list item
-            for (const {nickname, status} of resp.online_users) {
+            for (const {nickname, status, userID} of resp.online_users) {
                 const nicknameItem = document.createElement("li");
-                nicknameItem.textContent = `${nickname} ${status}`;
+                const chatBoxButton = document.createElement("button")
+                chatBoxButton.value =  userID
+                // chatBoxButton.type= "hidden"
+                chatBoxButton.addEventListener("click", function (e) {
+                    chatBox.style.display = "block"
+                   showChatHandler
+                   console.log("try to send to backend")
+                } )
+                chatBoxButton.textContent = `${nickname} ${status}`;
+                nicknameItem.append(chatBoxButton)
                 uList.append(nicknameItem);
             }
         }
     }
 })
+
+const showChatHandler = function (e) {
+    e.preventDefault();
+    let payloadObj = {}
+    payloadObj["label"] = "createChat";
+    payloadObj["userID"] = 4
+    payloadObj["contactID"] = chatBoxButton.value
+    userListSocket.send(JSON.stringify(payloadObj));
+};
 
 // const chatBox = document.createElement("form");
 // chatBox.id = "chat-form"

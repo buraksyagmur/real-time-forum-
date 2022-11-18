@@ -25,10 +25,13 @@ type WsUserListPayload struct {
 type userStatus struct {
 	Nickname string `json:"nickname"`
 	LoggedIn bool   `json:"status"`
+	UserID   int    `json:"userID"`
 }
 
-var userListPayloadChan = make(chan WsUserListPayload)
-var userListWsMap = make(map[*websocket.Conn]int)
+var (
+	userListPayloadChan = make(chan WsUserListPayload)
+	userListWsMap       = make(map[*websocket.Conn]int)
+)
 
 func userListWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -62,7 +65,7 @@ func ProcessAndReplyUserList() {
 	for {
 		receivedUserListPayload := <-userListPayloadChan
 		payloadLabels := strings.Split(receivedUserListPayload.Label, "-")
-
+		fmt.Println("------------------------------ PAYLOAD", payloadLabels)
 		// close and remove conn from map if logout
 		if len(payloadLabels) > 1 && payloadLabels[1] == "logout" {
 			_ = receivedUserListPayload.Conn.Close()
@@ -96,6 +99,7 @@ func ProcessAndReplyUserList() {
 			userListWsMap[&receivedUserListPayload.Conn] = loggedInUid
 			fmt.Printf("current map: %v", userListWsMap)
 		}
+
 		updateUList()
 	}
 }
@@ -104,7 +108,7 @@ func updateUList() {
 	var userListResponse WsUserListResponse
 	userListResponse.Label = "update"
 
-	rows, err := db.Query(`SELECT nickname, loggedIn FROM users`)
+	rows, err := db.Query(`SELECT nickname, loggedIn, userID   FROM users`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -113,13 +117,18 @@ func updateUList() {
 	for rows.Next() {
 		var nicknameDB string
 		var loggedInDB bool
-		rows.Scan(&nicknameDB, &loggedInDB)
+		var UserIDDB int
+
+		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB)
+		fmt.Println(UserIDDB)
 		userStatusElement := struct {
 			Nickname string `json:"nickname"`
 			LoggedIn bool   `json:"status"`
+			UserID   int    `json:"userID"`
 		}{
 			nicknameDB,
 			loggedInDB,
+			UserIDDB,
 		}
 		userStatusDBArr = append(userStatusDBArr, userStatusElement)
 	}
