@@ -2,8 +2,11 @@ import userListSocket from "./userList.js";
 let loginSocket = null;
 let nameInput = null;
 let pwInput = null;
-const navbar = document.querySelector(".nav-bar")
-console.log(userListSocket);
+const navbar = document.querySelector(".navbar")
+const displayMsgDiv = document.createElement("div");
+const displayMsg = document.createElement("h2");
+// const logout = document.querySelector("#logout")
+// console.log(userListSocket);
 document.addEventListener("DOMContentLoaded", function() {
     loginSocket = new WebSocket("ws://localhost:8080/loginWs/");
     console.log("JS attempt to connect to login");
@@ -11,7 +14,9 @@ document.addEventListener("DOMContentLoaded", function() {
     loginSocket.onclose = () => console.log("Bye login");
     loginSocket.onerror = (err) => console.log("login ws Error!");
     loginSocket.onmessage = (msg) => {
+        // display msg
         const resp = JSON.parse(msg.data);
+
         if (resp.label === "greet") {
             console.log(resp.content);
             navbar.children[0].style.display = "block"
@@ -20,22 +25,33 @@ document.addEventListener("DOMContentLoaded", function() {
         } else if (resp.label === "login") {
             console.log("uid: ",resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
             document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
-            if (resp.pass== true){
-            navbar.children[0].style.display = "none"
-            navbar.children[1].style.display = "none"
-            navbar.children[2].style.display = "block"
-            nameInput.value = "";
-            pwInput.value = "";
-            }
-            // update user list after a user login
+
             if (resp.pass) {
+                // hide the login and reg btn, show the logout btn
+                navbar.children[0].style.display = "none"
+                navbar.children[1].style.display = "none"
+                navbar.children[2].style.display = "block"
+
+                // clear input fields
+                nameInput.value = "";
+                pwInput.value = "";
+
+                // close the popup
+                const loginPopup = document.querySelector("#userPopUpPOne");
+                loginPopup.style.display = "none";
+
+                // update user list after a user login
                 let uListPayload = {};
-                uListPayload["label"] = "update";
+                uListPayload["label"] = "login-reg-update";
                 uListPayload["cookie_value"] = resp.cookie.sid;
                 console.log("login UL sending: ", uListPayload);
                 userListSocket.send(JSON.stringify(uListPayload));
+            } else {
+                displayMsgDiv.classList.add("display-msg");
+                displayMsg.id = "login-msg";
+                displayMsg.textContent = `${resp.content}`;
+                displayMsgDiv.append(displayMsg);
             }
-            
         }
     }
 });
@@ -48,6 +64,8 @@ const loginHandler = function (e) {
     payloadObj["label"] = "login";
     console.log({ payloadObj });
     loginSocket.send(JSON.stringify(payloadObj));
+
+    displayMsg.textContent = "";
 };
 
 
@@ -91,5 +109,5 @@ loginSubmit.textContent = "Login";
 loginSubmit.setAttribute("type", "submit");
 loginSubmitDiv.append(loginSubmit);
 
-loginForm.append(nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
+loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
 export default loginForm;
