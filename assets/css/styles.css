@@ -11,7 +11,7 @@ body {
     /*THIS CSS SECTION IS FOR THE BODY OF THE MAIN PAGE*/
     /* margin: 20px; */
     /* align-items: center; */
-    /* flex-direction: column; */
+    flex-direction: column;
     /* padding: 10px; */
     /* margin: 0px; */
     height: 100%;
@@ -124,6 +124,17 @@ li a:hover:not(.active) {
     padding-right: 2%;
     max-width: 50%;
     overflow:hidden;
+    float: left;
+    width: 50%;
+    height: 100%;
+    /* position: sticky; */
+    /* top: 76px; */
+    /* right: 0vh; */
+    /* z-index: 1; */
+    /* display: flex; */
+    /* flex-direction:column; */
+    /* color: #fff; */
+    /* background-image: linear-gradient(to right, #1c00f2, #453f96); */
 }
 
 #allPost{

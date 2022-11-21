@@ -11,7 +11,7 @@
     align-items: center;
     justify-content: center;
     color: #fff;
-    overflow:hidden;
+    /* overflow:hidden; */
     background-image: linear-gradient(to right, #1c00f2, #453f96);
 }
 
@@ -35,7 +35,7 @@
 
 .col-1{
     flex: 1;
-    display:none;
+    /* display:none; */
 }
 .col-2{
     flex-basis: 250px;

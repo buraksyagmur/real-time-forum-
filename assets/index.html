@@ -26,27 +26,31 @@
             <li>
                 <p><a button class="button" data-userPopUpP="userPopUpPTwo">Register</button></a></p>
             </li>
-            <li id= "logoutBtn"></li>
+            <li>
+                <div class="logout" id="logoutBtn"></div>
+            </li>
         </ul>
     </header>
 
     <!---home--->
-    <!-- <div class="form-page"></div> -->
-    <!-- popup page -->
     <div class="postPage">
-    <div id="userPopUpPOne" class="userPopUpP">
-        <div class="userPopUpP-content">
-            <a class="close">&times;</a>
+        <!-- popup page -->
+        <div id="userPopUpPOne" class="userPopUpP">
+            <div class="userPopUpP-content">
+                <a class="close">&times;</a>
+            </div>
         </div>
-    </div>
-    <div id="userPopUpPTwo" class="userPopUpP">
-        <div class="userPopUpP-content">
-            <span class="close">&times;</span>
+        <div id="userPopUpPTwo" class="userPopUpP">
+            <div class="userPopUpP-content">
+                <span class="close">&times;</span>
+            </div>
         </div>
+        <!-- end popup page -->
+        <div class="comment"></div>
+        <ul class="user-list"></ul>
     </div>
-    <div class="comment"></div>
-    </div>
-    <!-- end popup page -->
+
+    <!-- this section is for the live chat ariea -->
     <div class="container">
         <div class="hana">Friends contact</div>
         <div class="chatbox">
@@ -79,10 +83,23 @@
             </div>
             <div class="col-2">
                 <h3> Friend List</h3>
-                    <!-- <li class="online"><img src="../assets/images/him3.png"> Name user 1</li> -->
-    <ul class="user-list"></ul>
+                <ul>
+                    <li class="online"><img src="../assets/images/him3.png"> Name user 1</li>
+                    <li class="online"><img src="../assets/images/him1.png"> Name user 2</li>
+                    <li class="busy"><img src="../assets/images/her1.png">Name user 3</li>
+                    <li class="offline"><img src="../assets/images/him6.png">Name user 4</li>
+                    <li class="online"><img src="../assets/images/him2.png">Name user 5</li>
+                    <li class="busy"><img src="../assets/images/him4.png">Name user 6</li>
+                    <li class="online"><img src="../assets/images/her3.png">Name user 7</li>
+                    <li class="busy"><img src="../assets/images/her6.png">Name user 8</li>
+                    <li class="offline"><img src="../assets/images/him5.png">Name user 9</li>
+                    <li class="offline"><img src="../assets/images/her2.png">Name user 10</li>
+                    <!-- <ul class="user-list"></ul> -->
+                </ul>
             </div>
-            <!-- end chat -->
+        </div>
+    </div>
+    <!-- end chat -->
     <script type="module" src="../assets/js/index.js"></script>
     <script src="../assets/js/popupform.js"></script>
 </body>
