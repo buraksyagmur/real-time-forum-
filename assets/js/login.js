@@ -21,9 +21,13 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("uid: ",resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
             document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
             if (resp.pass== true){
+            const splitScreen = document.querySelector(".container")
+            const signPage = document.querySelector("#userPopUpPOne")
             navbar.children[0].style.display = "none"
             navbar.children[1].style.display = "none"
             navbar.children[2].style.display = "block"
+            signPage.style.display= "none"
+            splitScreen.style.display= "flex"
             nameInput.value = "";
             pwInput.value = "";
             }

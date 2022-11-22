@@ -1,6 +1,7 @@
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
-document.addEventListener("DOMContentLoaded", function(e) {
+let usID
+document.addEventListener("DOMContentLoaded", function (e) {
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
     console.log("JS attempt to connect to user list");
     userListSocket.onopen = () => console.log("user list connected");
@@ -8,25 +9,29 @@ document.addEventListener("DOMContentLoaded", function(e) {
     userListSocket.onerror = (err) => console.log("user list ws Error!");
     userListSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
-        console.log({resp});
+        console.log({ resp });
         if (resp.label === "update") {
             console.log(resp.online_users);
             const uList = document.querySelector(".user-list");
             // remove list item
             uList.textContent = "";
             // add new list item
-            for (const {nickname, status, userID} of resp.online_users) {
+            for (const { nickname, status, userID } of resp.online_users) {
+                usID = userID
                 const nicknameItem = document.createElement("li");
                 const chatBoxButton = document.createElement("button")
-                chatBoxButton.value =  userID
+                const chatBoxForm = document.createElement("form")
+                chatBoxForm.addEventListener("submit", showChatHandler)
+                chatBoxButton.setAttribute("type", "submit")
+                chatBoxButton.value = userID
                 // chatBoxButton.type= "hidden"
                 chatBoxButton.addEventListener("click", function (e) {
                     chatBox.style.display = "block"
-                   showChatHandler
-                   console.log("try to send to backend")
-                } )
+                    console.log("try to send to backend")
+                })
+                chatBoxForm.append(chatBoxButton)
                 chatBoxButton.textContent = `${nickname} ${status}`;
-                nicknameItem.append(chatBoxButton)
+                nicknameItem.append(chatBoxForm)
                 uList.append(nicknameItem);
             }
         }
@@ -38,7 +43,7 @@ const showChatHandler = function (e) {
     let payloadObj = {}
     payloadObj["label"] = "createChat";
     payloadObj["userID"] = 4
-    payloadObj["contactID"] = chatBoxButton.value
+    payloadObj["contactID"] = usID
     userListSocket.send(JSON.stringify(payloadObj));
 };
 

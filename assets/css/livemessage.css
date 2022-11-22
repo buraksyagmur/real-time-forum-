@@ -6,7 +6,7 @@
     z-index: -0;
     width: 50%;
     height: 100vh;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -35,6 +35,7 @@
 
 .col-1 {
     flex: 1;
+    display:none;
     /* display:none; */
 }
 
