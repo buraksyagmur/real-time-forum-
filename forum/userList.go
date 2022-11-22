@@ -1,10 +1,12 @@
 package forum
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -20,6 +22,8 @@ type WsUserListPayload struct {
 	Content     string         `json:"content"`
 	CookieValue string         `json:"cookie_value"`
 	Conn        websocket.Conn `json:"-"`
+	ContactID   int            `json:"contactID"`
+	UserID      int            `json:"userID"`
 }
 
 type userStatus struct {
@@ -31,6 +35,7 @@ type userStatus struct {
 var (
 	userListPayloadChan = make(chan WsUserListPayload)
 	userListWsMap       = make(map[*websocket.Conn]int)
+	loggedInUid         int
 )
 
 func userListWsEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +58,15 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 	for {
 		// fmt.Print("ul ")
 		err := conn.ReadJSON(&userListPayload)
-		if err == nil {
+		if err == nil && userListPayload.Label == "createChat" {
+			fmt.Println("----contact", userListPayload.ContactID, "----userID", userListPayload.UserID)
+			var creatingChatResponse WsUserListResponse
+			// creatingChatResponse.Label= "using"
+			creatingChatResponse.Label = "chatBox"
+			// fmt.Println("-------------chatinfo:", displayChatInfo
+			creatingChatResponse.Content =sortMessages(userListPayload.UserID, userListPayload.ContactID)
+			conn.WriteJSON(creatingChatResponse)
+		} else if err == nil {
 			fmt.Printf("Sending userListPayload thru chan: %v\n", userListPayload)
 			userListPayload.Conn = *conn
 			userListPayloadChan <- userListPayload
@@ -65,7 +78,6 @@ func ProcessAndReplyUserList() {
 	for {
 		receivedUserListPayload := <-userListPayloadChan
 		payloadLabels := strings.Split(receivedUserListPayload.Label, "-")
-		fmt.Println("------------------------------ PAYLOAD", payloadLabels)
 		// close and remove conn from map if logout
 		if len(payloadLabels) > 1 && payloadLabels[1] == "logout" {
 			_ = receivedUserListPayload.Conn.Close()
@@ -74,7 +86,7 @@ func ProcessAndReplyUserList() {
 
 		if len(payloadLabels) == 1 && payloadLabels[0] == "update" {
 			// find which userID
-			var loggedInUid int
+
 			rows, err := db.Query("SELECT userID FROM sessions WHERE sessionID = ?;", receivedUserListPayload.CookieValue)
 			if err != nil {
 				log.Fatal(err)
@@ -99,7 +111,6 @@ func ProcessAndReplyUserList() {
 			userListWsMap[&receivedUserListPayload.Conn] = loggedInUid
 			fmt.Printf("current map: %v", userListWsMap)
 		}
-
 		updateUList()
 	}
 }
@@ -156,4 +167,53 @@ func broadcast(userListResponse WsUserListResponse) {
 	// for _, wsAddress := range wsArr {
 	// 	wsAddress.WriteJSON(userListResponse)
 	// }
+}
+
+func displayChatInfo(sendID, recID int) []MessageArray {
+	var allMsg MessageArray
+	var arrMsgArray []MessageArray
+	rows, err := db.Query(
+		`SELECT * 
+	FROM messages 
+	WHERE senderID = ? 
+	AND receiverID = ?`, sendID, recID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var oneMsg WsChatPayload
+		var msgTime time.Time
+		var msgID int
+		rows.Scan(&msgID, &(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
+		fmt.Println("dont be empty", oneMsg.Content, len(oneMsg.Content))
+		oneMsg.MessageTime = msgTime.String()
+		if oneMsg.SenderId == loggedInUid {
+			oneMsg.Right = true
+		}
+		allMsg.Index = msgID
+		allMsg.Msg = oneMsg
+		arrMsgArray = append(arrMsgArray, allMsg)
+	}
+	fmt.Println("chatinfo:", arrMsgArray)
+
+	return arrMsgArray
+}
+
+func sortMessages(sendID, recID int) string {
+	firstMes := displayChatInfo(sendID, recID)
+	secMes := displayChatInfo(recID, sendID)
+	allMes := append(firstMes, secMes...)
+	for k := 0; k < 10; k++ {
+		for i := 0; i < len(allMes)-1; i++ {
+			if allMes[i].Index > allMes[i+1].Index {
+				allMes[i], allMes[i+1] = allMes[i+1], allMes[i]
+			}
+		}
+	}
+	jsonF, err := json.Marshal(allMes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(jsonF)
 }

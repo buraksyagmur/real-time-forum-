@@ -27,13 +27,19 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 // chatBoxButton.type= "hidden"
                 chatBoxButton.addEventListener("click", function (e) {
                     chatBox.style.display = "block"
-                    console.log("try to send to backend")
                 })
                 chatBoxForm.append(chatBoxButton)
                 chatBoxButton.textContent = `${nickname} ${status}`;
                 nicknameItem.append(chatBoxForm)
                 uList.append(nicknameItem);
             }
+        }else if (resp.label== "chatBox"){
+            console.log("check content:",resp.content)
+            for (let  i= 0 ; i < (resp.content).length; i++ ){
+                let singleMsg= document.createElement("div")
+                let msgContent = document.createElement("p")
+               
+            }  
         }
     }
 })
@@ -42,8 +48,8 @@ const showChatHandler = function (e) {
     e.preventDefault();
     let payloadObj = {}
     payloadObj["label"] = "createChat";
-    payloadObj["userID"] = 4
-    payloadObj["contactID"] = usID
+    payloadObj["userID"] = 1
+    payloadObj["contactID"] = 2
     userListSocket.send(JSON.stringify(payloadObj));
 };
 

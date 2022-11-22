@@ -68,7 +68,7 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 }
 
 func listeningChat(conn *websocket.Conn, msg WsChatPayload) {
-	var chatResponse WsChatResponse
+	// var chatResponse WsChatResponse
 	defer func() {
 		fmt.Println("chat Ws Conn Closed")
 	}()
@@ -77,11 +77,6 @@ func listeningChat(conn *websocket.Conn, msg WsChatPayload) {
 			var pureMsg WsChatPayload
 			json.Unmarshal([]byte(msg.Content), &pureMsg)
 			processMsg(pureMsg)
-			fmt.Printf("payload received: %v\n", msg)
-		} else if msg.Label == "openChatBox" {
-			chatResponse.Label = "openChatBox"
-			chatResponse.Content = displayChatInfo(msg.SenderId, msg.ReceiverId)
-			// chatResponse.UserID, chatResponse.ContactID = msg.SenderId, msg.ReceiverId
 			fmt.Printf("payload received: %v\n", msg)
 		}
 	}
@@ -97,32 +92,4 @@ func processMsg(msg WsChatPayload) {
 	fmt.Println("msg saved successfully")
 }
 
-func displayChatInfo(sendID, recID int) string {
-	var allMsg MessageArray
-	var arrMsgArray []MessageArray
-	counter := 0
-	rows, err := db.Query(`SELECT senderID,receiverID,messageTime, content, seen FROM messages 
-	WHERE (senderID = ? AND receiverID = ?) or (senderID = ? AND receiverID = ?)`, sendID, recID, recID, sendID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var oneMsg WsChatPayload
-		var msgTime time.Time
-		rows.Scan(&(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
-		oneMsg.MessageTime = msgTime.String()
-		if oneMsg.SenderId == sendID {
-			oneMsg.Right = true
-		}
-		allMsg.Index = counter
-		allMsg.Msg = oneMsg
-		counter++
-		arrMsgArray = append(arrMsgArray, allMsg)
-	}
-	jsonF, err := json.Marshal(arrMsgArray)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(jsonF)
-}
+
