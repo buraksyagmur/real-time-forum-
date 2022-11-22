@@ -1,4 +1,4 @@
-package forum
+package main
 
 import (
 	"fmt"
@@ -46,13 +46,13 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 		err := conn.ReadJSON(&chatPayload)
 		if err == nil {
 			// find the right room
-			var findRoomName string
-			if chatPayload.SenderId < chatPayload.ReceiverId {
-				findRoomName = strconv.Itoa(chatPayload.SenderId) + "-and-" + strconv.Itoa(chatPayload.ReceiverId)
-			} else {
-				findRoomName = strconv.Itoa(chatPayload.ReceiverId) + "-and-" + strconv.Itoa(chatPayload.SenderId)
-			}
-			findRoom(findRoomName)
+			// var findRoomName string
+			// if chatPayload.SenderId < chatPayload.ReceiverId {
+			// 	findRoomName = strconv.Itoa(chatPayload.SenderId) + "-and-" + strconv.Itoa(chatPayload.ReceiverId)
+			// } else {
+			// 	findRoomName = strconv.Itoa(chatPayload.ReceiverId) + "-and-" + strconv.Itoa(chatPayload.SenderId)
+			// }
+			// hub.findRoom(findRoomName)
 
 			// load the msg
 
@@ -116,9 +116,9 @@ func (h *Hub) Run() {
 	}
 }
 
-func (h *Hub) findRoom(roomname string) {
+// func (h *Hub) findRoom(roomname string) {
 
-}
+// }
 
 // -----------------------Room-------------------------------
 type Room struct {
