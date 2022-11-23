@@ -34,10 +34,23 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 uList.append(nicknameItem);
             }
         }else if (resp.label== "chatBox"){
-            console.log("check content:",resp.content)
-            for (let  i= 0 ; i < (resp.content).length; i++ ){
+            console.log("check content:",(resp.content).length)
+            let js = JSON.parse(resp.content)
+            console.log("check content:",js)
+            for (let  i= 0 ; i < js.length; i++ ){
                 let singleMsg= document.createElement("div")
+              
                 let msgContent = document.createElement("p")
+                msgContent.classList= "msg-text"
+                msgContent.textContent = js[i].msgInfo.content
+                if (js[i].msgInfo.right_side == true){
+                    singleMsg.classList= "msg-row2"
+                }else {
+                    singleMsg.classList= "msg-row"
+                }
+                singleMsg.append(msgContent)
+                chatBox.append(singleMsg)
+                
                
             }  
         }
@@ -49,7 +62,7 @@ const showChatHandler = function (e) {
     let payloadObj = {}
     payloadObj["label"] = "createChat";
     payloadObj["userID"] = 1
-    payloadObj["contactID"] = 2
+    payloadObj["contactID"] = usID
     userListSocket.send(JSON.stringify(payloadObj));
 };
 

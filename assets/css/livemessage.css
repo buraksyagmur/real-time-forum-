@@ -46,8 +46,8 @@
 
 .msg-row {
     display: flex;
-    align-items: center;
-    margin: 40px;
+    justify-content: flex-start;
+    /* margin: 40px;  */
 
 }
 
@@ -73,6 +73,7 @@
 }
 
 .msg-row2 {
+    display:flex;
     justify-content: flex-end;
 }
 
