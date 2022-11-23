@@ -29,7 +29,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     chatBox.style.display = "block"
                 })
                 chatBoxForm.append(chatBoxButton)
-                chatBoxButton.textContent = `${nickname} ${status}`;
+                chatBoxButton.textContent = `${nickname}`;
+                if (status == false){
+                    nicknameItem.classList= "offline"
+                }else {
+                    nicknameItem.classList = "online"
+                }
                 nicknameItem.append(chatBoxForm)
                 uList.append(nicknameItem);
             }
