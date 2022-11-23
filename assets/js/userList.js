@@ -1,5 +1,6 @@
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
+const msgArea = document.querySelector(".msgArea")
 let usID
 document.addEventListener("DOMContentLoaded", function (e) {
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
             uList.textContent = "";
             // add new list item
             for (const { nickname, status, userID } of resp.online_users) {
-                usID = userID
+               
                 const nicknameItem = document.createElement("li");
                 const chatBoxButton = document.createElement("button")
                 const chatBoxForm = document.createElement("form")
@@ -26,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatBoxButton.value = userID
                 // chatBoxButton.type= "hidden"
                 chatBoxButton.addEventListener("click", function (e) {
+                    usID = chatBoxButton.value
                     chatBox.style.display = "block"
                 })
                 chatBoxForm.append(chatBoxButton)
@@ -39,12 +41,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 uList.append(nicknameItem);
             }
         }else if (resp.label== "chatBox"){
-            console.log("check content:",(resp.content).length)
             let js = JSON.parse(resp.content)
             console.log("check content:",js)
             for (let  i= 0 ; i < js.length; i++ ){
                 let singleMsg= document.createElement("div")
-              
                 let msgContent = document.createElement("p")
                 msgContent.classList= "msg-text"
                 msgContent.textContent = js[i].msgInfo.content
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     singleMsg.classList= "msg-row"
                 }
                 singleMsg.append(msgContent)
-                chatBox.append(singleMsg)
+                msgArea.append(singleMsg)
                 
                
             }  
@@ -66,8 +66,8 @@ const showChatHandler = function (e) {
     e.preventDefault();
     let payloadObj = {}
     payloadObj["label"] = "createChat";
-    payloadObj["userID"] = 1
-    payloadObj["contactID"] = usID
+    payloadObj["userID"] = 1 /* after login change to loggedUserID */
+    payloadObj["contactID"] = 2
     userListSocket.send(JSON.stringify(payloadObj));
 };
 
