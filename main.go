@@ -11,8 +11,6 @@ import (
 func main() {
 	forum.InitDB()
 	go forum.ProcessAndReplyUserList()
-	hub := forum.NewHub()
-	hub.Run()
 	// forum.ClearUsers()
 	// forum.ClearPosts()
 	// forum.ClearComments()
@@ -23,7 +21,7 @@ func main() {
 	http.HandleFunc("/postWs/", forum.PostWsEndpoint)
 	http.HandleFunc("/loginWs/", forum.LoginHandler)
 	http.HandleFunc("/userListWs/", forum.UserListHandler)
-	http.HandleFunc("/chatWs/", forum.ChatHandler)
+	// http.HandleFunc("/chatWs/", forum.ChatHandler)
 
 	// http.HandleFunc("/register", forum.RegisterHandler)
 	http.HandleFunc("/logout/", forum.LogoutHandler)
