@@ -2,10 +2,7 @@ import userListSocket from "./userList.js";
 // console.log(userListSocket);
 let regSocket = null; 
 const userList = document.querySelector(".user-list");
-<<<<<<< HEAD
-const navbar = document.querySelector(".nav-bar")
 const splitScreen = document.querySelector(".container")
-=======
 const navbar = document.querySelector(".navbar")
 const displayMsgDiv = document.createElement("div");
 const displayMsg = document.createElement("h2");
@@ -22,7 +19,6 @@ let RgenderInputOpt3 = null;
 let RgenderInputOpt4 = null;
 
 
->>>>>>> login-reg-bugs
 document.addEventListener("DOMContentLoaded", function() {
     regSocket = new WebSocket("ws://localhost:8080/regWs/");
     console.log("JS attempt to connect to reg");
@@ -41,15 +37,12 @@ document.addEventListener("DOMContentLoaded", function() {
         } else if (resp.label === "reg") {
             console.log("uid: ",resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
             document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
-<<<<<<< HEAD
             navbar.children[0].style.display = "none"
             navbar.children[1].style.display = "none"
             navbar.children[2].style.display = "block"
             const signPage = document.querySelector("#userPopUpPOne")
             signPage.style.display= "none"
             splitScreen.style.display= "flex"
-=======
->>>>>>> login-reg-bugs
             console.log("msg: ", resp.content);
 
             if (resp.pass) {
@@ -192,7 +185,6 @@ RpwInput.setAttribute("id", "pw");
 RpwInputDiv.append(RpwInput);
 
 //gender
-<<<<<<< HEAD
 const RgenderDiv = document.createElement('select');
 RgenderDiv.setAttribute("name", "gender_option")
 const GenderOpt1 = document.createElement("option");
@@ -213,7 +205,8 @@ GenderOpt3.textContent = "Male";
 GenderOpt4.textContent = "Other";
 RgenderDiv.setAttribute("id", "genderOption");
 RgenderDiv.append(GenderOpt1,GenderOpt2,GenderOpt3,GenderOpt4)
-=======
+
+// -----------------------
 const RgenderDiv = document.createElement('div');
 const RgenderOptionDiv = document.createElement('div');
 const RgenderLabel = document.createElement("label");
@@ -259,8 +252,7 @@ RgenderOptionDiv.append(
     RgenderInputOpt4,RgenderLabelOpt4);
 
 RgenderOptionDiv.setAttribute("id", "gender");
->>>>>>> login-reg-bugs
-
+//----------------------
 const regSubmitDiv = document.createElement('div');
 const regSubmit = document.createElement("button");
 regSubmit.textContent = "Register";
