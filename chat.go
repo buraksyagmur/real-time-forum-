@@ -1,4 +1,4 @@
-package forum
+package main
 
 import (
 	"fmt"
@@ -23,7 +23,6 @@ type WsChatPayload struct {
 }
 
 var chatPayloadChan = make(chan WsChatPayload)
-var hub *Hub
 
 func chatWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -41,23 +40,19 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 	defer func() {
 		fmt.Println("Chat Ws Conn Closed")
 	}()
-	fmt.Printf("hub before %v", hub)
-	if (*hub).rooms == nil { // if map not made
-		hub = newHub()
-	}
-	fmt.Printf("hub after %v", hub)
+
 	var chatPayload WsChatPayload
 	for {
 		err := conn.ReadJSON(&chatPayload)
 		if err == nil {
 			// find the right room
-			var findRoomName string
-			if chatPayload.SenderId < chatPayload.ReceiverId {
-				findRoomName = strconv.Itoa(chatPayload.SenderId) + "-and-" + strconv.Itoa(chatPayload.ReceiverId)
-			} else {
-				findRoomName = strconv.Itoa(chatPayload.ReceiverId) + "-and-" + strconv.Itoa(chatPayload.SenderId)
-			}
-			hub.findRoom(findRoomName)
+			// var findRoomName string
+			// if chatPayload.SenderId < chatPayload.ReceiverId {
+			// 	findRoomName = strconv.Itoa(chatPayload.SenderId) + "-and-" + strconv.Itoa(chatPayload.ReceiverId)
+			// } else {
+			// 	findRoomName = strconv.Itoa(chatPayload.ReceiverId) + "-and-" + strconv.Itoa(chatPayload.SenderId)
+			// }
+			// hub.findRoom(findRoomName)
 
 			// load the msg
 
@@ -91,7 +86,7 @@ type Hub struct {
 	rooms map[string]Room
 }
 
-func newHub() *Hub {
+func NewHub() *Hub {
 	return &Hub{
 		rooms: make(map[string]Room),
 	}
@@ -121,9 +116,9 @@ func (h *Hub) Run() {
 	}
 }
 
-func (h *Hub) findRoom(roomname string) {
+// func (h *Hub) findRoom(roomname string) {
 
-}
+// }
 
 // -----------------------Room-------------------------------
 type Room struct {
