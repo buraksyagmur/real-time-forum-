@@ -46,7 +46,6 @@ func chatWsEndpoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Chat Connected")
-
 	readChatPayloadFromWs(conn)
 }
 
@@ -54,7 +53,6 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 	defer func() {
 		fmt.Println("Chat Ws Conn Closed")
 	}()
-
 	var chatPayload WsChatPayload
 	for {
 		err := conn.ReadJSON(&chatPayload)
@@ -62,7 +60,6 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 			fmt.Printf("Sending chatPayload thru chan: %v\n", chatPayload)
 			listeningChat(conn, chatPayload)
 			chatPayloadChan <- chatPayload
-
 		}
 	}
 }
@@ -91,5 +88,3 @@ func processMsg(msg WsChatPayload) {
 	rows.Exec(msg.SenderId, msg.ReceiverId, time.Now(), msg.Content, false)
 	fmt.Println("msg saved successfully")
 }
-
-

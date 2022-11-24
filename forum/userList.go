@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -34,7 +33,7 @@ type userStatus struct {
 
 var (
 	userListPayloadChan = make(chan WsUserListPayload)
-	userListWsMap       = make(map[*websocket.Conn]int)
+	userListWsMap       = make(map[int]*websocket.Conn)
 	loggedInUid         int
 )
 
@@ -64,7 +63,7 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 			// creatingChatResponse.Label= "using"
 			creatingChatResponse.Label = "chatBox"
 			// fmt.Println("-------------chatinfo:", displayChatInfo
-			creatingChatResponse.Content =sortMessages(userListPayload.UserID, userListPayload.ContactID)
+			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
 			conn.WriteJSON(creatingChatResponse)
 		} else if err == nil {
 			fmt.Printf("Sending userListPayload thru chan: %v\n", userListPayload)
@@ -77,25 +76,43 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 func ProcessAndReplyUserList() {
 	for {
 		receivedUserListPayload := <-userListPayloadChan
-		payloadLabels := strings.Split(receivedUserListPayload.Label, "-")
-		// close and remove conn from map if logout
-		if len(payloadLabels) > 1 && payloadLabels[1] == "logout" {
-			_ = receivedUserListPayload.Conn.Close()
-			delete(userListWsMap, &receivedUserListPayload.Conn)
+		// payloadLabels := strings.Split(receivedUserListPayload.Label, "-")
+
+		// find which userID
+		var loggedInUid int
+		rows, err := db.Query("SELECT userID FROM sessions WHERE sessionID = ?;", receivedUserListPayload.CookieValue)
+		if err != nil {
+			log.Fatal(err)
 		}
+		defer rows.Close()
+		for rows.Next() {
+			rows.Scan(&loggedInUid)
+		}
+		fmt.Printf("loggedInUid UL %d \n", loggedInUid)
 
-		if len(payloadLabels) == 1 && payloadLabels[0] == "update" {
-			// find which userID
+		// close and remove conn from map if logout
+		// if len(payloadLabels) > 1 && payloadLabels[1] == "logout" {
+		if receivedUserListPayload.Label == "logout-update" {
+			// _ = receivedUserListPayload.Conn.Close()
+			delete(userListWsMap, loggedInUid)
+			fmt.Print("----------------------------\n")
+			fmt.Printf("removing  logout user: %d\n", loggedInUid)
+			// fmt.Printf("removing ws logout user: %v\n", &receivedUserListPayload.Conn)
+			fmt.Printf("uList after removing logout user: %v\n", userListWsMap)
 
-			rows, err := db.Query("SELECT userID FROM sessions WHERE sessionID = ?;", receivedUserListPayload.CookieValue)
+			// delete sessionID from sessions db table
+			// still need sessionID record for removing logout user from user list
+			stmt, err := db.Prepare("DELETE FROM sessions WHERE sessionID=?")
 			if err != nil {
 				log.Fatal(err)
 			}
-			defer rows.Close()
-			for rows.Next() {
-				rows.Scan(&loggedInUid)
-			}
-			fmt.Printf("loggedInUid UL %d \n", loggedInUid)
+			defer stmt.Close()
+			stmt.Exec(receivedUserListPayload.CookieValue)
+			fmt.Printf("cookie sid removed (have value): %s\n", receivedUserListPayload.CookieValue)
+		}
+
+		// if len(payloadLabels) == 1 && payloadLabels[0] == "update" {
+		if receivedUserListPayload.Label == "login-reg-update" {
 			// store conn in websockets table
 			// stmt, err := db.Prepare(`INSERT INTO websockets
 			// 					(userID, websocketAdd, usage)
@@ -108,7 +125,8 @@ func ProcessAndReplyUserList() {
 			// stmt.Exec(loggedInUid, receivedUserListPayload.Conn, "userlist")
 
 			// store conn in map
-			userListWsMap[&receivedUserListPayload.Conn] = loggedInUid
+			// userListWsMap[&receivedUserListPayload.Conn] = loggedInUid
+			userListWsMap[loggedInUid] = &receivedUserListPayload.Conn
 			fmt.Printf("current map: %v", userListWsMap)
 		}
 		updateUList()
@@ -150,7 +168,7 @@ func updateUList() {
 }
 
 func broadcast(userListResponse WsUserListResponse) {
-	for userListWs := range userListWsMap {
+	for _, userListWs := range userListWsMap {
 		userListWs.WriteJSON(userListResponse)
 	}
 	// rows, err := db.Query(`SELECT websocketAdd FROM websockets`) // WHERE usage = userlist

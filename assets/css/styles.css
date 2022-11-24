@@ -30,9 +30,14 @@ body {
     
 }
 
+<<<<<<< HEAD
 
 .nav-bar {
     /* padding: 20px; */
+=======
+.navbar {
+    padding: 20px;
+>>>>>>> login-reg-bugs
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -55,12 +60,16 @@ li a {
 }
 
 li a:hover:not(.active) {
+<<<<<<< HEAD
     color: crimson;
     border-radius: 20%;
     transition: 0.7s;
     /* transition-property: inherit; */
     /* margin-top: 30%; */
     background-color: #fff;
+=======
+    background-color: #111;
+>>>>>>> login-reg-bugs
 }
 
 /* THIS FILD IS NOT READY FOR USE YET */
