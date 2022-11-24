@@ -57,12 +57,13 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 	for {
 		// fmt.Print("ul ")
 		err := conn.ReadJSON(&userListPayload)
+		fmt.Println("Label",userListPayload.Label)
+		fmt.Println(err)
 		if err == nil && userListPayload.Label == "createChat" {
 			fmt.Println("----contact", userListPayload.ContactID, "----userID", userListPayload.UserID)
 			var creatingChatResponse WsUserListResponse
 			// creatingChatResponse.Label= "using"
 			creatingChatResponse.Label = "chatBox"
-			// fmt.Println("-------------chatinfo:", displayChatInfo
 			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
 			conn.WriteJSON(creatingChatResponse)
 		} else if err == nil {
@@ -79,7 +80,6 @@ func ProcessAndReplyUserList() {
 		// payloadLabels := strings.Split(receivedUserListPayload.Label, "-")
 
 		// find which userID
-		var loggedInUid int
 		rows, err := db.Query("SELECT userID FROM sessions WHERE sessionID = ?;", receivedUserListPayload.CookieValue)
 		if err != nil {
 			log.Fatal(err)
@@ -206,6 +206,7 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 		rows.Scan(&msgID, &(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
 		fmt.Println("dont be empty", oneMsg.Content, len(oneMsg.Content))
 		oneMsg.MessageTime = msgTime.String()
+		fmt.Println(oneMsg.SenderId, "-----", loggedInUid)
 		if oneMsg.SenderId == loggedInUid {
 			oneMsg.Right = true
 		}

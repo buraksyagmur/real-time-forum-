@@ -205,9 +205,7 @@ const commentHandler = function (e) {
 function CreateCommentForm(value) {
     const commentForm = document.createElement("form")
     commentForm.setAttribute("target", "_self")
-    console.log("this is before using handler")
     commentForm.addEventListener("submit", commentHandler);
-    console.log("this is after using handler")
     const commentLabelDiv = document.createElement('div');
     const commentLabel = document.createElement('label');
     commentLabel.textContent = "create a comment:";
