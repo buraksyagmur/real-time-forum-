@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -26,9 +27,12 @@ type WsUserListPayload struct {
 }
 
 type userStatus struct {
-	Nickname string `json:"nickname"`
-	LoggedIn bool   `json:"status"`
-	UserID   int    `json:"userID"`
+	Nickname   string `json:"nickname"`
+	LoggedIn   bool   `json:"status"`
+	UserID     int    `json:"userID"`
+	MsgCheck   bool   `json:"msgcheck"`
+	CurUser    bool   `json:"curuser"`
+	withoutlet bool
 }
 
 var (
@@ -57,7 +61,7 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 	for {
 		// fmt.Print("ul ")
 		err := conn.ReadJSON(&userListPayload)
-		fmt.Println("Label",userListPayload.Label)
+		fmt.Println("Label", userListPayload.Label)
 		fmt.Println(err)
 		if err == nil && userListPayload.Label == "createChat" {
 			fmt.Println("----contact", userListPayload.ContactID, "----userID", userListPayload.UserID)
@@ -142,24 +146,83 @@ func updateUList() {
 		log.Fatal(err)
 	}
 	defer rows.Close()
+	var tempUserStatus []userStatus
 	var userStatusDBArr []userStatus
 	for rows.Next() {
 		var nicknameDB string
 		var loggedInDB bool
 		var UserIDDB int
-
+		var msgcheck bool
 		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB)
 		fmt.Println(UserIDDB)
 		userStatusElement := struct {
-			Nickname string `json:"nickname"`
-			LoggedIn bool   `json:"status"`
-			UserID   int    `json:"userID"`
+			Nickname   string `json:"nickname"`
+			LoggedIn   bool   `json:"status"`
+			UserID     int    `json:"userID"`
+			MsgCheck   bool   `json:"msgcheck"`
+			CurUser    bool   `json:"curuser"`
+			withoutlet bool
 		}{
 			nicknameDB,
 			loggedInDB,
 			UserIDDB,
+			msgcheck,
+			false,
+			false,
 		}
-		userStatusDBArr = append(userStatusDBArr, userStatusElement)
+		tempUserStatus = append(tempUserStatus, userStatusElement)
+	}
+	topOfTheList := sortConversations()
+
+	var letter []userStatus
+	var notLetter []userStatus
+
+	for i := 0; i < len(tempUserStatus); i++ {
+		if strings.Title(tempUserStatus[i].Nickname)[0] < 64 || strings.Title(tempUserStatus[i].Nickname)[0] > 91 {
+			tempUserStatus[i].withoutlet = true
+		}
+		if !tempUserStatus[i].withoutlet {
+			letter = append(letter, tempUserStatus[i])
+		} else {
+			notLetter = append(notLetter, tempUserStatus[i])
+		}
+		if tempUserStatus[i].UserID == loggedInUid {
+			tempUserStatus[i].CurUser = true
+		}
+	}
+	counter := 0
+	fmt.Println("LETTER:", letter)
+loop:
+	for i := 0; i < len(letter)-1; i++ {
+		if strings.Title(letter[i].Nickname)[0] > strings.Title(letter[i+1].Nickname)[0] {
+			letter[i], letter[i+1] = letter[i+1], letter[i]
+		}
+		if counter != 2 && i == len(letter)-1 {
+			counter++
+			goto loop
+		}
+	}
+	counter2 := 0
+loop2:
+	for i := 0; i < len(notLetter)-1; i++ {
+		if strings.Title(notLetter[i].Nickname)[0] > strings.Title(notLetter[i+1].Nickname)[0] {
+			notLetter[i], notLetter[i+1] = notLetter[i+1], notLetter[i]
+		}
+		if counter != 2 && i == len(notLetter)-1 {
+			counter2++
+			goto loop2
+		}
+		userStatusDBArr = append(userStatusDBArr, letter...)
+		userStatusDBArr = append(userStatusDBArr, notLetter...)
+		for i := 0; i < len(userStatusDBArr); i++ {
+			for k := 0; k < len(topOfTheList); k++ {
+				if userStatusDBArr[i].UserID == topOfTheList[k] {
+					userStatusDBArr[i].MsgCheck = true
+					userStatusDBArr[k], userStatusDBArr[i] = userStatusDBArr[i], userStatusDBArr[k]
+				}
+			}
+		}
+
 	}
 
 	fmt.Printf("UL nicknames: %v\n", userStatusDBArr)
@@ -204,9 +267,7 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 		var msgTime time.Time
 		var msgID int
 		rows.Scan(&msgID, &(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
-		fmt.Println("dont be empty", oneMsg.Content, len(oneMsg.Content))
 		oneMsg.MessageTime = msgTime.String()
-		fmt.Println(oneMsg.SenderId, "-----", loggedInUid)
 		if oneMsg.SenderId == loggedInUid {
 			oneMsg.Right = true
 		}
@@ -235,4 +296,37 @@ func sortMessages(sendID, recID int) string {
 		log.Fatal(err)
 	}
 	return string(jsonF)
+}
+
+func sortConversations() []int {
+	var allCon []int
+	rows, err := db.Query("SELECT receiverID FROM messages WHERE senderID= ?;", loggedInUid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var recID int
+		rows.Scan(&recID)
+		allCon = append(allCon, recID)
+
+	}
+	fmt.Println("allCons:", allCon)
+	for i := 0; i < len(allCon)/2; i++ {
+		allCon[i], allCon[len(allCon)-(i+1)] = allCon[len(allCon)-(i+1)], allCon[i]
+	}
+	var lastOne []int
+	for _, v := range allCon {
+		skip := false
+		for _, u := range lastOne {
+			if v == u {
+				skip = true
+				break
+			}
+		}
+		if !skip {
+			lastOne = append(lastOne, v)
+		}
+	}
+	return lastOne
 }

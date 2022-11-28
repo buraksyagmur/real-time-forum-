@@ -18,58 +18,63 @@ document.addEventListener("DOMContentLoaded", function (e) {
             // remove list item
             uList.textContent = "";
             // add new list item
-            for (const { nickname, status, userID } of resp.online_users) {
+            for (const { nickname, status, userID, msgcheck, curuser } of resp.online_users) {
+                if (curuser == false) {
+                    const nicknameItem = document.createElement("li");
+                    const chatBoxButton = document.createElement("button")
+                    chatBoxButton.classList = "nameButtons"
+                    const chatBoxForm = document.createElement("form")
 
-                const nicknameItem = document.createElement("li");
-                const chatBoxButton = document.createElement("button")
-                chatBoxButton.classList = "nameButtons"
-                const chatBoxForm = document.createElement("form")
 
+                    chatBoxForm.addEventListener("submit", showChatHandler)
+                    chatBoxButton.setAttribute("type", "submit")
+                    chatBoxButton.value = userID
+                    // chatBoxButton.type= "hidden"
 
-                chatBoxForm.addEventListener("submit", showChatHandler)
-                chatBoxButton.setAttribute("type", "submit")
-                chatBoxButton.value = userID
-                // chatBoxButton.type= "hidden"
-
-                chatBoxButton.addEventListener("click", function (e) {
-                    if (open == false) {
-                        open = true
-                        usID = chatBoxButton.value
-                        chatBox.style.display = "block"
-                        window.onclick = function (event) {
-                            console.log(event.target.className)
-                            open = false
-                            if (event.target.className == "closeChat") {
-                                chatBox.style.display = "none"
-                                while (msgArea.firstChild) {
-                                    msgArea.removeChild(msgArea.firstChild)
+                    chatBoxButton.addEventListener("click", function (e) {
+                        if (open == false) {
+                            open = true
+                            usID = chatBoxButton.value
+                            chatBox.style.display = "block"
+                            window.onclick = function (event) {
+                                console.log(event.target.className)
+                                open = false
+                                if (event.target.className == "closeChat") {
+                                    chatBox.style.display = "none"
+                                    while (msgArea.firstChild) {
+                                        msgArea.removeChild(msgArea.firstChild)
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (open == true) {
-                        usID = chatBoxButton.value
-                        while (msgArea.firstChild) {
-                            msgArea.removeChild(msgArea.firstChild)
+                        if (open == true) {
+                            usID = chatBoxButton.value
+                            while (msgArea.firstChild) {
+                                msgArea.removeChild(msgArea.firstChild)
+                            }
                         }
+
+                    })
+                    chatBoxForm.append(chatBoxButton)
+                    chatBoxButton.textContent = `${nickname}`;
+                    if (status == false) {
+                        nicknameItem.classList = "offline"
+                    } else {
+                        nicknameItem.classList = "online"
                     }
+                    if (msgcheck == false) {
+                        nicknameItem.classList.add("alphab")
+                    }
+                    nicknameItem.append(chatBoxForm)
+                    uList.append(nicknameItem);
 
-                })
-                chatBoxForm.append(chatBoxButton)
-                chatBoxButton.textContent = `${nickname}`;
-                if (status == false) {
-                    nicknameItem.classList = "offline"
-                } else {
-                    nicknameItem.classList = "online"
                 }
-                nicknameItem.append(chatBoxForm)
-                uList.append(nicknameItem);
-
             }
             const closeChatBox = document.createElement("button")
             closeChatBox.textContent = "X"
             closeChatBox.classList = "closeChat"
             chatBox.append(closeChatBox)
+
         } else if (resp.label == "chatBox") {
             let js = JSON.parse(resp.content)
             if (js != null) {
@@ -103,7 +108,6 @@ const showChatHandler = function (e) {
     payloadObj["contactID"] = parseInt(usID)
     userListSocket.send(JSON.stringify(payloadObj));
 };
-
 // const chatBox = document.createElement("form");
 // chatBox.id = "chat-form"
 

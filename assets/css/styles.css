@@ -29,6 +29,14 @@ body {
     background: linear-gradient(to bottom right, rgba(190, 186, 182, 0.5), rgb(199, 150, 91))
     
 }
+.blankScreen{
+    /* color: black; */
+    z-index:5;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    position:absolute;
+}
 
 .navbar {
     padding: 20px;

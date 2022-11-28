@@ -115,7 +115,8 @@ func InitDB() {
 	createMessageTable()
 
 
-	// InsertMessage(1,2, "hello")
+	// InsertMessage(1,4, "hello")
+	InsertMessage(1,2, "hello")
 	// InsertMessage(2,1, "hello")
 	// InsertMessage(1,2, "how are you")
 	// InsertMessage(2,1, "thanks")
