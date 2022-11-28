@@ -62,7 +62,6 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 		// fmt.Print("ul ")
 		err := conn.ReadJSON(&userListPayload)
 		fmt.Println("Label", userListPayload.Label)
-		fmt.Println(err)
 		if err == nil && userListPayload.Label == "createChat" {
 			fmt.Println("----contact", userListPayload.ContactID, "----userID", userListPayload.UserID)
 			var creatingChatResponse WsUserListResponse
@@ -154,7 +153,6 @@ func updateUList() {
 		var UserIDDB int
 		var msgcheck bool
 		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB)
-		fmt.Println(UserIDDB)
 		userStatusElement := struct {
 			Nickname   string `json:"nickname"`
 			LoggedIn   bool   `json:"status"`
@@ -176,12 +174,22 @@ func updateUList() {
 
 	var letter []userStatus
 	var notLetter []userStatus
-
+	var msgHistory []userStatus
+	for i := 0; i < len(tempUserStatus); i++ {
+		for k := 0; k < len(topOfTheList); k++ {
+			if tempUserStatus[i].UserID == topOfTheList[k] {
+				tempUserStatus[i].MsgCheck = true
+				tempUserStatus[k], tempUserStatus[i] = tempUserStatus[i], tempUserStatus[k]
+			}
+		}
+	}
 	for i := 0; i < len(tempUserStatus); i++ {
 		if strings.Title(tempUserStatus[i].Nickname)[0] < 64 || strings.Title(tempUserStatus[i].Nickname)[0] > 91 {
 			tempUserStatus[i].withoutlet = true
 		}
-		if !tempUserStatus[i].withoutlet {
+		if tempUserStatus[i].MsgCheck {
+			msgHistory = append(msgHistory, tempUserStatus[i])
+		} else if !tempUserStatus[i].withoutlet {
 			letter = append(letter, tempUserStatus[i])
 		} else {
 			notLetter = append(notLetter, tempUserStatus[i])
@@ -191,13 +199,12 @@ func updateUList() {
 		}
 	}
 	counter := 0
-	fmt.Println("LETTER:", letter)
 loop:
 	for i := 0; i < len(letter)-1; i++ {
 		if strings.Title(letter[i].Nickname)[0] > strings.Title(letter[i+1].Nickname)[0] {
 			letter[i], letter[i+1] = letter[i+1], letter[i]
 		}
-		if counter != 2 && i == len(letter)-1 {
+		if counter != 2 && i == len(letter)-2 {
 			counter++
 			goto loop
 		}
@@ -208,22 +215,14 @@ loop2:
 		if strings.Title(notLetter[i].Nickname)[0] > strings.Title(notLetter[i+1].Nickname)[0] {
 			notLetter[i], notLetter[i+1] = notLetter[i+1], notLetter[i]
 		}
-		if counter != 2 && i == len(notLetter)-1 {
+		if counter != 2 && i == len(notLetter)-2 {
 			counter2++
 			goto loop2
 		}
-		userStatusDBArr = append(userStatusDBArr, letter...)
-		userStatusDBArr = append(userStatusDBArr, notLetter...)
-		for i := 0; i < len(userStatusDBArr); i++ {
-			for k := 0; k < len(topOfTheList); k++ {
-				if userStatusDBArr[i].UserID == topOfTheList[k] {
-					userStatusDBArr[i].MsgCheck = true
-					userStatusDBArr[k], userStatusDBArr[i] = userStatusDBArr[i], userStatusDBArr[k]
-				}
-			}
-		}
-
 	}
+	userStatusDBArr = append(userStatusDBArr, msgHistory...)
+	userStatusDBArr = append(userStatusDBArr, letter...)
+	userStatusDBArr = append(userStatusDBArr, notLetter...)
 
 	fmt.Printf("UL nicknames: %v\n", userStatusDBArr)
 	userListResponse.OnlineUsers = userStatusDBArr
@@ -311,7 +310,6 @@ func sortConversations() []int {
 		allCon = append(allCon, recID)
 
 	}
-	fmt.Println("allCons:", allCon)
 	for i := 0; i < len(allCon)/2; i++ {
 		allCon[i], allCon[len(allCon)-(i+1)] = allCon[len(allCon)-(i+1)], allCon[i]
 	}
