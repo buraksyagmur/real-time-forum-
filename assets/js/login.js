@@ -34,6 +34,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 signPage.style.display = "none"
                 splitScreen.style.display = "flex"
                 screen.style.height = 0
+                while (screen.firstChild) {
+                    screen.removeChild(screen.firstChild)
+                }
                 // hide the login and reg btn, show the logout btn
                 navbar.children[0].style.display = "none"
                 navbar.children[1].style.display = "none"

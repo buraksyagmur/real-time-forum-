@@ -27,16 +27,35 @@ body {
     background: -o-linear-gradient(to bottom right, rgba(190, 186, 182, 0.5), rgb(199, 150, 91));
     /* for standard syntax */
     background: linear-gradient(to bottom right, rgba(190, 186, 182, 0.5), rgb(199, 150, 91))
-    
 }
-.blankScreen{
+
+.blankScreen {
     /* color: black; */
-    z-index:5;
+    z-index: 5;
     height: 100%;
     width: 100%;
     background-color: black;
-    position:absolute;
+    position: absolute;
 }
+
+h1 {
+    display: block;
+    font-size: 4.17em;
+    color: rgb(21, 183, 75);
+    text-align: center;
+    margin-block-start: 4em;
+    /* margin-block-end: 1em; */
+    font-weight: bold;
+}
+
+h2 {
+    display: block;
+    font-size: 1.17em;
+    /* text-decoration-color: rgb(131, 188, 23); */
+    text-align: center;
+    font-weight: bold;
+}
+
 
 .navbar {
     padding: 20px;
@@ -71,7 +90,7 @@ li a:hover:not(.active) {
 }
 
 /* THIS FILD IS NOT READY FOR USE YET */
-.comment {   
+.comment {
     height: 0%;
     width: 100%;
     /* position: fixed; */
@@ -126,11 +145,11 @@ li a:hover:not(.active) {
     margin-bottom: 0;
 }
 
-.postPage{
+.postPage {
     padding-left: 2%;
     padding-right: 2%;
     max-width: 50%;
-    overflow:hidden;
+    overflow: hidden;
     float: left;
     width: 50%;
     height: 100%;
@@ -144,7 +163,7 @@ li a:hover:not(.active) {
     /* background-image: linear-gradient(to right, #1c00f2, #453f96); */
 }
 
-#allPost{
+#allPost {
     padding-left: 2%;
     padding-right: 2%;
     max-width: 50%;
@@ -155,15 +174,18 @@ li a:hover:not(.active) {
     flex-direction: column;
     align-items: flex-start;
 }
-#category > div {
+
+#category>div {
     display: flex;
     flex-direction: row;
     margin: 5px;
 }
-#category > div > input {
+
+#category>div>input {
     margin: 10px;
 }
-#category > div > label {
+
+#category>div>label {
     margin: 10px;
 }
 
@@ -225,7 +247,7 @@ span {
     margin: 25px;
     box-shadow: 0 2px 5px #f5f5f5;
     background: #eee;
-    float:left
+    float: left
 }
 
 input,
@@ -285,7 +307,7 @@ button.button:hover {
 
 
 .form-page {
-   color: red;
+    color: red;
 }
 
 

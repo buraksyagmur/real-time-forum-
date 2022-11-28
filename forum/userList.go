@@ -177,6 +177,10 @@ func updateUList() {
 	var msgHistory []userStatus
 	for i := 0; i < len(tempUserStatus); i++ {
 		for k := 0; k < len(topOfTheList); k++ {
+			if tempUserStatus[i].UserID == loggedInUid {
+				tempUserStatus[i].CurUser = true
+				continue
+			}
 			if tempUserStatus[i].UserID == topOfTheList[k] {
 				tempUserStatus[i].MsgCheck = true
 				tempUserStatus[k], tempUserStatus[i] = tempUserStatus[i], tempUserStatus[k]
@@ -194,9 +198,7 @@ func updateUList() {
 		} else {
 			notLetter = append(notLetter, tempUserStatus[i])
 		}
-		if tempUserStatus[i].UserID == loggedInUid {
-			tempUserStatus[i].CurUser = true
-		}
+
 	}
 	counter := 0
 loop:
