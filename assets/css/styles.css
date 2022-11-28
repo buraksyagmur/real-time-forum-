@@ -247,7 +247,7 @@ span {
     margin: 25px;
     box-shadow: 0 2px 5px #f5f5f5;
     background: #eee;
-    float: left
+    /* float: left */
 }
 
 input,
