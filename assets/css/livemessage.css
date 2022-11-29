@@ -25,23 +25,25 @@
 
 
 .chatbox {
-    background: #1d61c2;
+    background: #b7babf;
     width: 60%;
     min-width: 250px;
     display: flex;
+    /* overflow: hidden; */
 }
 
 /* The main chat area */
 
 .col-1 {
     flex: 1;
-    display:none;
-    /* display:none; */
+    display: none;
+    background: #66d1d8;
+    /* overflow-y: scroll; */
 }
 
 .col-2 {
     flex-basis: 250px;
-    background: #3874c9;
+    background: #79b333;
 }
 
 .msg-row {
@@ -73,7 +75,7 @@
 }
 
 .msg-row2 {
-    display:flex;
+    display: flex;
     justify-content: flex-end;
 }
 
@@ -81,7 +83,7 @@
     border: 0;
     outline: none;
     padding: 20px 40px;
-    background: #3874c9;
+    background: #2c2b2b;
     color: #fff;
     width: 100%;
     font-size: 12px;

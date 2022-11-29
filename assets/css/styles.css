@@ -30,30 +30,42 @@ body {
 }
 
 .blankScreen {
-    /* color: black; */
     z-index: 5;
     height: 100%;
     width: 100%;
-    background-color: black;
     position: absolute;
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    overflow-y: hidden;
+}
+
+.blankScreen {
+    background: rgb(111, 110, 110);
+    transition: background 0.3s ease-out;
+}
+
+.blankScreen:hover {
+    background: rgb(25, 25, 25);
 }
 
 h1 {
-    display: block;
-    font-size: 4.17em;
+    background-clip: text;
+    text-shadow: rgba(255, 255, 255, 0.9) 0px 3px 3px;
+    font-size: 450%;
     color: rgb(21, 183, 75);
     text-align: center;
-    margin-block-start: 4em;
+    margin-block-start: 18%;
     /* margin-block-end: 1em; */
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 h2 {
     display: block;
-    font-size: 1.17em;
+    font-size: 117%;
     /* text-decoration-color: rgb(131, 188, 23); */
     text-align: center;
     font-weight: bold;
+    padding-top: 15%;
 }
 
 
