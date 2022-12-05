@@ -121,21 +121,9 @@ func ProcessAndReplyUserList() {
 
 		// if len(payloadLabels) == 1 && payloadLabels[0] == "update" {
 		if receivedUserListPayload.Label == "login-reg-update" {
-			// store conn in websockets table
-			// stmt, err := db.Prepare(`INSERT INTO websockets
-			// 					(userID, websocketAdd, usage)
-			// 					VALUES (?, ?, ?);`)
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
-			// defer stmt.Close()
-			// fmt.Printf("uid: %d, Conn: %v, usage %s \n", loggedInUid, receivedUserListPayload.Conn, "userlist")
-			// stmt.Exec(loggedInUid, receivedUserListPayload.Conn, "userlist")
-
 			// store conn in map
-			// userListWsMap[&receivedUserListPayload.Conn] = loggedInUid
 			userListWsMap[loggedInUid] = &receivedUserListPayload.Conn
-			fmt.Printf("current map: %v", userListWsMap)
+			fmt.Printf("UL current map: %v", userListWsMap)
 		}
 		updateUList()
 	}
