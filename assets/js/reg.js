@@ -1,4 +1,5 @@
 import userListSocket from "./userList.js";
+import { chatSocket } from "./chat.js";
 // console.log(userListSocket);
 let regSocket = null; 
 const userList = document.querySelector(".user-list");
@@ -68,11 +69,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 regPopup.style.display = "none";
                 
                 // update user list after a user reg
-                let uListPayload = {};
-                uListPayload["label"] = "login-reg-update";
-                uListPayload["cookie_value"] = resp.cookie.sid;
-                console.log("reg UL sending: ", uListPayload);
-                userListSocket.send(JSON.stringify(uListPayload));
+                let uListPayloadObj = {};
+                uListPayloadObj["label"] = "login-reg-update";
+                uListPayloadObj["cookie_value"] = resp.cookie.sid;
+                console.log("reg UL sending: ", uListPayloadObj);
+                userListSocket.send(JSON.stringify(uListPayloadObj));
+
+                // user is online and avalible to chat
+                let chatPayloadObj = {};
+                chatPayloadObj["label"] = "user-online";
+                console.log(`reg chat uid: ${resp.cookie.uid}`);
+                chatPayloadObj["sender_id"] = (resp.cookie.uid);
+                console.log("reg chat: ", chatPayloadObj);
+                chatSocket.send(JSON.stringify(chatPayloadObj));
             } else {
                 displayMsgDiv.classList.add("display-msg");
                 displayMsg.id = "reg-msg";

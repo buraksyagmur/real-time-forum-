@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -28,12 +27,9 @@ type WsUserListPayload struct {
 }
 
 type userStatus struct {
-	Nickname   string `json:"nickname"`
-	LoggedIn   bool   `json:"status"`
-	UserID     int    `json:"userID"`
-	MsgCheck   bool   `json:"msgcheck"`
-	CurUser    bool   `json:"curuser"`
-	withoutlet bool
+	Nickname string `json:"nickname"`
+	LoggedIn bool   `json:"status"`
+	UserID   int    `json:"userID"`
 }
 
 var (
@@ -63,7 +59,8 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 	for {
 		// fmt.Print("ul ")
 		err := conn.ReadJSON(&userListPayload)
-		// fmt.Println("Label", userListPayload.Label)
+		fmt.Println("UL Label", userListPayload.Label)
+		fmt.Printf("UL readjson err (should be nil)%v\n", err)
 		if err == nil && userListPayload.Label == "createChat" {
 			fmt.Println("----contact", userListPayload.ContactID, "----userID", userListPayload.UserID)
 			var creatingChatResponse WsUserListResponse
@@ -75,7 +72,7 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
 			conn.WriteJSON(creatingChatResponse)
 		} else if err == nil {
-			fmt.Printf("Sending userListPayload thru chan: %v\n", userListPayload)
+			// fmt.Printf("Sending userListPayload thru chan: %v\n", userListPayload)
 			userListPayload.Conn = *conn
 			userListPayloadChan <- userListPayload
 		}
@@ -119,11 +116,10 @@ func ProcessAndReplyUserList() {
 			fmt.Printf("cookie sid removed (have value): %s\n", receivedUserListPayload.CookieValue)
 		}
 
-		// if len(payloadLabels) == 1 && payloadLabels[0] == "update" {
 		if receivedUserListPayload.Label == "login-reg-update" {
-			// store conn in map
+			// store conn in userListWsMap
 			userListWsMap[loggedInUid] = &receivedUserListPayload.Conn
-			fmt.Printf("UL current map: %v", userListWsMap)
+			fmt.Printf("UL: current map: %v", userListWsMap)
 		}
 		updateUList()
 	}
@@ -138,86 +134,25 @@ func updateUList() {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	var tempUserStatus []userStatus
 	var userStatusDBArr []userStatus
 	for rows.Next() {
 		var nicknameDB string
 		var loggedInDB bool
 		var UserIDDB int
-		var msgcheck bool
+
 		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB)
+		fmt.Println(UserIDDB)
 		userStatusElement := struct {
-			Nickname   string `json:"nickname"`
-			LoggedIn   bool   `json:"status"`
-			UserID     int    `json:"userID"`
-			MsgCheck   bool   `json:"msgcheck"`
-			CurUser    bool   `json:"curuser"`
-			withoutlet bool
+			Nickname string `json:"nickname"`
+			LoggedIn bool   `json:"status"`
+			UserID   int    `json:"userID"`
 		}{
 			nicknameDB,
 			loggedInDB,
 			UserIDDB,
-			msgcheck,
-			false,
-			false,
 		}
-		tempUserStatus = append(tempUserStatus, userStatusElement)
+		userStatusDBArr = append(userStatusDBArr, userStatusElement)
 	}
-	topOfTheList := sortConversations()
-
-	var letter []userStatus
-	var notLetter []userStatus
-	var msgHistory []userStatus
-	for i := 0; i < len(tempUserStatus); i++ {
-		for k := 0; k < len(topOfTheList); k++ {
-			if tempUserStatus[i].UserID == loggedInUid {
-				tempUserStatus[i].CurUser = true
-				continue
-			}
-			if tempUserStatus[i].UserID == topOfTheList[k] {
-				tempUserStatus[i].MsgCheck = true
-				tempUserStatus[k], tempUserStatus[i] = tempUserStatus[i], tempUserStatus[k]
-			}
-		}
-	}
-	for i := 0; i < len(tempUserStatus); i++ {
-		if strings.Title(tempUserStatus[i].Nickname)[0] < 64 || strings.Title(tempUserStatus[i].Nickname)[0] > 91 {
-			tempUserStatus[i].withoutlet = true
-		}
-		if tempUserStatus[i].MsgCheck {
-			msgHistory = append(msgHistory, tempUserStatus[i])
-		} else if !tempUserStatus[i].withoutlet {
-			letter = append(letter, tempUserStatus[i])
-		} else {
-			notLetter = append(notLetter, tempUserStatus[i])
-		}
-
-	}
-	counter := 0
-loop:
-	for i := 0; i < len(letter)-1; i++ {
-		if strings.Title(letter[i].Nickname)[0] > strings.Title(letter[i+1].Nickname)[0] {
-			letter[i], letter[i+1] = letter[i+1], letter[i]
-		}
-		if counter != 2 && i == len(letter)-2 {
-			counter++
-			goto loop
-		}
-	}
-	counter2 := 0
-loop2:
-	for i := 0; i < len(notLetter)-1; i++ {
-		if strings.Title(notLetter[i].Nickname)[0] > strings.Title(notLetter[i+1].Nickname)[0] {
-			notLetter[i], notLetter[i+1] = notLetter[i+1], notLetter[i]
-		}
-		if counter != 2 && i == len(notLetter)-2 {
-			counter2++
-			goto loop2
-		}
-	}
-	userStatusDBArr = append(userStatusDBArr, msgHistory...)
-	userStatusDBArr = append(userStatusDBArr, letter...)
-	userStatusDBArr = append(userStatusDBArr, notLetter...)
 
 	fmt.Printf("UL nicknames: %v\n", userStatusDBArr)
 	userListResponse.OnlineUsers = userStatusDBArr
@@ -244,6 +179,7 @@ func broadcast(userListResponse WsUserListResponse) {
 	// }
 }
 
+// move to chat.go
 func displayChatInfo(sendID, recID int) []MessageArray {
 	var allMsg MessageArray
 	var arrMsgArray []MessageArray
@@ -264,7 +200,13 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 		var msgTime time.Time
 		var msgID int
 		rows.Scan(&msgID, &(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
+		fmt.Println("dont be empty", oneMsg.Content, len(oneMsg.Content))
 		oneMsg.MessageTime = msgTime.String()
+		fmt.Println(oneMsg.SenderId, "-----", loggedInUid)
+		// sendIdNum, err := strconv.Atoi(oneMsg.SenderId)
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 		if oneMsg.SenderId == loggedInUid {
 			oneMsg.Right = true
 		}
@@ -297,36 +239,4 @@ func sortMessages(sendID, recID int) string {
 		log.Fatal(err)
 	}
 	return string(jsonF)
-}
-
-func sortConversations() []int {
-	var allCon []int
-	rows, err := db.Query("SELECT receiverID FROM messages WHERE senderID= ?;", loggedInUid)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var recID int
-		rows.Scan(&recID)
-		allCon = append(allCon, recID)
-
-	}
-	for i := 0; i < len(allCon)/2; i++ {
-		allCon[i], allCon[len(allCon)-(i+1)] = allCon[len(allCon)-(i+1)], allCon[i]
-	}
-	var lastOne []int
-	for _, v := range allCon {
-		skip := false
-		for _, u := range lastOne {
-			if v == u {
-				skip = true
-				break
-			}
-		}
-		if !skip {
-			lastOne = append(lastOne, v)
-		}
-	}
-	return lastOne
 }

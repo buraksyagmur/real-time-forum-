@@ -5,16 +5,18 @@ import (
 	"forum/forum"
 	"log"
 	"net/http"
-	"os/exec"
 )
 
 func main() {
+	println("started")
 	forum.InitDB()
 	go forum.ProcessAndReplyUserList()
+	// hub := forum.NewHub()
+	go forum.ChatHub.Run()
 	// forum.ClearUsers()
 	// forum.ClearPosts()
 	// forum.ClearComments()
-	exec.Command("xdg-open", "http://localhost:8080/").Start()
+	// exec.Command("xdg-open", "http://localhost:8080/").Start()
 	http.Handle("/assets/", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
 	http.HandleFunc("/", forum.HomeHandler)
 	http.HandleFunc("/regWs/", forum.RegisterHandler)

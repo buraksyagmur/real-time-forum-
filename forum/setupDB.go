@@ -114,8 +114,6 @@ func InitDB() {
 	createCommentsTable()
 	createMessageTable()
 
-
-	// InsertMessage(1,4, "hello")
 	// InsertMessage(1,2, "hello")
 	// InsertMessage(2,1, "hello")
 	// InsertMessage(1,2, "how are you")

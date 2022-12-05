@@ -1,4 +1,5 @@
 import userListSocket from "./userList.js";
+import { chatSocket } from "./chat.js";
 let loginSocket = null;
 let nameInput = null;
 let pwInput = null;
@@ -7,7 +8,7 @@ const displayMsgDiv = document.createElement("div");
 const displayMsg = document.createElement("h2");
 // const logout = document.querySelector("#logout")
 // console.log(userListSocket);
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     loginSocket = new WebSocket("ws://localhost:8080/loginWs/");
     console.log("JS attempt to connect to login");
     loginSocket.onopen = () => console.log("login connected");
@@ -16,14 +17,14 @@ document.addEventListener("DOMContentLoaded", function () {
     loginSocket.onmessage = (msg) => {
         // display msg
         const resp = JSON.parse(msg.data);
-        const screen = document.querySelector(".blankScreen")
+
         if (resp.label === "greet") {
             console.log(resp.content);
             navbar.children[0].style.display = "block"
             navbar.children[1].style.display = "block"
             navbar.children[2].style.display = "none"
         } else if (resp.label === "login") {
-            console.log("uid: ", resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
+            console.log("uid: ",resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
             document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
 
             // update user list after a user login
@@ -31,12 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
             if (resp.pass) {
                 const splitScreen = document.querySelector(".container")
                 const signPage = document.querySelector("#userPopUpPOne")
-                signPage.style.display = "none"
-                splitScreen.style.display = "flex"
-                screen.style.height = 0
-                while (screen.firstChild) {
-                    screen.removeChild(screen.firstChild)
-                }
+                signPage.style.display= "none"
+                splitScreen.style.display= "flex"
+
                 // hide the login and reg btn, show the logout btn
                 navbar.children[0].style.display = "none"
                 navbar.children[1].style.display = "none"
@@ -56,6 +54,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 uListPayload["cookie_value"] = resp.cookie.sid;
                 console.log("login UL sending: ", uListPayload);
                 userListSocket.send(JSON.stringify(uListPayload));
+
+                // user is online and avalible to chat
+                let chatPayloadObj = {};
+                chatPayloadObj["label"] = "user-online";
+                console.log(`login chat uid: ${resp.cookie.uid}`);
+                chatPayloadObj["sender_id"] = (resp.cookie.uid);
+                console.log("login chat: ", chatPayloadObj);
+                chatSocket.send(JSON.stringify(chatPayloadObj));
             } else {
                 // error msg
                 displayMsgDiv.classList.add("display-msg");

@@ -299,20 +299,20 @@ func (c *Client) readPump() {
 					createRoomChan <- rmReq
 				}
 
-				// load the msg into rightChatRoom // not used yet
-				fmt.Println("----receiver", chatPayload.ReceiverId, "----sender", chatPayload.SenderId)
-				var creatingChatResponse WsChatResponse
-				// creatingChatResponse.Label= "using"
-				creatingChatResponse.Label = "chatBox"
-				// load prev msgs
-				// senderIdNum, _ := chatPayload.SenderId
-				// receiverIdNum, _ := chatPayload.ReceiverId
-				creatingChatResponse.Content = sortMessages(chatPayload.SenderId, chatPayload.ReceiverId)
-				// just loading for the sender!!
-				c.conn.WriteJSON(creatingChatResponse) // only writing to sender
-				// c.receiverRooms[chatPayload.ReceiverId]
+				// // load the msg into rightChatRoom // not used yet
+				// fmt.Println("----receiver", chatPayload.ReceiverId, "----sender", chatPayload.SenderId)
+				// var creatingChatResponse WsChatResponse
+				// // creatingChatResponse.Label= "using"
+				// creatingChatResponse.Label = "chatBox"
+				// // load prev msgs
+				// // senderIdNum, _ := chatPayload.SenderId
+				// // receiverIdNum, _ := chatPayload.ReceiverId
+				// creatingChatResponse.Content = sortMessages(chatPayload.SenderId, chatPayload.ReceiverId)
+				// // just loading for the sender!!
+				// c.conn.WriteJSON(creatingChatResponse) // only writing to sender
+				// // c.receiverRooms[chatPayload.ReceiverId]
 
-				// reply? roomname?
+				// // reply? roomname?
 
 			} else if chatPayload.Label == "chat" {
 				fmt.Printf("Sending chatPayload thru chan: %v\n", chatPayload)
@@ -346,6 +346,8 @@ func (c *Client) writePump() {
 		c.conn.WriteJSON(chatPayload)
 	}
 }
+
+// ---------------------------------------
 
 func processMsg(msg WsChatPayload) {
 	rows, err := db.Prepare("INSERT INTO messages(senderID,receiverID,messageTime,content,seen) VALUES(?,?,?,?,?);")
