@@ -13,15 +13,13 @@ import (
 type WsChatResponse struct {
 	Label     string `json:"label"`
 	Content   string `json:"content"`
-	UserID    string `json:"userID"`
-	ContactID string `json:"contactID"`
+	UserID    int    `json:"userID"`
+	ContactID int    `json:"contactID"`
 }
-
 type MessageArray struct {
 	Index int           `json:"index"`
 	Msg   WsChatPayload `json:"msgInfo"`
 }
-
 type WsChatPayload struct {
 	Label       string `json:"label"`
 	Content     string `json:"content"`
@@ -144,9 +142,11 @@ func (h *hub) Run() {
 		// }
 		rm := newRoom(roomReq.roomName, roomReq)
 		fmt.Printf("created room name: %v\n", roomReq.roomName)
-		rm.run()
+		go rm.run()
+		fmt.Printf("still fine\n")
+		fmt.Printf("rooms in hub (before): %v\n", h.rooms) // deref ptr error
 		h.rooms[roomReq.roomName] = rm
-		fmt.Printf("rooms in hub: %v\n", h.rooms)
+		fmt.Printf("rooms in hub (after): %v\n", h.rooms)
 		// add room to reciverRooms (map) of clientA (c of c.readPump), feasible coz linked to c
 		roomReq.clientA.receiverRooms[roomReq.clientB.userID] = rm
 		fmt.Printf("%v has receiverRooms: %v\n", roomReq.clientA, roomReq.clientA.receiverRooms)
@@ -188,6 +188,7 @@ func newRoom(roomName string, participants roomRequest) *Room {
 }
 
 func (r *Room) run() {
+	fmt.Printf("room %v running\n", r)
 	for {
 		var chatRoomPayload WsChatPayload
 		select {
@@ -201,6 +202,7 @@ func (r *Room) run() {
 }
 
 func (r *Room) loadPrevMsgs() {
+
 }
 
 // -----------------------Client-------------------------------
@@ -284,35 +286,46 @@ func (c *Client) readPump() {
 					fmt.Printf("right room is: not found \n")
 					// if no record of the room, create one
 					var rmReq roomRequest
+					fmt.Printf("create rmReq \n")
 					rmReq.roomName = findRoomName
+					fmt.Printf("rmReq rn %s \n", rmReq.roomName)
 					rmReq.clientA = c // link c and rmReq.clientA
-
+					fmt.Printf("rmReq CA %v \n", rmReq.clientA)
 					///////////////////////
 					// dereference clientB IN THE RMReq, and put the userID or conn field into it
 					// ReceiverIdNum, err := chatPayload.ReceiverId
 					// if err != nil {
 					// 	log.Fatal(err)
 					// }
-					(*(rmReq.clientB)).userID = chatPayload.ReceiverId          //
-					(*(rmReq.clientB)).conn = chatWsMap[chatPayload.ReceiverId] // the map is always empty atm
+
+					clientB := &Client{
+						receiverRooms: make(map[int]*Room),
+						userID:        chatPayload.ReceiverId,
+						conn:          chatWsMap[chatPayload.ReceiverId], // the receiver will also be online, so has a record in the map
+						send:          make(chan WsChatPayload),
+					}
+					rmReq.clientB = clientB
+
+					fmt.Printf("rmReq CB ID %v \n", rmReq.clientB.userID)
+					fmt.Printf("rmReq CB conn %v \n", rmReq.clientB.conn)
 					fmt.Printf("sending rmReq: %v\n", rmReq)
 					createRoomChan <- rmReq
 				}
 
-				// // load the msg into rightChatRoom // not used yet
-				// fmt.Println("----receiver", chatPayload.ReceiverId, "----sender", chatPayload.SenderId)
-				// var creatingChatResponse WsChatResponse
-				// // creatingChatResponse.Label= "using"
-				// creatingChatResponse.Label = "chatBox"
-				// // load prev msgs
-				// // senderIdNum, _ := chatPayload.SenderId
-				// // receiverIdNum, _ := chatPayload.ReceiverId
-				// creatingChatResponse.Content = sortMessages(chatPayload.SenderId, chatPayload.ReceiverId)
-				// // just loading for the sender!!
-				// c.conn.WriteJSON(creatingChatResponse) // only writing to sender
-				// // c.receiverRooms[chatPayload.ReceiverId]
+				// load the msg into rightChatRoom // not used yet
+				fmt.Println("----receiver", chatPayload.ReceiverId, "----sender", chatPayload.SenderId)
+				var creatingChatResponse WsChatResponse
+				// creatingChatResponse.Label= "using"
+				creatingChatResponse.Label = "chatBox"
+				// load prev msgs
+				// senderIdNum, _ := chatPayload.SenderId
+				// receiverIdNum, _ := chatPayload.ReceiverId
+				creatingChatResponse.Content = sortMessages(chatPayload.SenderId, chatPayload.ReceiverId)
+				// just loading for the sender!!
+				c.conn.WriteJSON(creatingChatResponse) // only writing to sender
+				// c.receiverRooms[chatPayload.ReceiverId]
 
-				// // reply? roomname?
+				// reply? roomname?
 
 			} else if chatPayload.Label == "chat" {
 				fmt.Printf("Sending chatPayload thru chan: %v\n", chatPayload)
