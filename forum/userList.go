@@ -24,6 +24,7 @@ type WsUserListPayload struct {
 	Conn        websocket.Conn `json:"-"`
 	ContactID   int            `json:"contactID"`
 	UserID      int            `json:"userID"`
+	LoadMsg     bool           `json:"loadMsg"`
 }
 
 type userStatus struct {
@@ -36,6 +37,7 @@ type userStatus struct {
 }
 
 var (
+	PageMsgMap          = make(map[int]int)
 	userListPayloadChan = make(chan WsUserListPayload)
 	userListWsMap       = make(map[int]*websocket.Conn)
 	loggedInUid         int
@@ -61,12 +63,15 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 	for {
 		// fmt.Print("ul ")
 		err := conn.ReadJSON(&userListPayload)
-		fmt.Println("Label", userListPayload.Label)
+		// fmt.Println("Label", userListPayload.Label)
 		if err == nil && userListPayload.Label == "createChat" {
 			fmt.Println("----contact", userListPayload.ContactID, "----userID", userListPayload.UserID)
 			var creatingChatResponse WsUserListResponse
 			// creatingChatResponse.Label= "using"
 			creatingChatResponse.Label = "chatBox"
+			if !userListPayload.LoadMsg {
+				PageMsgMap[userListPayload.UserID] = 1234567890
+			}
 			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
 			conn.WriteJSON(creatingChatResponse)
 		} else if err == nil {
@@ -92,7 +97,7 @@ func ProcessAndReplyUserList() {
 			rows.Scan(&loggedInUid)
 		}
 		fmt.Printf("loggedInUid UL %d \n", loggedInUid)
-
+		PageMsgMap[loggedInUid] = 1234567890
 		// close and remove conn from map if logout
 		// if len(payloadLabels) > 1 && payloadLabels[1] == "logout" {
 		if receivedUserListPayload.Label == "logout-update" {
@@ -254,11 +259,14 @@ func broadcast(userListResponse WsUserListResponse) {
 func displayChatInfo(sendID, recID int) []MessageArray {
 	var allMsg MessageArray
 	var arrMsgArray []MessageArray
+	fmt.Println(PageMsgMap)
 	rows, err := db.Query(
 		`SELECT * 
 	FROM messages 
-	WHERE senderID = ? 
-	AND receiverID = ?`, sendID, recID)
+	WHERE messageID < ? AND ((senderID = ? AND receiverID = ?) OR (receiverID = ? AND senderID = ?))
+	ORDER BY messageID DESC	
+	LIMIT ?
+	;`, PageMsgMap[sendID], sendID, recID, sendID, recID, 10)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -272,9 +280,11 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 		if oneMsg.SenderId == loggedInUid {
 			oneMsg.Right = true
 		}
+		fmt.Println(msgID, "INDEX")
 		allMsg.Index = msgID
 		allMsg.Msg = oneMsg
 		arrMsgArray = append(arrMsgArray, allMsg)
+		PageMsgMap[sendID] = msgID
 	}
 	fmt.Println("chatinfo:", arrMsgArray)
 
@@ -282,9 +292,11 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 }
 
 func sortMessages(sendID, recID int) string {
-	firstMes := displayChatInfo(sendID, recID)
-	secMes := displayChatInfo(recID, sendID)
-	allMes := append(firstMes, secMes...)
+	// firstMes := displayChatInfo(sendID, recID)
+	// secMes := displayChatInfo(recID, sendID)
+	// allMes := append(firstMes, secMes...)
+
+	allMes := displayChatInfo(sendID, recID)
 	for k := 0; k < 10; k++ {
 		for i := 0; i < len(allMes)-1; i++ {
 			if allMes[i].Index > allMes[i+1].Index {

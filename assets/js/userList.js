@@ -3,6 +3,7 @@ const chatBox = document.querySelector(".col-1")
 const msgArea = document.querySelector(".msgArea")
 let usID
 let open = false
+let loadMsg = false
 document.addEventListener("DOMContentLoaded", function (e) {
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
     console.log("JS attempt to connect to user list");
@@ -24,8 +25,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     const chatBoxButton = document.createElement("button")
                     chatBoxButton.classList = "nameButtons"
                     const chatBoxForm = document.createElement("form")
-
-
                     chatBoxForm.addEventListener("submit", showChatHandler)
                     chatBoxButton.setAttribute("type", "submit")
                     chatBoxButton.value = userID
@@ -41,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                                 open = false
                                 if (event.target.className == "closeChat") {
                                     chatBox.style.display = "none"
+                                    loadMsg = false
                                     while (msgArea.firstChild) {
                                         msgArea.removeChild(msgArea.firstChild)
                                     }
@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                         }
                         if (open == true) {
                             usID = chatBoxButton.value
+                            loadMsg= false
                             while (msgArea.firstChild) {
                                 msgArea.removeChild(msgArea.firstChild)
                             }
@@ -70,12 +71,22 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
                 }
             }
+
             const closeChatBox = document.createElement("button")
             closeChatBox.textContent = "End Chat"
             closeChatBox.classList = "closeChat"
             chatBox.append(closeChatBox)
 
-        } else if (resp.label == "chatBox") {
+        }
+        if (resp.label == "chatBox") {
+            if (msgArea.firstChild == null) {
+                const loadBut = document.createElement("button")
+                loadBut.classList = "loadMsg"
+                loadBut.addEventListener("click",  showChatHandler)
+                loadBut.textContent = "Load 10 more msg"
+                msgArea.append(loadBut)
+                loadMsg= true
+            }
             let js = JSON.parse(resp.content)
             if (js != null) {
                 console.log("check content:", js)
@@ -103,12 +114,13 @@ const showChatHandler = function (e) {
     e.preventDefault();
     let payloadObj = {}
     console.log("usID =", usID)
+    console.log("loadmsg", loadMsg)
     payloadObj["label"] = "createChat";
     payloadObj["userID"] = 1 /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
+    payloadObj["loadMsg"] = loadMsg
     userListSocket.send(JSON.stringify(payloadObj));
 };
 // const chatBox = document.createElement("form");
 // chatBox.id = "chat-form"
-
 export default userListSocket;

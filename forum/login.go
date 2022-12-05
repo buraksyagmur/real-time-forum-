@@ -135,7 +135,6 @@ func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
 	} else {
 		// Login successfully
 		fmt.Printf("%s (name from DB) Login successfully\n", loginPayload.NicknameEmail)
-
 		// update login status in users
 
 		var successResponse WsLoginResponse
