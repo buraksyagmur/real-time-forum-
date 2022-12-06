@@ -27,27 +27,5 @@ document.addEventListener("DOMContentLoaded", function(e) {
     chatSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
         console.log({resp});
-        // // if (resp.label === "userList") {
-        // //     console.log(resp.online_users);
-        // //     const uList = document.querySelector(".user-list");
-        // //     // remove list item
-        // //     uList.textContent = "";
-        // //     // add new list item
-        // //     for (let uNickname of resp.online_users) {
-        // //         const nickname = document.createElement("li");
-        // //         nickname.textContent = `${uNickname}`;
-        // //         uList.append(nickname);
-        
-        // //     }
-        // // }
-        //  else if (resp.label === "chat") {
-         
-        //     console.log(resp.content);
-        // }
     }
 })
-
-// const chatBox = document.createElement("form");
-// chatBox.id = "chat-form"
-
-// export default chatForm;

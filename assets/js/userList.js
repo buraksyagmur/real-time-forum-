@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
         }
         if (resp.label == "chatBox") {
+
             if (msgArea.firstChild == null) {
                 const loadBut = document.createElement("button")
                 loadBut.classList = "loadMsg"
@@ -91,6 +92,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 loadBut.textContent = "Load 10 more msg"
                 msgArea.append(loadBut)
                 loadMsg= true
+
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
