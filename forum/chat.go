@@ -246,7 +246,7 @@ type Client struct {
 
 func (c *Client) readPump() {
 	defer func() {
-		fmt.Println("readPump failed")
+		fmt.Println("readPump faileed")
 	}()
 
 	fmt.Println("read pump running")
