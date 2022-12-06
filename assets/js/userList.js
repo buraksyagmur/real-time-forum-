@@ -21,60 +21,60 @@ document.addEventListener("DOMContentLoaded", function (e) {
             uList.textContent = "";
             // add new list item
             for (const { nickname, status, userID, msgcheck } of resp.online_users) {
-                    let curUserNickname = document.querySelector(".profile user.nickname")
-                    const nicknameItem = document.createElement("li");
-                    const chatBoxButton = document.createElement("button")
-                    chatBoxButton.classList = "nameButtons"
-                    const chatBoxForm = document.createElement("form")
-                    chatBoxForm.addEventListener("submit", showChatHandler)
-                    chatBoxButton.setAttribute("type", "submit")
-                    chatBoxButton.value = userID
-                    
-                    // chatBoxButton.type= "hidden"
+                let curUserNickname = document.querySelector(".Profileid")
+                const nicknameItem = document.createElement("li");
+                const chatBoxButton = document.createElement("button")
+                chatBoxButton.classList = "nameButtons"
+                const chatBoxForm = document.createElement("form")
+                chatBoxForm.addEventListener("submit", showChatHandler)
+                chatBoxButton.setAttribute("type", "submit")
+                chatBoxButton.value = userID
 
-                    chatBoxButton.addEventListener("click", function (e) {
-                        if (open == false) {
-                            open = true
-                            usID = chatBoxButton.value
-                            chatBox.style.display = "block"
-                            window.onclick = function (event) {
-                                console.log(event.target.className)
-                                open = false
-                                if (event.target.className == "closeChat") {
-                                    chatBox.style.display = "none"
-                                    loadMsg = false
-                                    while (msgArea.firstChild) {
-                                        msgArea.removeChild(msgArea.firstChild)
-                                    }
+                // chatBoxButton.type= "hidden"
+
+                chatBoxButton.addEventListener("click", function (e) {
+                    if (open == false) {
+                        open = true
+                        usID = chatBoxButton.value
+                        chatBox.style.display = "block"
+                        window.onclick = function (event) {
+                            console.log(event.target.className)
+                            open = false
+                            if (event.target.className == "closeChat") {
+                                chatBox.style.display = "none"
+                                loadMsg = false
+                                while (msgArea.firstChild) {
+                                    msgArea.removeChild(msgArea.firstChild)
                                 }
                             }
                         }
-                        if (open == true) {
-                            usID = chatBoxButton.value
-                            loadMsg= false
-                            while (msgArea.firstChild) {
-                                msgArea.removeChild(msgArea.firstChild)
-                            }
+                    }
+                    if (open == true) {
+                        usID = chatBoxButton.value
+                        loadMsg = false
+                        while (msgArea.firstChild) {
+                            msgArea.removeChild(msgArea.firstChild)
                         }
+                    }
 
-                    })
-                    chatBoxForm.append(chatBoxButton)
-                    chatBoxButton.textContent = `${nickname}`;
-                    if (chatBoxButton.textContent == curUserNickname){
-                        chatBoxButton.style.display = "none"
-                    }
-                    if (status == false) {
-                        nicknameItem.classList = "offline"
-                    } else {
-                        nicknameItem.classList = "online"
-                    }
-                    if (msgcheck == false) {
-                        nicknameItem.classList.add("alphab")
-                    }
-                    nicknameItem.append(chatBoxForm)
-                    uList.append(nicknameItem);
+                })
+                chatBoxForm.append(chatBoxButton)
+                chatBoxButton.textContent = `${nickname}`;
+                if (chatBoxButton.textContent == curUserNickname) {
+                    chatBoxButton.style.display = "none"
+                }
+                if (status == false) {
+                    nicknameItem.classList = "offline"
+                } else {
+                    nicknameItem.classList = "online"
+                }
+                if (msgcheck == false) {
+                    nicknameItem.classList.add("alphab")
+                }
+                nicknameItem.append(chatBoxForm)
+                uList.append(nicknameItem);
 
-                
+
             }
 
             const closeChatBox = document.createElement("button")
@@ -84,13 +84,13 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
         }
         if (resp.label == "chatBox") {
-            if (msgArea.firstChild == null) {
+            if (msgArea.firstElementChild == null) {
                 const loadBut = document.createElement("button")
                 loadBut.classList = "loadMsg"
-                loadBut.addEventListener("click",  showChatHandler)
+                loadBut.addEventListener("click", showChatHandler)
                 loadBut.textContent = "Load 10 more msg"
                 msgArea.append(loadBut)
-                loadMsg= true
+                loadMsg = true
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
@@ -110,6 +110,20 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
 
                 }
+                if (chatBox.lastElementChild.classList !="submitMsg") {
+                const chatInput = document.createElement("input")
+                chatInput.setAttribute("type", "text")
+                const chatForm = document.createElement("form")
+                const submitChat = document.createElement("button")
+                chatForm.addEventListener("submit", showChatHandler)
+                submitChat.setAttribute("type", "submit")
+                submitChat.classList= "submitMsg"
+                submitChat.textContent= "submit msg"
+                chatInput.classList= "chatInput"
+                chatForm.append(chatInput,submitChat)
+                chatBox.append(chatForm)
+                }
+                
             }
         }
     }
@@ -118,17 +132,24 @@ document.addEventListener("DOMContentLoaded", function (e) {
 const showChatHandler = function (e) {
     e.preventDefault();
     let payloadObj = {}
+    let profileid = document.querySelector(".Profileid")
+    
+    
+    console.log(profileid.textContent, "---textcontent")
     console.log("usID =", usID)
     console.log("loadmsg", loadMsg)
     payloadObj["label"] = "createChat";
-    payloadObj["userID"] = 1 /* after login change to loggedUserID */
+    payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
     payloadObj["loadMsg"] = loadMsg
-    userListSocket.send(JSON.stringify(payloadObj));
+    if (payloadObj["contactID"] != null) {
+        userListSocket.send(JSON.stringify(payloadObj));
+    }
 
     let chatPayloadObj = {};
+    console.log(chatInput.textContent)
     chatPayloadObj["label"] = "createChat";
-    // chatPayloadObj["sender_id"] = 1 /* after login change to loggedUserID */
+    chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
     chatPayloadObj["receiver_id"] = parseInt(usID)
     chatSocket.send(JSON.stringify(payloadObj));
 };

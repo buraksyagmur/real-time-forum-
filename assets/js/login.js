@@ -32,13 +32,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (resp.pass) {
                 let user = JSON.parse(resp.content) 
-                createProfile("p",user.userID)
-                createProfile("p",user.nickname)
-                createProfile("p",user.age)
-                createProfile("p",user.gender)
-                createProfile("p",user.firstname)
-                createProfile("p",user.lastname)
-                createProfile("p",user.email)
+                createProfile("p",user.userID, "id")
+                createProfile("p",user.nickname, "nickname")
+                createProfile("p",user.age, "age")
+                createProfile("p",user.gender, "gender")
+                createProfile("p",user.firstname, "firstname")
+                createProfile("p",user.lastname, "lastname")
+                createProfile("p",user.email, "email")
                 profile.style.display = "block"
                 console.log(user)
                 const splitScreen = document.querySelector(".container")
@@ -141,10 +141,10 @@ loginSubmit.setAttribute("type", "submit");
 loginSubmitDiv.append(loginSubmit);
 
 loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
-function createProfile(type, userAttr){
+function createProfile(type, userAttr,str){
     let newelement = document.createElement(type)
     newelement.textContent= userAttr
-    newelement.classList ="Profile"+userAttr
+    newelement.classList ="Profile"+ str
     profile.append(newelement)
 }
 export default loginForm;
