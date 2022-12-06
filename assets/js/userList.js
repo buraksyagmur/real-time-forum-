@@ -110,20 +110,20 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
 
                 }
-                if (chatBox.lastElementChild.classList !="submitMsg") {
-                const chatInput = document.createElement("input")
-                chatInput.setAttribute("type", "text")
-                const chatForm = document.createElement("form")
-                const submitChat = document.createElement("button")
-                chatForm.addEventListener("submit", showChatHandler)
-                submitChat.setAttribute("type", "submit")
-                submitChat.classList= "submitMsg"
-                submitChat.textContent= "submit msg"
-                chatInput.classList= "chatInput"
-                chatForm.append(chatInput,submitChat)
-                chatBox.append(chatForm)
+                if (chatBox.lastChild.lastChild.nodeType != 1) {
+                    const chatInput = document.createElement("input")
+                    chatInput.setAttribute("type", "text")
+                    const chatForm = document.createElement("form")
+                    const submitChat = document.createElement("button")
+                    chatForm.addEventListener("submit", SubChatHandler)
+                    submitChat.setAttribute("type", "submit")
+                    submitChat.classList = "submitMsg"
+                    submitChat.textContent = "submit msg"
+                    chatInput.classList = "chatInput"
+                    chatForm.append(chatInput, submitChat)
+                    chatBox.append(chatForm)
                 }
-                
+
             }
         }
     }
@@ -133,8 +133,6 @@ const showChatHandler = function (e) {
     e.preventDefault();
     let payloadObj = {}
     let profileid = document.querySelector(".Profileid")
-    
-    
     console.log(profileid.textContent, "---textcontent")
     console.log("usID =", usID)
     console.log("loadmsg", loadMsg)
@@ -142,17 +140,34 @@ const showChatHandler = function (e) {
     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
     payloadObj["loadMsg"] = loadMsg
-    if (payloadObj["contactID"] != null) {
-        userListSocket.send(JSON.stringify(payloadObj));
-    }
+    userListSocket.send(JSON.stringify(payloadObj));
 
+    // let chatPayloadObj = {};
+    // chatPayloadObj["label"] = "createChat";
+    // chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
+    // chatPayloadObj["receiver_id"] = parseInt(usID)
+    // chatSocket.send(JSON.stringify(chatPayloadObj));
+};
+const SubChatHandler = function (e) {
+    e.preventDefault();
     let chatPayloadObj = {};
-    console.log(chatInput.textContent)
-    chatPayloadObj["label"] = "createChat";
+    let profileid = document.querySelector(".Profileid")
+    let chatInput = document.querySelector(".chatInput")
+    let msgrow = document.createElement("div")
+    let msgtext = document.createElement("p")
+    msgrow.className= "msg-row2"
+    msgtext.className= "msg-text"
+    msgtext.textContent= chatInput.value
+    msgrow.append(msgtext)
+    msgArea.append(msgrow)
+    chatPayloadObj["label"] = "chat";
     chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
     chatPayloadObj["receiver_id"] = parseInt(usID)
-    chatSocket.send(JSON.stringify(payloadObj));
-};
+    chatPayloadObj["message"]= chatInput.value
+    chatInput.value= ""
+    chatSocket.send(JSON.stringify(chatPayloadObj));
+
+}
 // const chatBox = document.createElement("form");
 // chatBox.id = "chat-form"
 export default userListSocket;
