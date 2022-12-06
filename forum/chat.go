@@ -193,13 +193,13 @@ func newRoom(roomName string, participants roomRequest) *Room {
 func (r *Room) run() {
 	fmt.Printf("room %v running\n", r)
 	for {
-		var chatRoomPayload WsChatPayload
+		var chatRoomResponse WsChatPayload
 		select {
-		case chatRoomPayload = <-r.intoRoom:
-			fmt.Printf("in room chatRoomPayload: %v", chatRoomPayload)
+		case chatRoomResponse = <-r.intoRoom:
+			fmt.Printf("in room chatRoomPayload: %v", chatRoomResponse)
 			// send to both clients when room receives msg
-			// r.clientA.send <- chatRoomPayload
-			r.clientB.send <- chatRoomPayload
+			r.clientA.send <- chatRoomResponse
+			r.clientB.send <- chatRoomResponse
 		}
 	}
 }
