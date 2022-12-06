@@ -11,7 +11,9 @@ import (
 func main() {
 	forum.InitDB()
 	go forum.ProcessAndReplyUserList()
-	go forum.ChatHub.Run()
+	// ChatHub := forum.NewHub()
+	// go ChatHub.Run()
+	// go forum.ChatHub.Run()
 	// forum.ClearUsers()
 	// forum.ClearPosts()
 	// forum.ClearComments()

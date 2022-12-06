@@ -55,8 +55,9 @@ func chatWsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	// create hub if none
 	fmt.Printf("hub before %v\n", ChatHub)
-	if ChatHub == nil { // if map not made
+	if ChatHub == nil { // if hub not made
 		ChatHub = newHub()
+		go ChatHub.Run()
 	}
 	fmt.Printf("hub after %v\n", ChatHub)
 
@@ -145,10 +146,10 @@ func (h *hub) Run() {
 		fmt.Printf("created room name: %v\n", roomReq.roomName)
 		go rm.run()
 		fmt.Printf("still fine\n")
-
-		fmt.Printf("rooms in hub (before): %v\n", h.rooms) // deref ptr error
+		fmt.Printf(" hub: %v\n", h)
+		fmt.Printf("new room in hub (before): %v\n", h.rooms[rm.roomName]) // deref ptr error
 		h.rooms[roomReq.roomName] = rm
-		fmt.Printf("rooms in hub (after): %v\n", h.rooms)
+		fmt.Printf("new room in hub (after): %v\n", h.rooms[rm.roomName])
 		// add room to reciverRooms (map) of clientA (c of c.readPump), feasible coz linked to c
 		roomReq.clientA.receiverRooms[roomReq.clientB.userID] = rm
 		fmt.Printf("%v has receiverRooms: %v\n", roomReq.clientA, roomReq.clientA.receiverRooms)
