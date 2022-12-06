@@ -1,5 +1,5 @@
 import userListSocket from "./userList.js";
-
+import { chatSocket } from "./chat.js";
 const logoutUrl = location.origin + "/logout/";
 console.log(logoutUrl);
 const logoutHandler = function() {
@@ -15,6 +15,13 @@ const logoutHandler = function() {
             // remove cookie
             document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     
+            // update user list after a user logout
+            let chatPayload = {};
+            chatPayload["label"] = "user-offline";
+            chatPayload["cookie_value"] = cookieVal;
+            console.log("logout chat sending: ", chatPayload);
+            chatSocket.send(JSON.stringify(chatPayload));
+
             // update user list after a user logout
             let uListPayload = {};
             uListPayload["label"] = "logout-update";

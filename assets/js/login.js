@@ -1,10 +1,12 @@
 import userListSocket from "./userList.js";
+import { chatSocket } from "./chat.js";
 let loginSocket = null;
 let nameInput = null;
 let pwInput = null;
 const navbar = document.querySelector(".navbar")
 const displayMsgDiv = document.createElement("div");
 const displayMsg = document.createElement("h2");
+const profile = document.querySelector(".profile")
 // const logout = document.querySelector("#logout")
 // console.log(userListSocket);
 document.addEventListener("DOMContentLoaded", function () {
@@ -29,6 +31,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // update user list after a user login
 
             if (resp.pass) {
+                let user = JSON.parse(resp.content) 
+                createProfile("p",user.userID)
+                createProfile("p",user.nickname)
+                createProfile("p",user.age)
+                createProfile("p",user.gender)
+                createProfile("p",user.firstname)
+                createProfile("p",user.lastname)
+                createProfile("p",user.email)
+                profile.style.display = "block"
+                console.log(user)
                 const splitScreen = document.querySelector(".container")
                 const signPage = document.querySelector("#userPopUpPOne")
                 signPage.style.display = "none"
@@ -56,6 +68,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 uListPayload["cookie_value"] = resp.cookie.sid;
                 console.log("login UL sending: ", uListPayload);
                 userListSocket.send(JSON.stringify(uListPayload));
+            
+                // user is online and avalible to chat
+                let chatPayloadObj = {};
+                chatPayloadObj["label"] = "user-online";
+                console.log(`login chat uid: ${resp.cookie.uid}`);
+                chatPayloadObj["sender_id"] = (resp.cookie.uid);
+                console.log("login chat: ", chatPayloadObj);
+                chatSocket.send(JSON.stringify(chatPayloadObj));
             } else {
                 // error msg
                 displayMsgDiv.classList.add("display-msg");
@@ -121,4 +141,10 @@ loginSubmit.setAttribute("type", "submit");
 loginSubmitDiv.append(loginSubmit);
 
 loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
+function createProfile(type, userAttr){
+    let newelement = document.createElement(type)
+    newelement.textContent= userAttr
+    newelement.classList ="Profile"+userAttr
+    profile.append(newelement)
+}
 export default loginForm;

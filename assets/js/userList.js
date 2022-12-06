@@ -1,3 +1,4 @@
+import { chatSocket } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
 const msgArea = document.querySelector(".msgArea")
@@ -19,8 +20,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
             // remove list item
             uList.textContent = "";
             // add new list item
-            for (const { nickname, status, userID, msgcheck, curuser } of resp.online_users) {
-                if (curuser == false) {
+            for (const { nickname, status, userID, msgcheck } of resp.online_users) {
+                    let curUserNickname = document.querySelector(".profile user.nickname")
                     const nicknameItem = document.createElement("li");
                     const chatBoxButton = document.createElement("button")
                     chatBoxButton.classList = "nameButtons"
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     chatBoxForm.addEventListener("submit", showChatHandler)
                     chatBoxButton.setAttribute("type", "submit")
                     chatBoxButton.value = userID
+                    
                     // chatBoxButton.type= "hidden"
 
                     chatBoxButton.addEventListener("click", function (e) {
@@ -58,6 +60,9 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     })
                     chatBoxForm.append(chatBoxButton)
                     chatBoxButton.textContent = `${nickname}`;
+                    if (chatBoxButton.textContent == curUserNickname){
+                        chatBoxButton.style.display = "none"
+                    }
                     if (status == false) {
                         nicknameItem.classList = "offline"
                     } else {
@@ -69,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     nicknameItem.append(chatBoxForm)
                     uList.append(nicknameItem);
 
-                }
+                
             }
 
             const closeChatBox = document.createElement("button")
@@ -120,6 +125,12 @@ const showChatHandler = function (e) {
     payloadObj["contactID"] = parseInt(usID)
     payloadObj["loadMsg"] = loadMsg
     userListSocket.send(JSON.stringify(payloadObj));
+
+    let chatPayloadObj = {};
+    chatPayloadObj["label"] = "createChat";
+    // chatPayloadObj["sender_id"] = 1 /* after login change to loggedUserID */
+    chatPayloadObj["receiver_id"] = parseInt(usID)
+    chatSocket.send(JSON.stringify(payloadObj));
 };
 // const chatBox = document.createElement("form");
 // chatBox.id = "chat-form"
