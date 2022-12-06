@@ -11,6 +11,7 @@ import (
 func main() {
 	forum.InitDB()
 	go forum.ProcessAndReplyUserList()
+	go forum.ProcessPayloadChan()
 	// forum.ClearUsers()
 	// forum.ClearPosts()
 	// forum.ClearComments()
