@@ -198,14 +198,14 @@ func (r *Room) run() {
 		case chatRoomPayload = <-r.intoRoom:
 			fmt.Printf("in room chatRoomPayload: %v", chatRoomPayload)
 			// send to both clients when room receives msg
-			r.clientA.send <- chatRoomPayload
+			// r.clientA.send <- chatRoomPayload
 			r.clientB.send <- chatRoomPayload
 		}
 	}
 }
 
-func (r *Room) loadPrevMsgs() {
-}
+// func (r *Room) loadPrevMsgs() {
+// }
 
 // -----------------------Client-------------------------------
 type Client struct {
@@ -275,13 +275,13 @@ func (c *Client) readPump() {
 			} else if chatPayload.Label == "createChat" { // can add to/from userlist.go
 				// find the right room
 				var findRoomName string
-				if chatPayload.SenderId < chatPayload.ReceiverId {
-					findRoomName = strconv.Itoa(chatPayload.SenderId) + "-and-" + strconv.Itoa(chatPayload.ReceiverId)
+				if c.userID < chatPayload.ReceiverId {
+					findRoomName = strconv.Itoa(c.userID) + "-and-" + strconv.Itoa(chatPayload.ReceiverId)
 				} else {
-					findRoomName = strconv.Itoa(chatPayload.ReceiverId) + "-and-" + strconv.Itoa(chatPayload.SenderId)
+					findRoomName = strconv.Itoa(chatPayload.ReceiverId) + "-and-" + strconv.Itoa(c.userID)
 				}
 				fmt.Printf("the right room name is: %s\n", findRoomName)
-				rightChatRoom := ChatHub.findRoom(findRoomName)
+				rightChatRoom := ChatHub.findRoom(findRoomName) // can find right room
 				fmt.Printf("the right room is: %v\n", rightChatRoom)
 
 				if rightChatRoom == nil {
@@ -331,6 +331,13 @@ func (c *Client) readPump() {
 
 			} else if chatPayload.Label == "chat" {
 				fmt.Printf("Sending chatPayload thru chan: %v\n", chatPayload)
+				var chatResponse WsChatPayload
+
+				chatResponse.Label = "chat"
+				chatResponse.Content = chatPayload.Content
+				chatResponse.SenderId = chatPayload.SenderId
+				chatResponse.ReceiverId = chatPayload.ReceiverId
+
 				// if chatPayload.Online {
 				// receiver online
 				// send msg into room
@@ -341,7 +348,7 @@ func (c *Client) readPump() {
 				// 	log.Fatal(err)
 				// }
 				receivingRoom := *(c.receiverRooms[chatPayload.ReceiverId])
-				receivingRoom.intoRoom <- chatPayload
+				receivingRoom.intoRoom <- chatResponse
 				// } else {
 				// receiver offline
 				// }

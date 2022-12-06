@@ -142,11 +142,11 @@ const showChatHandler = function (e) {
     payloadObj["loadMsg"] = loadMsg
     userListSocket.send(JSON.stringify(payloadObj));
 
-    // let chatPayloadObj = {};
-    // chatPayloadObj["label"] = "createChat";
-    // chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
-    // chatPayloadObj["receiver_id"] = parseInt(usID)
-    // chatSocket.send(JSON.stringify(chatPayloadObj));
+    let chatPayloadObj = {};
+    chatPayloadObj["label"] = "createChat";
+    chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
+    chatPayloadObj["receiver_id"] = parseInt(usID)
+    chatSocket.send(JSON.stringify(chatPayloadObj));
 };
 const SubChatHandler = function (e) {
     e.preventDefault();
@@ -163,7 +163,7 @@ const SubChatHandler = function (e) {
     chatPayloadObj["label"] = "chat";
     chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
     chatPayloadObj["receiver_id"] = parseInt(usID)
-    chatPayloadObj["message"]= chatInput.value
+    chatPayloadObj["content"]= chatInput.value
     chatInput.value= ""
     chatSocket.send(JSON.stringify(chatPayloadObj));
 
