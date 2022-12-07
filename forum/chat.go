@@ -60,7 +60,9 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 
 		if err == nil && chatPayload.Label == "chat" {
 			processMsg(chatPayload)
-			chatPayloadChan <- chatPayload
+			if userListWsMap[chatPayload.ReceiverId] != nil {
+				chatPayloadChan <- chatPayload
+			}
 		} else if err == nil && chatPayload.Label == "updateChat" {
 			// saving websocket to map
 			chatWsMap[chatPayload.SenderId] = conn
@@ -78,9 +80,9 @@ func ProcessAndReplyChat() {
 		responseChatPayload.UserID = receivedChatPayload.ReceiverId
 		responseChatPayload.ContactID = receivedChatPayload.SenderId
 		responseChatPayload.Content = receivedChatPayload.Content
-
 		receiverConn := chatWsMap[receivedChatPayload.ReceiverId]
 		err := receiverConn.WriteJSON(responseChatPayload)
+		updateUList()
 		if err != nil {
 			fmt.Println("failed to send message")
 		}

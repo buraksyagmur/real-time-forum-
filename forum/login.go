@@ -103,7 +103,7 @@ func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
 	for rows.Next() {
 		rows.Scan(&logUser.UserId, &logUser.Nickname, &logUser.Age, &logUser.Gender, &logUser.FirstName, &logUser.LastName, &logUser.Email, &hashDB, &logge)
 	}
-	fmt.Println(logUser)
+	
 	// // test hash
 	// hash, err := bcrypt.GenerateFromPassword([]byte(pw), 10)
 	// fmt.Printf("nicknameEmailDB: %s , hashDB: %s\n", nicknameEmailDB, hashDB)
@@ -116,7 +116,7 @@ func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
 	// Login failed
 	if err != nil {
 		// login failed
-		fmt.Println("Failed")
+		fmt.Println("Login Failed")
 		var failedResponse WsLoginResponse
 		failedResponse.Label = "login"
 		failedResponse.Content = "Please check your credentials"

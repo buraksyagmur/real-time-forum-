@@ -1,7 +1,7 @@
 let postSocket = null;
 const body = document.getElementsByTagName("BODY")[0]
 const DisplayPost = document.createElement("div")
-var commentPostId 
+var commentPostId
 let jsonFile
 document.addEventListener("DOMContentLoaded", function () {
     postSocket = new WebSocket("ws://localhost:8080/postWs/");
@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
     postSocket.onerror = (err) => console.log("Error!-postCreate", err);
     postSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
-        console.log({ resp });
         if (resp.label === "Greet") {
             jsonFile = JSON.parse(resp.content)
             if (jsonFile !== null) {
@@ -22,25 +21,20 @@ document.addEventListener("DOMContentLoaded", function () {
             createPost(jsonFile)
         }
         else if (resp.label === "Createcomment") {
-            console.log("label is now comment----------------------")
             jsonFile = JSON.parse(resp.content)
-            console.log("thats json",jsonFile, "and thats resp.content", resp.content)
             if (resp.Content !== null) {
                 const comment = document.querySelector(".comment")
-              let newCom= CreateComments(jsonFile,parseInt(commentPostId)-1)
-            //    comment.append(newCom)
-            comment.insertBefore(newCom, comment.children[1])
-               console.log("function now over")
+                let newCom = CreateComments(jsonFile, parseInt(commentPostId) - 1)
+                //    comment.append(newCom)
+                comment.insertBefore(newCom, comment.children[1])
             }
-        }else if (resp.label=== "showComment"){
-            console.log("----------------------------------------- label show")
-            jsonFile= JSON.parse(resp.content)
-            console.log("and new Json", jsonFile)
+        } else if (resp.label === "showComment") {
+            jsonFile = JSON.parse(resp.content)
         }
     }
 });
 function createPost(arr) {
-  
+
     document.querySelectorAll("#allPost").forEach(e => {
         e.remove();
     });
@@ -69,7 +63,6 @@ function createPost(arr) {
                     comment.removeChild(comment.firstChild)
                 }
             })
-            console.log("functions working***")
             let comments = CreateComments(jsonFile, i)
             let comForm = CreateCommentForm(titleButton.value)
             comment.append(clone, comments, comForm, closeComments)
@@ -115,7 +108,6 @@ function createPost(arr) {
 const PostHandler = function (e) {
     e.preventDefault();
     const formFields = new FormData(e.target);
-    console.log("form entries", formFields.entries())
     const payloadObj = Object.fromEntries(formFields.entries());
     payloadObj["label"] = "post";
     console.log("checking target", payloadObj)
@@ -166,7 +158,7 @@ CatInputOpt2.textContent = "Burak";
 CatInputOpt3.textContent = "David";
 CatInputOpt4.textContent = "Godfrey";
 CatOptionDiv.setAttribute("id", "category");
-CatOptionDiv.append(CatInputOpt1,CatInputOpt2,CatInputOpt3,CatInputOpt4)
+CatOptionDiv.append(CatInputOpt1, CatInputOpt2, CatInputOpt3, CatInputOpt4)
 const contLabelDiv = document.createElement('div');
 const contLabel = document.createElement('label');
 contLabel.textContent = "content:";
@@ -188,20 +180,15 @@ PostSubmitDiv.append(PostSubmit);
 PostForm.append(titleLabelDiv, titleInputDiv, CatDiv, CatOptionDiv, contLabelDiv, contInputDiv, PostSubmitDiv);
 const commentHandler = function (e) {
     e.preventDefault();
-    console.log("checking e", e.target[0])
-    // const formFields = new FormData(e.target);
-    // console.log("checking form", formFields)
-    // const payloadObj = Object.fromEntries((e.target[0].value).entries());
-    // const payloadObj =Object.create(Object.prototype)
-    const payloadObj = Object.create(Object.prototype)
-    const payloadObjCom = Object.create(Object.prototype)
+    const payloadObj = {}
+    const payloadObjCom = {}
     payloadObj["label"] = "Createcomment";
     payloadObj["postID"] = (parseInt(e.submitter.value) + 1) + ""
     payloadObjCom["comment"] = e.target[0].value
     let strCom = JSON.stringify(payloadObjCom)
     payloadObj["commentOfPost"] = strCom
     console.log("checking target", payloadObj)
-    commentPostId= payloadObj.postID
+    commentPostId = payloadObj.postID
     postSocket.send(JSON.stringify(payloadObj));
 };
 function CreateCommentForm(value) {
@@ -232,9 +219,7 @@ function CreateCommentForm(value) {
 
 const showcommentHandler = function (e) {
     e.preventDefault();
-    // const formFields = new FormData(e.target);
-    // const payloadObj = Object.fromEntries(formFields.entries());
-    const payloadObj = Object.create(Object.prototype)
+    const payloadObj = {}
     payloadObj["label"] = "showComment";
     payloadObj["postID"] = (parseInt(e.submitter.value) + 1) + ""
     payloadObj["commentOfPost"] = jsonFile[e.submitter.value].postinfo.commentOfPost
@@ -247,19 +232,15 @@ function CreateComments(arr, value) {
         e.remove();
     });
 
-    console.log(value, "func check", arr[value])
-    console.log(arr)
     if (arr[value].postinfo.commentOfPost === "null") {
         console.log("comment of post empty")
         return ""
 
     } else {
-        console.log()
         let comJson = JSON.parse(arr[value].postinfo.commentOfPost)
         const allComments = document.createElement("div")
         allComments.id = "allComments"
         for (let i = 0; i < comJson.length; i++) {
-            console.log("*****************************",comJson[i].comInfo.comment)
             const comDiv = document.createElement("div")
             const comContentDiv = document.createElement("div");
             const comUserIdDiv = document.createElement("div");
@@ -284,5 +265,5 @@ function CreateComments(arr, value) {
 }
 
 // }
-export default {PostForm,DisplayPost};
+export default { PostForm, DisplayPost };
 

@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const resp = JSON.parse(msg.data);
         const screen = document.querySelector(".blankScreen")
         if (resp.label === "greet") {
-            console.log(resp.content);
             navbar.children[0].style.display = "block"
             navbar.children[1].style.display = "block"
             navbar.children[2].style.display = "none"
@@ -41,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 createProfile("p",user.lastname, "lastname")
                 createProfile("p",user.email, "email")
                 profile.style.display = "block"
-                console.log(user)
                 const splitScreen = document.querySelector(".container")
                 const signPage = document.querySelector("#userPopUpPOne")
                 signPage.style.display = "none"
@@ -94,14 +92,11 @@ const loginHandler = function (e) {
     const formFields = new FormData(e.target);
     const payloadObj = Object.fromEntries(formFields.entries());
     payloadObj["label"] = "login";
-    console.log({ payloadObj });
     loginSocket.send(JSON.stringify(payloadObj));
     displayMsg.textContent = "";
 };
 
 const updateChat = function () {
-    console.log("update chat function")
-    // e.preventDefault();
    let userID = document.querySelector(".Profileid")
     let chatpayloadObj = {}
     chatpayloadObj["label"] = "updateChat";

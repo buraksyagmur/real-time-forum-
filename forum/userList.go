@@ -32,7 +32,6 @@ type userStatus struct {
 	LoggedIn   bool   `json:"status"`
 	UserID     int    `json:"userID"`
 	MsgCheck   bool   `json:"msgcheck"`
-	CurUser    bool   `json:"curuser"`
 	withoutlet bool
 }
 
@@ -65,7 +64,6 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 		err := conn.ReadJSON(&userListPayload)
 		// fmt.Println("Label", userListPayload.Label)
 		if err == nil && userListPayload.Label == "createChat" {
-			fmt.Println("----contact", userListPayload.ContactID, "----userID", userListPayload.UserID)
 			var creatingChatResponse WsUserListResponse
 			// creatingChatResponse.Label= "using"
 			creatingChatResponse.Label = "chatBox"
@@ -75,7 +73,6 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
 			conn.WriteJSON(creatingChatResponse)
 		} else if err == nil {
-			fmt.Printf("Sending userListPayload thru chan: %v\n", userListPayload)
 			userListPayload.Conn = *conn
 			userListPayloadChan <- userListPayload
 		}
@@ -139,7 +136,6 @@ func updateUList() {
 	}
 	defer rows.Close()
 	var tempUserStatus []userStatus
-	var userStatusDBArr []userStatus
 	for rows.Next() {
 		var nicknameDB string
 		var loggedInDB bool
@@ -151,7 +147,6 @@ func updateUList() {
 			LoggedIn   bool   `json:"status"`
 			UserID     int    `json:"userID"`
 			MsgCheck   bool   `json:"msgcheck"`
-			CurUser    bool   `json:"curuser"`
 			withoutlet bool
 		}{
 			nicknameDB,
@@ -159,21 +154,21 @@ func updateUList() {
 			UserIDDB,
 			msgcheck,
 			false,
-			false,
 		}
 		tempUserStatus = append(tempUserStatus, userStatusElement)
 	}
-	topOfTheList := sortConversations()
+	userListResponse.OnlineUsers = UserListSort(tempUserStatus)
+	broadcast(userListResponse)
+}
 
+func UserListSort(tempUserStatus []userStatus) []userStatus {
+	var userStatusDBArr []userStatus
+	topOfTheList := sortConversations()
 	var letter []userStatus
 	var notLetter []userStatus
 	var msgHistory []userStatus
 	for i := 0; i < len(tempUserStatus); i++ {
 		for k := 0; k < len(topOfTheList); k++ {
-			if tempUserStatus[i].UserID == loggedInUid {
-				tempUserStatus[i].CurUser = true
-				continue
-			}
 			if tempUserStatus[i].UserID == topOfTheList[k] {
 				tempUserStatus[i].MsgCheck = true
 				tempUserStatus[k], tempUserStatus[i] = tempUserStatus[i], tempUserStatus[k]
@@ -220,8 +215,7 @@ loop2:
 	userStatusDBArr = append(userStatusDBArr, notLetter...)
 
 	fmt.Printf("UL nicknames: %v\n", userStatusDBArr)
-	userListResponse.OnlineUsers = userStatusDBArr
-	broadcast(userListResponse)
+	return userStatusDBArr
 }
 
 func broadcast(userListResponse WsUserListResponse) {
@@ -247,7 +241,6 @@ func broadcast(userListResponse WsUserListResponse) {
 func displayChatInfo(sendID, recID int) []MessageArray {
 	var allMsg MessageArray
 	var arrMsgArray []MessageArray
-	fmt.Println(PageMsgMap)
 	rows, err := db.Query(
 		`SELECT * 
 	FROM messages 
@@ -265,17 +258,14 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 		var msgID int
 		rows.Scan(&msgID, &(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
 		oneMsg.MessageTime = msgTime.String()
-		if oneMsg.SenderId == loggedInUid {
+		if oneMsg.SenderId == sendID {
 			oneMsg.Right = true
 		}
-		fmt.Println(msgID, "INDEX")
 		allMsg.Index = msgID
 		allMsg.Msg = oneMsg
 		arrMsgArray = append(arrMsgArray, allMsg)
 		PageMsgMap[sendID] = msgID
 	}
-	fmt.Println("chatinfo:", arrMsgArray)
-
 	return arrMsgArray
 }
 

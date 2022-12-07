@@ -90,7 +90,7 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	fmt.Println("Connected")
+	fmt.Println("Post Connected")
 	var firstResponse WsPostResponse
 	firstResponse.Label = "Greet"
 	allPosts := findAllPosts()
@@ -100,10 +100,8 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	firstResponse.Content = string(firstJson)
 	conn.WriteJSON(firstResponse)
-	fmt.Println(lastCon)
 	lastCon= conn
 	postComWsArr = append(postComWsArr, conn)
-	fmt.Println(lastCon)
 	ListenToPostWs()
 	
 }
@@ -120,13 +118,9 @@ func ListenToPostWs() {
 			if postPayload.Label == "post" {
 				fmt.Printf("payload received: %v\n", postPayload)
 				ProcessAndReplyPost(lastCon, postPayload)
-			} else if postPayload.Label == "Createcomment" {
-
-				fmt.Println("THIS IS PAYLOAD ----------------", postPayload)
+			} else if postPayload.Label == "Createcomment" {		
 				ProcessAndReplyPost(lastCon, postPayload)
 			} else if postPayload.Label == "showComment" {
-
-				fmt.Println("THIS IS PAYLOAD ----------------", postPayload)
 				ProcessAndReplyPost(lastCon, postPayload)
 			}
 		}
@@ -135,7 +129,6 @@ func ListenToPostWs() {
 
 func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 	if postPayload.Label == "post" {
-		fmt.Println("LABEL WORK--------------------------------")
 		fmt.Printf("post - title:%s, cat:%s, Content:%s", postPayload.Title, postPayload.Category, postPayload.Content)
 
 		rows, err := db.Prepare("INSERT INTO posts(title,content,category,postTime) VALUES(?,?,?,?);")
@@ -145,7 +138,6 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		defer rows.Close()
 		rows.Exec(postPayload.Title, postPayload.Content, postPayload.Category, time.Now())
 		fmt.Println("Post saved successfully")
-
 		var successResponse WsPostResponse
 		successResponse.Label = "post"
 		allPosts := findAllPosts()
@@ -159,7 +151,6 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		broadcastPost(successResponse)
 
 	} else if postPayload.Label == "Createcomment" {
-		fmt.Println("commmentAllDetails", postPayload)
 		rows, err := db.Prepare("INSERT INTO comments (content, postID, comTime) VALUES (?,?,?);")
 		if err != nil {
 			log.Fatal(err)
@@ -182,8 +173,6 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		// conn.WriteJSON(successResponse)
 		broadcastPost(successResponse)
 	} else if postPayload.Label == "showComment" {
-		fmt.Println("****show all comment*", postPayload)
-
 		var successResponse WsPostResponse
 		successResponse.Label = "showComment"
 		allPosts := findAllPosts()
@@ -192,7 +181,6 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 			log.Fatal(err)
 		}
 		successResponse.Content = string(postJson)
-		fmt.Println(successResponse.Content, "allcomments")
 		successResponse.Pass = true
 		// conn.WriteJSON(successResponse)
 		broadcastPost(successResponse)

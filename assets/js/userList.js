@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
     userListSocket.onerror = (err) => console.log("user list ws Error!");
     userListSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
-        console.log({ resp });
         if (resp.label === "update") {
             console.log(resp.online_users);
             const uList = document.querySelector(".user-list");
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
             uList.textContent = "";
             // add new list item
             for (const { nickname, status, userID, msgcheck } of resp.online_users) {
-                let curUserNickname = document.querySelector(".Profileid")
                 const nicknameItem = document.createElement("li");
                 const chatBoxButton = document.createElement("button")
                 chatBoxButton.classList = "nameButtons"
@@ -29,16 +27,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatBoxForm.addEventListener("submit", showChatHandler)
                 chatBoxButton.setAttribute("type", "submit")
                 chatBoxButton.value = userID
-
-                // chatBoxButton.type= "hidden"
-
                 chatBoxButton.addEventListener("click", function (e) {
                     if (open == false) {
                         open = true
                         usID = chatBoxButton.value
                         chatBox.style.display = "block"
                         window.onclick = function (event) {
-                            console.log(event.target.className)
                             open = false
                             if (event.target.className == "closeChat") {
                                 chatBox.style.display = "none"
@@ -59,9 +53,11 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
                 })
                 chatBoxForm.append(chatBoxButton)
+                let userNick = document.querySelector(".Profilenickname")
                 chatBoxButton.textContent = `${nickname}`;
-                if (chatBoxButton.textContent == curUserNickname) {
-                    chatBoxButton.style.display = "none"
+                if (chatBoxButton.textContent == userNick.textContent) {
+              
+                    nicknameItem.style.display = "none"
                 }
                 if (status == false) {
                     nicknameItem.classList = "offline"
@@ -76,7 +72,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
 
             }
-
             const closeChatBox = document.createElement("button")
             closeChatBox.textContent = "End Chat"
             closeChatBox.classList = "closeChat"
@@ -94,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
-                console.log("check content:", js)
                 for (let i = 0; i < js.length; i++) {
                     let singleMsg = document.createElement("div")
                     let msgContent = document.createElement("p")
@@ -133,15 +127,11 @@ const showChatHandler = function (e) {
     e.preventDefault();
     let payloadObj = {}
     let profileid = document.querySelector(".Profileid")
-    console.log(profileid.textContent, "---textcontent")
-    console.log("usID =", usID)
-    console.log("loadmsg", loadMsg)
     payloadObj["label"] = "createChat";
     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
     payloadObj["loadMsg"] = loadMsg
     userListSocket.send(JSON.stringify(payloadObj));
-
     let chatPayloadObj = {};
     chatPayloadObj["label"] = "createChat";
     chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
@@ -155,19 +145,22 @@ const SubChatHandler = function (e) {
     let chatInput = document.querySelector(".chatInput")
     let msgrow = document.createElement("div")
     let msgtext = document.createElement("p")
-    msgrow.className= "msg-row2"
-    msgtext.className= "msg-text"
-    msgtext.textContent= chatInput.value
+    msgrow.className = "msg-row2"
+    msgtext.className = "msg-text"
+    msgtext.textContent = chatInput.value
     msgrow.append(msgtext)
     msgArea.append(msgrow)
+    let userlist = document.querySelector(".user-list")
+    while (userlist.firstChild){
+        console.log("userlist,",userlist.length)
+        userlist.removeChild(userlist.firstChild)
+    }
     chatPayloadObj["label"] = "chat";
     chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
     chatPayloadObj["receiver_id"] = parseInt(usID)
-    chatPayloadObj["content"]= chatInput.value
-    chatInput.value= ""
+    chatPayloadObj["content"] = chatInput.value
+    chatInput.value = ""
     chatSocket.send(JSON.stringify(chatPayloadObj));
 
 }
-// const chatBox = document.createElement("form");
-// chatBox.id = "chat-form"
 export default userListSocket;
