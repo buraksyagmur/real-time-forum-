@@ -1,34 +1,44 @@
 .container {
     top: 0px;
-    right: 0vh;
+    right: 0vw;
     z-index: -0;
     width: 50%;
-    height: 96vh;
+    height: 100vh;
     float: right;
     display: none;
     color: #fff;
     position: sticky;
     align-items: center;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     background-image: linear-gradient(to right, #1c00f2, #453f96);
     /* overflow: hidden; */
 }
 
+.container h1 {
+    font-size: 220%;
+    text-align: center;
+    background-clip: text;
+    margin-block-start: 1%;
+    color: rgb(8, 10, 9);
+    text-shadow: rgba(255, 255, 255, 0.9) 0px 3px 3px;
+}
+
 .hana {
-    /* text-align:justify */
-    margin-top: 0;
-    padding-bottom: 5%;
+    margin-top: 0%;
+    padding-bottom: 1px;
     text-align: justify;
     align-items: center;
+    position: relative;
 }
 
 /* this is the parent box for the chat & freind list */
 .chatbox {
-    width: 60%;
+    width: 90%;
     display: flex;
     min-width: 250px;
     background: #b7babf;
+    align-self: center;
     /* overflow: hidden; */
 }
 
@@ -38,7 +48,6 @@
     flex: 1;
     display: none;
     background: #66d1d8;
-    /* overflow-y: scroll; */
 }
 
 
@@ -53,32 +62,6 @@
     overflow: scroll;
     /* font: 24px/36px sans-serif; */
 }
-
-/* width */
-/* .msgArea::-webkit-scrollbar {
-    width: 20px;
-} */
-
-/* Handle 
-.msgArea::-webkit-scrollbar-thumb {
-    background: yellowgreen;
-}
-
-Track
-.msgArea::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px grey;
-    border-radius: 10px;
-}
-
-.msgArea::-webkit-resizer {
-    background: rgb(134, 112, 216);
-}
-
-Handle on hover
-.msgArea::-webkit-scrollbar-thumb:hover {
-    background: #b30000;
-} */
-
 
 
 .msg-row {
@@ -131,6 +114,11 @@ Handle on hover
     color: rgb(95, 125, 167);
 }
 
+.closeChat {
+    position: relative;
+    left: 80%;
+}
+
 /* ----------------------------------------------------------Friend List------------------------------- */
 .col-2 {
     flex-basis: 250px;
@@ -141,6 +129,7 @@ Handle on hover
     text-align: center;
     margin-top: 40px;
     font-weight: 400;
+    color: #453f96
 }
 
 .col-2 ul {
