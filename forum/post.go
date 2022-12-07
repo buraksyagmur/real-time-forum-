@@ -36,6 +36,7 @@ type WsPostPayload struct {
 	PostTime      string `json:"PostTime"`
 	PostID        string `json:"postID"`
 	CommentOfPost string `json:"commentOfPost"`
+	Conn          websocket.Conn
 }
 
 type WsComPayload struct {
@@ -44,6 +45,9 @@ type WsComPayload struct {
 	Comment string `json:"comment"`
 	ComTime string `json:"comTime"`
 }
+
+var postComWsArr []*websocket.Conn
+var lastCon *websocket.Conn
 
 func findAllPosts() []Ind {
 	var pos []WsPostPayload
@@ -96,28 +100,34 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	firstResponse.Content = string(firstJson)
 	conn.WriteJSON(firstResponse)
-	listenToPostWs(conn)
+	fmt.Println(lastCon)
+	lastCon= conn
+	postComWsArr = append(postComWsArr, conn)
+	fmt.Println(lastCon)
+	ListenToPostWs()
+	
 }
 
-func listenToPostWs(conn *websocket.Conn) {
+func ListenToPostWs() {
 	defer func() {
 		fmt.Println("Post Ws Conn Closed")
 	}()
 	var postPayload WsPostPayload
 	for {
-		err := conn.ReadJSON(&postPayload)
+		err := lastCon.ReadJSON(&postPayload)
 		if err == nil {
+
 			if postPayload.Label == "post" {
 				fmt.Printf("payload received: %v\n", postPayload)
-				ProcessAndReplyPost(conn, postPayload)
+				ProcessAndReplyPost(lastCon, postPayload)
 			} else if postPayload.Label == "Createcomment" {
 
 				fmt.Println("THIS IS PAYLOAD ----------------", postPayload)
-				ProcessAndReplyPost(conn, postPayload)
+				ProcessAndReplyPost(lastCon, postPayload)
 			} else if postPayload.Label == "showComment" {
 
 				fmt.Println("THIS IS PAYLOAD ----------------", postPayload)
-				ProcessAndReplyPost(conn, postPayload)
+				ProcessAndReplyPost(lastCon, postPayload)
 			}
 		}
 	}
@@ -145,7 +155,8 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		}
 		successResponse.Content = string(postJson)
 		successResponse.Pass = true
-		conn.WriteJSON(successResponse)
+		// conn.WriteJSON(successResponse)
+		broadcastPost(successResponse)
 
 	} else if postPayload.Label == "Createcomment" {
 		fmt.Println("commmentAllDetails", postPayload)
@@ -168,7 +179,8 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		}
 		successResponse.Content = string(postJson)
 		successResponse.Pass = true
-		conn.WriteJSON(successResponse)
+		// conn.WriteJSON(successResponse)
+		broadcastPost(successResponse)
 	} else if postPayload.Label == "showComment" {
 		fmt.Println("****show all comment*", postPayload)
 
@@ -182,7 +194,8 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		successResponse.Content = string(postJson)
 		fmt.Println(successResponse.Content, "allcomments")
 		successResponse.Pass = true
-		conn.WriteJSON(successResponse)
+		// conn.WriteJSON(successResponse)
+		broadcastPost(successResponse)
 	}
 }
 
@@ -218,4 +231,10 @@ func findAllComments(postID int) string {
 		log.Fatal(err)
 	}
 	return string(j)
+}
+
+func broadcastPost(response WsPostResponse) {
+	for _, postConns := range postComWsArr {
+		postConns.WriteJSON(response)
+	}
 }
