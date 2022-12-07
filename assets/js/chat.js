@@ -1,6 +1,7 @@
 export const chatSocket = new WebSocket("ws://localhost:8080/chatWs/");
 
 export const chatForm = document.createElement("form");
+const msgArea = document.querySelector(".msgArea")
 chatForm.id = "chat-form";
 chatForm.addEventListener("submit", function(e) {
     e.preventDefault();
@@ -29,8 +30,17 @@ document.addEventListener("DOMContentLoaded", function(e) {
         console.log({resp});
         if (resp.label === "created_room") {
             console.log(`chat room created between ${resp.sender_id} and ${resp.receiver_id}`);
-        } else if (resp.label === "chat") {
-            console.log(resp.content);
+        } else if (resp.label === "msgIncoming") {
+            console.log("recievedChatMsg")
+            console.log(resp);
+            let msgrow = document.createElement("div")
+            let msgtext = document.createElement("p")
+            msgrow.className= "msg-row"
+            msgtext.className= "msg-text"
+            msgtext.textContent= resp.content
+            msgrow.append(msgtext)
+            msgArea.append(msgrow)
+
         }
         //  else if (resp.label === "chat") {
          

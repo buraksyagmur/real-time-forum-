@@ -11,7 +11,7 @@ import (
 func main() {
 	forum.InitDB()
 	go forum.ProcessAndReplyUserList()
-	
+	go forum.ProcessAndReplyChat()
 	// ChatHub := forum.NewHub()
 	// go ChatHub.Run()
 	// go forum.ChatHub.Run()

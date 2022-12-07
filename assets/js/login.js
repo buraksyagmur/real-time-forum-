@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (resp.pass) {
                 let user = JSON.parse(resp.content) 
                 createProfile("p",user.userID, "id")
+                updateChat()
                 createProfile("p",user.nickname, "nickname")
                 createProfile("p",user.age, "age")
                 createProfile("p",user.gender, "gender")
@@ -95,10 +96,18 @@ const loginHandler = function (e) {
     payloadObj["label"] = "login";
     console.log({ payloadObj });
     loginSocket.send(JSON.stringify(payloadObj));
-
     displayMsg.textContent = "";
 };
 
+const updateChat = function () {
+    console.log("update chat function")
+    // e.preventDefault();
+   let userID = document.querySelector(".Profileid")
+    let chatpayloadObj = {}
+    chatpayloadObj["label"] = "updateChat";
+    chatpayloadObj["sender_id"] =parseInt(userID.textContent) 
+    chatSocket.send(JSON.stringify(chatpayloadObj));
+};
 
 const loginForm = document.createElement("form");
 loginForm.className = "formPage"
