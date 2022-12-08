@@ -65,7 +65,8 @@
 
 
 .msg-row {
-    display: flex;
+    /* display: flex; */
+    display: grid;
     justify-content: flex-start;
     /* margin: 40px;  */
 
@@ -94,7 +95,8 @@
 
 /* is the actual row of the user sent text */
 .msg-row2 {
-    display: flex;
+    /* display: flex; */
+   display: grid;
     justify-content: flex-end;
 }
 

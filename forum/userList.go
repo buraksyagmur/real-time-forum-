@@ -32,6 +32,7 @@ type userStatus struct {
 	LoggedIn   bool   `json:"status"`
 	UserID     int    `json:"userID"`
 	MsgCheck   bool   `json:"msgcheck"`
+	MsgSeen    bool   `json:"msgseen"`
 	withoutlet bool
 }
 
@@ -130,7 +131,7 @@ func updateUList() {
 	var userListResponse WsUserListResponse
 	userListResponse.Label = "update"
 
-	rows, err := db.Query(`SELECT nickname, loggedIn, userID   FROM users`)
+	rows, err := db.Query(`SELECT nickname, loggedIn, userID,seen   FROM users`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -141,18 +142,21 @@ func updateUList() {
 		var loggedInDB bool
 		var UserIDDB int
 		var msgcheck bool
-		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB)
+		var msgSeen bool
+		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB, &msgSeen)
 		userStatusElement := struct {
 			Nickname   string `json:"nickname"`
 			LoggedIn   bool   `json:"status"`
 			UserID     int    `json:"userID"`
 			MsgCheck   bool   `json:"msgcheck"`
+			MsgSeen    bool   `json:"msgseen"`
 			withoutlet bool
 		}{
 			nicknameDB,
 			loggedInDB,
 			UserIDDB,
 			msgcheck,
+			msgSeen,
 			false,
 		}
 		tempUserStatus = append(tempUserStatus, userStatusElement)
@@ -258,6 +262,12 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 		var msgID int
 		rows.Scan(&msgID, &(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
 		oneMsg.MessageTime = msgTime.String()
+		rows2, err := db.Prepare("UPDATE users SET seen = ? WHERE msgID = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows2.Close()
+		rows2.Exec(true, msgID)
 		if oneMsg.SenderId == sendID {
 			oneMsg.Right = true
 		}

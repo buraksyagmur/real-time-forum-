@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 let userNick = document.querySelector(".Profilenickname")
                 chatBoxButton.textContent = `${nickname}`;
                 if (chatBoxButton.textContent == userNick.textContent) {
-              
+
                     nicknameItem.style.display = "none"
                 }
                 if (status == false) {
@@ -92,19 +92,25 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 for (let i = 0; i < js.length; i++) {
                     let singleMsg = document.createElement("div")
                     let msgContent = document.createElement("p")
+                    let timeOfMsg = document.createElement("p")
                     msgContent.classList = "msg-text"
-                    msgContent.textContent = js[i].msgInfo.content
+                    timeOfMsg.classList= "timeofmsg"
+                    timeOfMsg.textContent= js[i].msgInfo.message_time
+                    timeOfMsg.style.fontSize= "9px"
+                    msgContent.textContent = js[i].msgInfo.content 
                     if (js[i].msgInfo.right_side == true) {
                         singleMsg.classList = "msg-row2"
                     } else {
                         singleMsg.classList = "msg-row"
                     }
                     singleMsg.append(msgContent)
+                    singleMsg.append(timeOfMsg)
                     msgArea.append(singleMsg)
 
 
                 }
-                if (chatBox.lastChild.lastChild.nodeType != 1) {
+
+                if (document.querySelector(".chatInput") == null) {
                     const chatInput = document.createElement("input")
                     chatInput.setAttribute("type", "text")
                     const chatForm = document.createElement("form")
@@ -151,8 +157,8 @@ const SubChatHandler = function (e) {
     msgrow.append(msgtext)
     msgArea.append(msgrow)
     let userlist = document.querySelector(".user-list")
-    while (userlist.firstChild){
-        console.log("userlist,",userlist.length)
+    while (userlist.firstChild) {
+        console.log("userlist,", userlist.length)
         userlist.removeChild(userlist.firstChild)
     }
     chatPayloadObj["label"] = "chat";
