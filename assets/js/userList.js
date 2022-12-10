@@ -86,14 +86,14 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 // loadBut.textContent = "Load 10 more msg"
                 // msgArea.append(loadBut)
                 // loadMsg = true
-                // msgArea.addEventListener("scroll", function(e) {
-                //     console.log("scrolled");
-                //     if (msgArea.scrollTop <= 30) {
-                //         console.log(`msgArea.scrollTop = ${msgArea.scrollTop} reload msg when value <= 30 `);
-                //         loadMsg = true
-                //         loadPrevMsgsHandler();
-                //     }
-                // });         
+                msgArea.addEventListener("scroll", function(e) {
+                    console.log("scrolled");
+                    if (msgArea.scrollTop <= 30) {
+                        console.log(`msgArea.scrollTop = ${msgArea.scrollTop} reload msg when value <= 30 `);
+                        loadMsg = true
+                        loadPrevMsgsHandler(e);
+                    }
+                });         
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
@@ -130,15 +130,16 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
     }
 })
-// const loadPrevMsgsHandler = function(e) {
-    // e.preventDefault();
-//     let payloadObj = {};
-//     payloadObj["label"] = "createChat";
-//     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
-//     payloadObj["contactID"] = parseInt(usID)
-//     payloadObj["loadMsg"] = loadMsg
-//     userListSocket.send(JSON.stringify(payloadObj));
-// };
+const loadPrevMsgsHandler = function(e) {
+    e.preventDefault();
+    let payloadObj = {};
+    let profileid = document.querySelector(".Profileid")
+    payloadObj["label"] = "createChat";
+    payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
+    payloadObj["contactID"] = parseInt(usID)
+    payloadObj["loadMsg"] = loadMsg
+    userListSocket.send(JSON.stringify(payloadObj));
+};
 
 const showChatHandler = function (e) {
     e.preventDefault();
