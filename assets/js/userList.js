@@ -80,12 +80,20 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
         if (resp.label == "chatBox") {
             if (msgArea.firstElementChild == null) {
-                const loadBut = document.createElement("button")
-                loadBut.classList = "loadMsg"
-                loadBut.addEventListener("click", showChatHandler)
-                loadBut.textContent = "Load 10 more msg"
-                msgArea.append(loadBut)
-                loadMsg = true
+                // const loadBut = document.createElement("button")
+                // loadBut.classList = "loadMsg"
+                // loadBut.addEventListener("click", showChatHandler)
+                // loadBut.textContent = "Load 10 more msg"
+                // msgArea.append(loadBut)
+                // loadMsg = true
+                // msgArea.addEventListener("scroll", function(e) {
+                //     console.log("scrolled");
+                //     if (msgArea.scrollTop <= 30) {
+                //         console.log(`msgArea.scrollTop = ${msgArea.scrollTop} reload msg when value <= 30 `);
+                //         loadMsg = true
+                //         loadPrevMsgsHandler();
+                //     }
+                // });         
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
@@ -122,6 +130,15 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
     }
 })
+// const loadPrevMsgsHandler = function(e) {
+    // e.preventDefault();
+//     let payloadObj = {};
+//     payloadObj["label"] = "createChat";
+//     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
+//     payloadObj["contactID"] = parseInt(usID)
+//     payloadObj["loadMsg"] = loadMsg
+//     userListSocket.send(JSON.stringify(payloadObj));
+// };
 
 const showChatHandler = function (e) {
     e.preventDefault();
@@ -131,6 +148,7 @@ const showChatHandler = function (e) {
     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
     payloadObj["loadMsg"] = loadMsg
+    // payloadObj["loadMsg"] = true
     userListSocket.send(JSON.stringify(payloadObj));
     let chatPayloadObj = {};
     chatPayloadObj["label"] = "createChat";
