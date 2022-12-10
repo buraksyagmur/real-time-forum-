@@ -86,13 +86,19 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 // loadBut.textContent = "Load 10 more msg"
                 // msgArea.append(loadBut)
                 // loadMsg = true
-                msgArea.addEventListener("scroll", function(e) {
-                    console.log("scrolled");
-                    if (msgArea.scrollTop <= 30) {
-                        console.log(`msgArea.scrollTop = ${msgArea.scrollTop} reload msg when value <= 30 `);
-                        loadMsg = true
-                        loadPrevMsgsHandler(e);
+                let prevScrollTop = 0;
+                msgArea.addEventListener("scroll", function(e) { 
+                    if (prevScrollTop < msgArea.scrollTop) {
+                        console.log("scrolling down");
+                    } else if (prevScrollTop > msgArea.scrollTop) {
+                        console.log("scrolling up");
+                        if (msgArea.scrollTop === 0) {
+                            console.log(`msgArea.scrollTop = ${msgArea.scrollTop} reload msg when value === 0 `);
+                            loadMsg = true
+                            loadPrevMsgsHandler(e);
+                        }
                     }
+                    prevScrollTop = msgArea.scrollTop; 
                 });         
             }
             let js = JSON.parse(resp.content)
