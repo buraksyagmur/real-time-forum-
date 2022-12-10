@@ -1,3 +1,4 @@
+import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
 import { chatSocket } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
@@ -5,6 +6,7 @@ const msgArea = document.querySelector(".msgArea")
 let usID
 let open = false
 let loadMsg = false
+
 document.addEventListener("DOMContentLoaded", function (e) {
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
     console.log("JS attempt to connect to user list");
@@ -87,7 +89,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 // msgArea.append(loadBut)
                 // loadMsg = true
                 let prevScrollTop = 0;
-                msgArea.addEventListener("scroll", function(e) { 
+                msgArea.addEventListener("scroll", throttle(function(e) {
+                // msgArea.addEventListener("scroll", function(e) { 
                     if (prevScrollTop < msgArea.scrollTop) {
                         console.log("scrolling down");
                     } else if (prevScrollTop > msgArea.scrollTop) {
@@ -99,7 +102,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
                         }
                     }
                     prevScrollTop = msgArea.scrollTop; 
-                });         
+                // })
+                }),1000);         
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
