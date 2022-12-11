@@ -96,7 +96,7 @@
 /* is the actual row of the user sent text */
 .msg-row2 {
     /* display: flex; */
-   display: grid;
+    display: grid;
     justify-content: flex-end;
 }
 
