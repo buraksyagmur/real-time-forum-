@@ -1,4 +1,4 @@
-import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
+// import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
 import { chatSocket } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
@@ -6,6 +6,16 @@ const msgArea = document.querySelector(".msgArea")
 let usID
 let open = false
 let loadMsg = false
+
+function throttle(fn, wait) {
+  let time = Date.now();
+  return function() {
+    if (time + wait < Date.now()) {
+      fn();
+      time = Date.now();
+    }
+  }
+}
 
 document.addEventListener("DOMContentLoaded", function (e) {
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
@@ -82,28 +92,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
         if (resp.label == "chatBox") {
             if (msgArea.firstElementChild == null) {
-                // const loadBut = document.createElement("button")
-                // loadBut.classList = "loadMsg"
-                // loadBut.addEventListener("click", showChatHandler)
-                // loadBut.textContent = "Load 10 more msg"
-                // msgArea.append(loadBut)
-                // loadMsg = true
-                let prevScrollTop = 0;
-                msgArea.addEventListener("scroll", throttle(function(e) {
-                // msgArea.addEventListener("scroll", function(e) { 
-                    if (prevScrollTop < msgArea.scrollTop) {
-                        console.log("scrolling down");
-                    } else if (prevScrollTop > msgArea.scrollTop) {
-                        console.log("scrolling up");
-                        if (msgArea.scrollTop === 0) {
-                            console.log(`msgArea.scrollTop = ${msgArea.scrollTop} reload msg when value === 0 `);
-                            loadMsg = true
-                            loadPrevMsgsHandler(e);
-                        }
-                    }
-                    prevScrollTop = msgArea.scrollTop; 
-                // })
-                }),1000);         
+                msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 1000)); 
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
@@ -119,8 +108,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     }
                     singleMsg.append(msgContent)
                     msgArea.append(singleMsg)
-
-
                 }
                 if (chatBox.lastChild.lastChild.nodeType != 1) {
                     const chatInput = document.createElement("input")
@@ -135,13 +122,31 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     chatForm.append(chatInput, submitChat)
                     chatBox.append(chatForm)
                 }
-
             }
         }
     }
 })
-const loadPrevMsgsHandler = function(e) {
-    e.preventDefault();
+let prevScrollTop = 0;
+const loadMsgCallback = function() {
+    return function() {
+         // msgArea.addEventListener("scroll", function(e) {
+        // console.log("scrolling");
+        // console.log(`msgArea.scrollTop = ${msgArea.scrollTop} load msg when value === 0 `);
+        if (prevScrollTop < msgArea.scrollTop) {
+            console.log("scrolling down");
+        } else if (prevScrollTop > msgArea.scrollTop) {
+            console.log("scrolling up");
+            if (msgArea.scrollTop <= 2) {
+                // console.log(`Loading msg ... msgArea.scrollTop = ${msgArea.scrollTop} load msg when value <= 20 `);
+                loadMsg = true
+                loadPrevMsgsHandler();
+            }
+        }
+        prevScrollTop = msgArea.scrollTop; 
+    }
+}
+
+const loadPrevMsgsHandler = function() {
     let payloadObj = {};
     let profileid = document.querySelector(".Profileid")
     payloadObj["label"] = "createChat";
