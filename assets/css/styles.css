@@ -36,26 +36,42 @@ body {
 }
 
 .blankScreen {
-    background: rgb(111, 110, 110);
+
+    background-color: rgb(111, 110, 110);
+    background-image: url("/assets/images/PnyGaloping.gif");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-blend-mode: color-burn;
     transition: background 0.3s ease-out;
 }
 
 .blankScreen:hover {
     background: rgb(25, 25, 25);
+    background-image: url("/assets/images/Constalation2.gif");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-blend-mode: color-burn;
 }
 
 .blankScreen h1 {
     font-size: 450%;
     text-align: center;
     background-clip: text;
-    margin-block-start: 18%;
+    margin-block-start: 2%;
     color: rgb(21, 183, 75);
     text-shadow: rgba(255, 255, 255, 0.9) 0px 3px 3px;
 }
 
+.chating-animation {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /* background-blend-mode: lighten; */
+}
+
 .blankScreen h2 {
     font-size: 117%;
-    padding-top: 15%;
+    padding-top: 0%;
     text-align: center;
 }
 
@@ -88,18 +104,6 @@ li a:hover:not(.active) {
     transition: 0.7s;
     border-radius: 20%;
     background-color: #fff;
-}
-
-/* THIS FILD IS NOT READY FOR USE YET */
-.comment {
-    top: 0;
-    left: 0;
-    z-index: 1;
-    height: 0%;
-    width: 100%;
-    transition: 0.5s;
-    overflow-y: hidden;
-    background-color: rgb(140, 9, 24);
 }
 
 #membershipButton {
@@ -142,22 +146,6 @@ li a:hover:not(.active) {
     margin-bottom: 0;
 }
 
-.postPage {
-    width: 50%;
-    float: left;
-    height: 100%;
-    max-width: 50%;
-    padding-left: 2%;
-    overflow: hidden;
-    padding-right: 2%;
-    overflow-y: hidden;
-}
-
-#allPost {
-    max-width: 50%;
-    padding-left: 2%;
-    padding-right: 2%;
-}
 
 #category {
     display: flex;
