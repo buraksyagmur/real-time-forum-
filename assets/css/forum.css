@@ -1,0 +1,153 @@
+/* the main left section */
+.postPage {
+    width: 50%;
+    float: left;
+    height: 100%;
+    max-width: 50%;
+    padding-left: 2%;
+    overflow: hidden;
+    padding-right: 2%;
+    overflow-y: hidden;
+}
+
+/* the section left section named profile */
+.profile {
+    background-color: azure;
+    /* display: none; */
+}
+
+.Profileid {
+    color: brown;
+}
+
+.Profilenickname {
+    color: crimson;
+}
+
+.Profileage {
+    color: aqua;
+}
+
+.Profilegender {
+    color: blue;
+}
+
+.Profilefirstname {
+    color: blueviolet;
+}
+
+.Profilelastname {
+    color: chartreuse;
+}
+
+.Profileemail {
+    color: darkgreen;
+}
+
+
+/* ---------------------------------------------/ the thered left section named just form /------------------------------------------- */
+
+/* form {
+    color: blueviolet;-----------> maybe somthing like newPostFormSection
+} */
+
+/* <div>{
+    ;-----------> maybe somthing like newPostTitlesArea
+} */
+
+/* #label {
+    color: darkgoldenrod;;-----------> maybe somthing like newPostLabelArea
+} */
+
+/* <div>{
+    ;-----------> maybe somthing like newPostNameInputArea
+} */
+
+input#title {
+    color: black;
+}
+
+/* <div>{
+    ;-----------> maybe somthing like categoryTitleArea
+} */
+
+/* <lable>{
+    ;-----------> maybe somthing like categoryLableTitle
+} */
+
+select#category {
+    color: cadetblue;
+}
+
+/* <div>{
+    ;-----------> maybe somthing like newPostContentTitleHolder
+} */
+
+/* <div><label for="content">{
+    ;-----------> maybe somthing like newPostContentTitle
+}  */
+
+/* <div>{
+    ;-----------> maybe somthing like newPostContenInputArea
+} */
+
+/* <div>{
+    ;-----------> maybe somthing like newPostContenInputBox
+} */
+
+/* <div>{
+    ;-----------> maybe somthing like newPostSubmitButtonArea
+} */
+
+/* <button>{
+    ;-----------> maybe somthing like newPostSubmitButto
+} */
+
+
+/* ---------------------------------------------/ the final section named Comment /----------------------------------------------------- */
+
+/* THIS FILD IS NOT READY FOR USE YET */
+.comment {
+    top: 0;
+    left: 0;
+    z-index: 1;
+    min-height: 0%;
+    max-height: 35%;
+    width: 70%;
+    transition: 0.5s;
+    overflow-y: hidden;
+    background-color: rgb(116, 112, 113);
+}
+
+
+/* ---------------------------------------------/ the final section named just DIV /----------------------------------------------------- */
+
+/* <div>{
+} */
+
+#allPost {
+    height: auto;
+    min-height: 10%;
+    max-height: 400px;
+    max-width: 90%;
+    padding-top: 5%;
+    padding-left: 3%;
+    padding-right: 3%;
+    overflow: scroll;
+    background-color: aqua;
+}
+
+/* <dive id="post-0">{
+} */
+
+/* <form>{
+} */
+
+/* <dive id="titel-0">{
+} */
+
+/* <div id="content-0>"{
+} */
+
+/* <div id="category-0">{
+} */
