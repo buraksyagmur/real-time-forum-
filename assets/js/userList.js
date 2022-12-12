@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
                 })
                 chatBoxForm.append(chatBoxButton)
-                let userNick = document.querySelector(".Profilenickname")
+                let userNick = document.querySelector(".Profilenickname") // reg userNick is null
                 chatBoxButton.textContent = `${nickname}`;
                 if (chatBoxButton.textContent == userNick.textContent) {
               
