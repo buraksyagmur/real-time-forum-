@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
         if (resp.label == "chatBox") {
             if (msgArea.firstElementChild == null) {
-                msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 1000)); 
+                msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250)); 
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
