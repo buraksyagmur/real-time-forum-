@@ -50,14 +50,14 @@ function createPost(arr) {
         titleButton.setAttribute("type", "submit")
         titleButton.addEventListener("click", function (e) {
             const comment = document.querySelector(".comment")
-            comment.style.height = "%100"
+            comment.style.left = "20%"
             let chosenPost = document.querySelector(`#post-${titleButton.value}`)
             console.log("post is choosen")
             let clone = chosenPost.cloneNode(true)
             const closeComments = document.createElement("button")
             closeComments.textContent = String.fromCodePoint(0x274C)
             closeComments.addEventListener("click", function () {
-                comment.style.height = "0%"
+                comment.style.left = "-70%"
                 PostHandler
                 while (comment.firstChild) {
                     comment.removeChild(comment.firstChild)
@@ -66,7 +66,7 @@ function createPost(arr) {
             let comments = CreateComments(jsonFile, i)
             let comForm = CreateCommentForm(titleButton.value)
             comment.append(clone, comments, comForm, closeComments)
-            comment.style.height = "100%";
+            // comment.style.height = "100%";
         })
         titleButton.innerText = (arr[i].postinfo.title)
         titleButton.style.padding = "0"
