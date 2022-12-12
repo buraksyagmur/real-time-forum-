@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,11 +29,11 @@ type WsUserListPayload struct {
 }
 
 type userStatus struct {
-	Nickname   string `json:"nickname"`
-	LoggedIn   bool   `json:"status"`
-	UserID     int    `json:"userID"`
-	MsgCheck   bool   `json:"msgcheck"`
-	MsgSeen    bool   `json:"msgseen"`
+	Nickname string `json:"nickname"`
+	LoggedIn bool   `json:"status"`
+	UserID   int    `json:"userID"`
+	MsgCheck bool   `json:"msgcheck"`
+
 	withoutlet bool
 }
 
@@ -71,6 +72,7 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 			if !userListPayload.LoadMsg {
 				PageMsgMap[userListPayload.UserID] = 1234567890
 			}
+			ChangeNotif(userListPayload.UserID, userListPayload.ContactID)
 			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
 			conn.WriteJSON(creatingChatResponse)
 		} else if err == nil {
@@ -122,6 +124,7 @@ func ProcessAndReplyUserList() {
 			// store conn in map
 			userListWsMap[loggedInUid] = &receivedUserListPayload.Conn
 			fmt.Printf("UL current map: %v", userListWsMap)
+			fmt.Println("continue")
 		}
 		updateUList()
 	}
@@ -131,7 +134,7 @@ func updateUList() {
 	var userListResponse WsUserListResponse
 	userListResponse.Label = "update"
 
-	rows, err := db.Query(`SELECT nickname, loggedIn, userID,seen   FROM users`)
+	rows, err := db.Query(`SELECT nickname, loggedIn, userID   FROM users`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -142,21 +145,21 @@ func updateUList() {
 		var loggedInDB bool
 		var UserIDDB int
 		var msgcheck bool
-		var msgSeen bool
-		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB, &msgSeen)
+
+		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB)
 		userStatusElement := struct {
-			Nickname   string `json:"nickname"`
-			LoggedIn   bool   `json:"status"`
-			UserID     int    `json:"userID"`
-			MsgCheck   bool   `json:"msgcheck"`
-			MsgSeen    bool   `json:"msgseen"`
+			Nickname string `json:"nickname"`
+			LoggedIn bool   `json:"status"`
+			UserID   int    `json:"userID"`
+			MsgCheck bool   `json:"msgcheck"`
+
 			withoutlet bool
 		}{
 			nicknameDB,
 			loggedInDB,
 			UserIDDB,
 			msgcheck,
-			msgSeen,
+
 			false,
 		}
 		tempUserStatus = append(tempUserStatus, userStatusElement)
@@ -262,12 +265,12 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 		var msgID int
 		rows.Scan(&msgID, &(oneMsg.SenderId), &(oneMsg.ReceiverId), &msgTime, &(oneMsg.Content), &(oneMsg.Noti))
 		oneMsg.MessageTime = msgTime.String()
-		rows2, err := db.Prepare("UPDATE users SET seen = ? WHERE msgID = ?;")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer rows2.Close()
-		rows2.Exec(true, msgID)
+		// rows2, err := db.Prepare("UPDATE users SET seen = ? WHERE msgID = ?;")
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// defer rows2.Close()
+		// rows2.Exec(true, msgID)
 		if oneMsg.SenderId == sendID {
 			oneMsg.Right = true
 		}
@@ -280,18 +283,7 @@ func displayChatInfo(sendID, recID int) []MessageArray {
 }
 
 func sortMessages(sendID, recID int) string {
-	// firstMes := displayChatInfo(sendID, recID)
-	// secMes := displayChatInfo(recID, sendID)
-	// allMes := append(firstMes, secMes...)
-
 	allMes := displayChatInfo(sendID, recID)
-	for k := 0; k < 10; k++ {
-		for i := 0; i < len(allMes)-1; i++ {
-			if allMes[i].Index > allMes[i+1].Index {
-				allMes[i], allMes[i+1] = allMes[i+1], allMes[i]
-			}
-		}
-	}
 	jsonF, err := json.Marshal(allMes)
 	if err != nil {
 		log.Fatal(err)
@@ -329,4 +321,33 @@ func sortConversations() []int {
 		}
 	}
 	return lastOne
+}
+
+func ChangeNotif(curUserID, senderID int) {
+	var newArr []int
+	notif := FindNotification(curUserID)
+	newArr = append(newArr, notif...)
+	for _, in := range newArr {
+		if in == senderID {
+			newArr = remove(newArr, in)
+		}
+	}
+	slcNotif := make([]string, len(newArr))
+	for i := 0; i < len(newArr); i++ {
+		str := strconv.Itoa(newArr[i])
+		slcNotif[i] = str
+	}
+	newNotificationString := strings.Join(slcNotif, ",")
+	rows2, err := db.Prepare("UPDATE users SET notifications = ? WHERE userID = ?;")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows2.Close()
+	rows2.Exec(newNotificationString, curUserID)
+	fmt.Println(len(newNotificationString), "notif string", newNotificationString)
+}
+
+func remove(s []int, i int) []int {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
 }

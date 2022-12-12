@@ -90,6 +90,7 @@ func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
 	// // get user data from db
 	var logge bool
 	var logUser User
+	var not string
 	// auth user
 	fmt.Printf("%s trying to Login\n", loginPayload.NicknameEmail)
 	rows, err := db.Query(`SELECT *
@@ -101,7 +102,7 @@ func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		rows.Scan(&logUser.UserId, &logUser.Nickname, &logUser.Age, &logUser.Gender, &logUser.FirstName, &logUser.LastName, &logUser.Email, &hashDB, &logge)
+		rows.Scan(&logUser.UserId, &logUser.Nickname, &logUser.Age, &logUser.Gender, &logUser.FirstName, &logUser.LastName, &logUser.Email, &hashDB, &logge,&not )
 	}
 	
 	// // test hash

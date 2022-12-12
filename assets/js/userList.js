@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 msgArea.append(loadBut)
                 loadMsg = true
             }
+            console.log("CONTENT", resp.content)
             let js = JSON.parse(resp.content)
             if (js != null) {
                 for (let i = 0; i < js.length; i++) {
@@ -94,10 +95,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     let msgContent = document.createElement("p")
                     let timeOfMsg = document.createElement("p")
                     msgContent.classList = "msg-text"
-                    timeOfMsg.classList= "timeofmsg"
-                    timeOfMsg.textContent= js[i].msgInfo.message_time
-                    timeOfMsg.style.fontSize= "9px"
-                    msgContent.textContent = js[i].msgInfo.content 
+                    timeOfMsg.classList = "timeofmsg"
+                    timeOfMsg.textContent = js[i].msgInfo.message_time
+                    timeOfMsg.style.fontSize = "9px"
+                    msgContent.textContent = js[i].msgInfo.content
                     if (js[i].msgInfo.right_side == true) {
                         singleMsg.classList = "msg-row2"
                     } else {
@@ -105,25 +106,26 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     }
                     singleMsg.append(msgContent)
                     singleMsg.append(timeOfMsg)
-                    msgArea.append(singleMsg)
-
-
+                    msgArea.insertBefore(singleMsg, msgArea.firstChild)
+                    // msgArea.append(singleMsg)
                 }
 
-                if (document.querySelector(".chatInput") == null) {
-                    const chatInput = document.createElement("input")
-                    chatInput.setAttribute("type", "text")
-                    const chatForm = document.createElement("form")
-                    const submitChat = document.createElement("button")
-                    chatForm.addEventListener("submit", SubChatHandler)
-                    submitChat.setAttribute("type", "submit")
-                    submitChat.classList = "submitMsg"
-                    submitChat.textContent = "submit msg"
-                    chatInput.classList = "chatInput"
-                    chatForm.append(chatInput, submitChat)
-                    chatBox.append(chatForm)
-                }
-
+            }
+            if (document.querySelector(".chatInput") == null) {
+                console.log("creating chat input")
+                const chatInput = document.createElement("input")
+                chatInput.setAttribute("type", "text")
+                const chatForm = document.createElement("form")
+                const submitChat = document.createElement("button")
+                chatForm.addEventListener("submit", SubChatHandler)
+                submitChat.setAttribute("type", "submit")
+                submitChat.classList = "submitMsg"
+                submitChat.textContent = "submit msg"
+                chatInput.classList = "chatInput"
+                chatForm.append(chatInput, submitChat)
+                chatBox.append(chatForm)
+            } else {
+                console.log("chatinput already exist")
             }
         }
     }
@@ -156,11 +158,12 @@ const SubChatHandler = function (e) {
     msgtext.textContent = chatInput.value
     msgrow.append(msgtext)
     msgArea.append(msgrow)
-    let userlist = document.querySelector(".user-list")
-    while (userlist.firstChild) {
-        console.log("userlist,", userlist.length)
-        userlist.removeChild(userlist.firstChild)
-    }
+    // ***********************NEED TO UPDATE USERLIST *********************
+    // let userlist = document.querySelector(".user-list")
+    // while (userlist.firstChild) {
+    //     console.log("userlist,", userlist.length)
+    //     userlist.removeChild(userlist.firstChild)
+    // }
     chatPayloadObj["label"] = "chat";
     chatPayloadObj["sender_id"] = parseInt(profileid.textContent)/* after login change to loggedUserID */
     chatPayloadObj["receiver_id"] = parseInt(usID)

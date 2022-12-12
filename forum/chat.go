@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -90,6 +92,7 @@ func ProcessAndReplyChat() {
 }
 
 func processMsg(msg WsChatPayload) {
+	newNotif := true
 	rows, err := db.Prepare("INSERT INTO messages(senderID,receiverID,messageTime,content,seen) VALUES(?,?,?,?,?);")
 	if err != nil {
 		log.Fatal(err)
@@ -97,4 +100,57 @@ func processMsg(msg WsChatPayload) {
 	defer rows.Close()
 	rows.Exec(msg.SenderId, msg.ReceiverId, time.Now(), msg.Content, false)
 	fmt.Println("msg saved successfully")
+	notif := FindNotification(msg.ReceiverId)
+	if notif != nil {
+		for _, not := range notif {
+			if not == msg.SenderId {
+				newNotif = false
+				break
+			}
+		}
+	}
+	fmt.Println("notification bool:", newNotif)
+	if newNotif {
+		var newArr []int
+		newArr = append(newArr, notif...)
+		newArr = append(newArr, msg.SenderId)
+		slcNotif := make([]string, len(newArr))
+		for i := 0; i < len(newArr); i++ {
+			str := strconv.Itoa(newArr[i])
+			slcNotif[i] = str
+		}
+		newNotificationString := strings.Join(slcNotif, ",")
+		rows2, err := db.Prepare("UPDATE users SET notifications = ? WHERE userID = ?;")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows2.Close()
+		rows2.Exec(newNotificationString, msg.ReceiverId)
+		fmt.Println(len(newNotificationString), "notif string", newNotificationString)
+	}
+}
+
+func FindNotification(userID int) []int {
+	notifi := ""
+	rows, err := db.Query("SELECT notifications FROM users WHERE userID =?", userID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	rows.Scan(&notifi)
+	if notifi == "" {
+		return nil
+	}
+	arr := strings.Split(notifi, ",")
+	in := make([]int, len(arr))
+	for i := 0; i < len(arr); i++ {
+		integ, err := strconv.Atoi(arr[i])
+		if err != nil {
+			log.Fatal(err)
+		}
+		in[i] = integ
+
+	}
+	fmt.Println("array of int", in)
+	return in
 }
