@@ -104,7 +104,8 @@ func ProcessAndReplyLogin(conn *websocket.Conn, loginPayload WsLoginPayload) {
 	for rows.Next() {
 		rows.Scan(&logUser.UserId, &logUser.Nickname, &logUser.Age, &logUser.Gender, &logUser.FirstName, &logUser.LastName, &logUser.Email, &hashDB, &logge,&not )
 	}
-	
+	findCurUser(logUser.UserId)
+
 	// // test hash
 	// hash, err := bcrypt.GenerateFromPassword([]byte(pw), 10)
 	// fmt.Printf("nicknameEmailDB: %s , hashDB: %s\n", nicknameEmailDB, hashDB)

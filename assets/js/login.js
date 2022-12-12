@@ -96,7 +96,7 @@ const loginHandler = function (e) {
     displayMsg.textContent = "";
 };
 
-const updateChat = function () {
+export const updateChat = function () {
    let userID = document.querySelector(".Profileid")
     let chatpayloadObj = {}
     chatpayloadObj["label"] = "updateChat";
@@ -104,7 +104,7 @@ const updateChat = function () {
     chatSocket.send(JSON.stringify(chatpayloadObj));
 };
 
-const loginForm = document.createElement("form");
+export const loginForm = document.createElement("form");
 loginForm.className = "formPage"
 loginForm.addEventListener("submit", loginHandler);
 
@@ -145,10 +145,10 @@ loginSubmit.setAttribute("type", "submit");
 loginSubmitDiv.append(loginSubmit);
 
 loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
-function createProfile(type, userAttr,str){
+export function createProfile(type, userAttr,str){
     let newelement = document.createElement(type)
     newelement.textContent= userAttr
     newelement.classList ="Profile"+ str
     profile.append(newelement)
 }
-export default loginForm;
+// export default {loginForm,updateChat, createProfile};

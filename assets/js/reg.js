@@ -1,5 +1,6 @@
 import userListSocket from "./userList.js";
 import { chatSocket } from "./chat.js";
+import { createProfile, updateChat } from "./login.js";
 // console.log(userListSocket);
 let regSocket = null;
 const userList = document.querySelector(".user-list");
@@ -36,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (resp.label === "reg") {
             console.log("uid: ", resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
             document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
+
             navbar.children[0].style.display = "none"
             navbar.children[1].style.display = "none"
             navbar.children[2].style.display = "block"
@@ -43,6 +45,23 @@ document.addEventListener("DOMContentLoaded", function () {
             signPage.style.display = "none"
             splitScreen.style.display = "flex"
             if (resp.pass) {
+                //create profile
+                let user = JSON.parse(resp.content)
+                const profile = document.querySelector(".profile")
+                const screen = document.querySelector(".blankScreen")
+                createProfile("p", user.userID, "id")
+                updateChat()
+                createProfile("p", user.nickname, "nickname")
+                createProfile("p", user.age, "age")
+                createProfile("p", user.gender, "gender")
+                createProfile("p", user.firstname, "name")
+                createProfile("p", user.lastname, "lastname")
+                createProfile("p", user.email, "email")
+                profile.style.display = "block"
+                screen.style.height = 0
+                while (screen.firstChild) {
+                    screen.removeChild(screen.firstChild)
+                }
                 // hide the login and reg btn, show the logout btn
                 navbar.children[0].style.display = "none"
                 navbar.children[1].style.display = "none"

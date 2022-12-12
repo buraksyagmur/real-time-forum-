@@ -24,7 +24,7 @@
     text-shadow: rgba(255, 255, 255, 0.9) 0px 3px 3px;
 }
 
-.hana {
+.friendListArea {
     margin-top: 0%;
     padding-bottom: 1px;
     text-align: justify;
@@ -58,7 +58,7 @@
     width: 300px;
     height: auto;
     min-height: 50px;
-    max-height: 600px;
+    max-height: 300px;
     overflow: scroll;
     /* font: 24px/36px sans-serif; */
 }

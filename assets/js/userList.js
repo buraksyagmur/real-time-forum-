@@ -1,3 +1,4 @@
+// import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
 import { chatSocket } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
@@ -5,6 +6,17 @@ const msgArea = document.querySelector(".msgArea")
 let usID
 let open = false
 let loadMsg = false
+
+function throttle(fn, wait) {
+  let time = Date.now();
+  return function() {
+    if (time + wait < Date.now()) {
+      fn();
+      time = Date.now();
+    }
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function (e) {
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
     console.log("JS attempt to connect to user list");
@@ -53,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
                 })
                 chatBoxForm.append(chatBoxButton)
-                let userNick = document.querySelector(".Profilenickname")
+                let userNick = document.querySelector(".Profilenickname") // reg userNick is null
                 chatBoxButton.textContent = `${nickname}`;
                 if (chatBoxButton.textContent == userNick.textContent) {
 
@@ -80,12 +92,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
         if (resp.label == "chatBox") {
             if (msgArea.firstElementChild == null) {
-                const loadBut = document.createElement("button")
-                loadBut.classList = "loadMsg"
-                loadBut.addEventListener("click", showChatHandler)
-                loadBut.textContent = "Load 10 more msg"
-                msgArea.append(loadBut)
-                loadMsg = true
+                msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250)); 
             }
             console.log("CONTENT", resp.content)
             let js = JSON.parse(resp.content)
@@ -109,7 +116,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     msgArea.insertBefore(singleMsg, msgArea.firstChild)
                     // msgArea.append(singleMsg)
                 }
-
             }
             if (document.querySelector(".chatInput") == null) {
                 console.log("creating chat input")
@@ -130,6 +136,35 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
     }
 })
+let prevScrollTop = 0;
+const loadMsgCallback = function() {
+    return function() {
+         // msgArea.addEventListener("scroll", function(e) {
+        // console.log("scrolling");
+        // console.log(`msgArea.scrollTop = ${msgArea.scrollTop} load msg when value === 0 `);
+        if (prevScrollTop < msgArea.scrollTop) {
+            console.log("scrolling down");
+        } else if (prevScrollTop > msgArea.scrollTop) {
+            console.log("scrolling up");
+            if (msgArea.scrollTop <= 2) {
+                // console.log(`Loading msg ... msgArea.scrollTop = ${msgArea.scrollTop} load msg when value <= 20 `);
+                loadMsg = true
+                loadPrevMsgsHandler();
+            }
+        }
+        prevScrollTop = msgArea.scrollTop; 
+    }
+}
+
+const loadPrevMsgsHandler = function() {
+    let payloadObj = {};
+    let profileid = document.querySelector(".Profileid")
+    payloadObj["label"] = "createChat";
+    payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
+    payloadObj["contactID"] = parseInt(usID)
+    payloadObj["loadMsg"] = loadMsg
+    userListSocket.send(JSON.stringify(payloadObj));
+};
 
 const showChatHandler = function (e) {
     e.preventDefault();
@@ -139,6 +174,7 @@ const showChatHandler = function (e) {
     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
     payloadObj["loadMsg"] = loadMsg
+    // payloadObj["loadMsg"] = true
     userListSocket.send(JSON.stringify(payloadObj));
     let chatPayloadObj = {};
     chatPayloadObj["label"] = "createChat";
