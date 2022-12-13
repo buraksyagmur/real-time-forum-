@@ -84,10 +84,17 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
 
             }
-            const closeChatBox = document.createElement("button")
-            closeChatBox.textContent = "End Chat"
-            closeChatBox.classList = "closeChat"
-            chatBox.append(closeChatBox)
+            // if button already exists do not create another
+
+            if  (document.querySelector(".closeChat")) {
+                
+            } else {
+                const closeChatBox = document.createElement("button")
+                closeChatBox.textContent = "End Chat"
+                closeChatBox.classList = "closeChat"
+                chatBox.append(closeChatBox)
+            }
+            
 
         }
         if (resp.label == "chatBox") {
