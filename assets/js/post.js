@@ -1,6 +1,7 @@
 let postSocket = null;
-const body = document.getElementsByTagName("BODY")[0]
+// const body = document.getElementsByTagName("BODY")[0]
 const DisplayPost = document.createElement("div")
+DisplayPost.className = "ContainAllPost"
 var commentPostId
 let jsonFile
 document.addEventListener("DOMContentLoaded", function () {
@@ -44,6 +45,7 @@ function createPost(arr) {
         const postDiv = document.createElement("div")
         const titleDiv = document.createElement("div");
         const titleButton = document.createElement("button")
+        titleButton.className = "titleButtonForm"
         const titleForm = document.createElement("form")
         titleForm.addEventListener("submit", showcommentHandler)
         titleButton.setAttribute("value", i)
@@ -55,7 +57,9 @@ function createPost(arr) {
             console.log("post is choosen")
             let clone = chosenPost.cloneNode(true)
             const closeComments = document.createElement("button")
-            closeComments.textContent = String.fromCodePoint(0x274C)
+            closeComments.className = "closeCommentsButton"
+            // closeComments.textContent = String.fromCodePoint(0x274C)
+            closeComments.textContent = "Close Comment"
             closeComments.addEventListener("click", function () {
                 comment.style.left = "-70%"
                 PostHandler
@@ -80,11 +84,16 @@ function createPost(arr) {
         contentDiv.id = `content-${i}`;
         categoryDiv.id = `category-${i}`;
         userIdDiv.id = `id-${i}`;
+        postDiv.className = `singlePostDiv`;
+        titleDiv.className = `postTitle`;
+        contentDiv.className = `postContent`;
+        categoryDiv.className = `postCategoryId`;
+        userIdDiv.className = `postAuthorId`;
         // const titleText = document.createElement("p")
         // titleText.style.fontWeight= "900"
         const contentText = document.createElement("p")
         const categoryText = document.createElement("p")
-        categoryText.style.width = "10%"
+        // categoryText.style.width = "10%"
         const userIdText = document.createElement("p")
         // const titletextNode = document.createTextNode(arr[i].postinfo.title) 
         // titleText.appendChild(titletextNode)
@@ -116,25 +125,31 @@ const PostHandler = function (e) {
 
 const PostForm = document.createElement("form");
 PostForm.addEventListener("submit", PostHandler);
-
+PostForm.className = "newPostFormSection"
 
 const titleLabelDiv = document.createElement('div');
+titleLabelDiv.className = "newPostTitlesArea"
 const titleLabel = document.createElement('label');
+titleLabel.className = "newPostLabelArea"
 titleLabel.textContent = "title";
 titleLabel.setAttribute("for", "title");
 titleLabelDiv.append(titleLabel);
 const titleInputDiv = document.createElement('div');
+titleInputDiv.className = "newPostTitleInputDiv"
 const titleInput = document.createElement('input');
+titleInput.className = "newPostInput"
 titleInput.setAttribute("type", "text");
 titleInput.setAttribute("name", "title");
 titleInput.setAttribute("id", "title");
 titleInputDiv.append(titleInput);
 //-------------------
 const CatDiv = document.createElement('div');
+CatDiv.className = "newPostCatDiv"
 const CatOptionDiv = document.createElement('select');
 CatOptionDiv.setAttribute("name", "category_option")
 const CatLabel = document.createElement("label");
 CatLabel.textContent = "Please choose category";
+CatLabel.className = "categoryLableTitle"
 CatLabel.setAttribute("for", "cat");
 CatDiv.append(CatLabel);
 const CatInputOpt1 = document.createElement("option");
@@ -159,20 +174,27 @@ CatInputOpt3.textContent = "David";
 CatInputOpt4.textContent = "Godfrey";
 CatOptionDiv.setAttribute("id", "category");
 CatOptionDiv.append(CatInputOpt1, CatInputOpt2, CatInputOpt3, CatInputOpt4)
+
 const contLabelDiv = document.createElement('div');
+contLabelDiv.className = "newPostContentTitleDiv"
 const contLabel = document.createElement('label');
+contLabel.className = "newPostContentTitle"
 contLabel.textContent = "content:";
 contLabel.setAttribute("for", "content");
 contLabelDiv.append(contLabel);
 const contInputDiv = document.createElement('div');
+contInputDiv.className = "newPostContentInputArea"
 const contInput = document.createElement('input');
+contInput.className = "newPostContentInputBox"
 contInput.setAttribute("type", "text");
 contInput.setAttribute("name", "content");
 contInput.setAttribute("id", "content");
 contInputDiv.append(contInput);
 
 const PostSubmitDiv = document.createElement('div');
+PostSubmitDiv.className = "newPostSubmitButtonDiv"
 const PostSubmit = document.createElement("button");
+PostSubmit.className = "newPostSubmitButton"
 PostSubmit.textContent = "Post";
 PostSubmit.setAttribute("type", "submit");
 PostSubmitDiv.append(PostSubmit);
@@ -193,23 +215,30 @@ const commentHandler = function (e) {
 };
 function CreateCommentForm(value) {
     const commentForm = document.createElement("form")
+    commentForm.className = "creatingCommentForm"
     commentForm.setAttribute("target", "_self")
     commentForm.addEventListener("submit", commentHandler);
     const commentLabelDiv = document.createElement('div');
+    commentLabelDiv.className = "creatingCommentRespondDiv"
     const commentLabel = document.createElement('label');
+    commentLabel.className = "creatingCommentRespondLabel"
     commentLabel.textContent = "create a comment:";
     commentLabel.setAttribute("for", "comment");
     commentLabelDiv.append(commentLabel);
     const commentInputDiv = document.createElement('div');
+    commentInputDiv.className = "commentInputDiv"
     const commentInput = document.createElement('input');
+    commentInput.className = "commentInput"
     commentInput.setAttribute("type", "text");
     commentInput.setAttribute("name", "comment");
     commentInput.setAttribute("placeholder", "type here...");
     commentInput.setAttribute("id", "comment");
     commentInputDiv.append(commentInput);
     const commentSubmitDiv = document.createElement('div');
+    commentSubmitDiv.className = "commentSubmitButtonDiv"
     const commentSubmit = document.createElement("button");
-    commentSubmit.textContent = "comment";
+    commentSubmit.className = "commentSubmitButton"
+    commentSubmit.textContent = "Submit Comment";
     commentSubmit.setAttribute("type", "submit");
     commentSubmit.setAttribute("value", value)
     commentSubmitDiv.append(commentSubmit);
@@ -247,6 +276,9 @@ function CreateComments(arr, value) {
             comDiv.id = `comment-${i}`;
             comContentDiv.id = `comment-${i}`;
             comUserIdDiv.id = `userId-${i}`;
+            comDiv.className = `singleComment`;
+            comContentDiv.className = `singleCommentContent`;
+            comUserIdDiv.className = `singleCommentAuthor`;
             const commentText = document.createElement("p")
             const comUserIdText = document.createElement("p")
             let commenTextNode = document.createTextNode(comJson[i].comInfo.comment)
