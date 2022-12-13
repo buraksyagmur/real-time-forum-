@@ -111,42 +111,42 @@
 }
 
 
-/* ---------------------------------------------/ the thered left section named just form /------------------------------------------- */
+/* ---------------------------------------------/ the third left section named just form /------------------------------------------- */
 
-/* form {
-    color: blueviolet;-----------> maybe somthing like newPostFormSection
+/* .newPostFormSection{
 } */
 
-/* <div>{
-    ;-----------> maybe somthing like newPostTitlesArea
+/* .newPostTitlesArea{
 } */
 
-/* #label {
-    color: darkgoldenrod;;-----------> maybe somthing like newPostLabelArea
+/* .newPostLabelArea {
 } */
+/* .newPostTitleInputDiv{
 
-/* <div>{
-    ;-----------> maybe somthing like newPostNameInputArea
+} */
+/* .newPostInput{
+   
 } */
 
 input#title {
-    color: black;
+    color: rgb(222, 22, 22);
 }
 
-/* <div>{
-    ;-----------> maybe somthing like categoryTitleArea
+/* .newPostCatDiv{
+
 } */
 
-/* <lable>{
-    ;-----------> maybe somthing like categoryLableTitle
+
+/* .categoryLableTitle{
+    
 } */
 
 select#category {
     color: cadetblue;
 }
 
-/* <div>{
-    ;-----------> maybe somthing like newPostContentTitleHolder
+/* .newPostContentTitleDiv{
+    
 } */
 
 /* <div><label for="content">{
@@ -154,19 +154,19 @@ select#category {
 }  */
 
 /* <div>{
-    ;-----------> maybe somthing like newPostContenInputArea
+    ;-----------> maybe somthing like newPostContentInputArea
 } */
 
 /* <div>{
-    ;-----------> maybe somthing like newPostContenInputBox
+    ;-----------> maybe somthing like newPostContentInputBox
 } */
 
 /* <div>{
-    ;-----------> maybe somthing like newPostSubmitButtonArea
+    ;-----------> maybe somthing like newPostSubmitButtonDiv
 } */
 
 /* <button>{
-    ;-----------> maybe somthing like newPostSubmitButto
+    ;-----------> maybe somthing like newPostSubmitButton
 } */
 
 
@@ -209,17 +209,25 @@ select#category {
     background-color: aqua;
 }
 
-/* <dive id="post-0">{
+/* .singlePostDiv{
+
 } */
 
-/* <form>{
+
+/*.postTitle{
 } */
 
-/* <dive id="titel-0">{
+/*.titleButtonForm {
 } */
 
-/* <div id="content-0>"{
+/*.postContent{
 } */
 
-/* <div id="category-0">{
+/*.postContent .p{
+} */
+
+/*.postCategoryId{
+} */
+
+/* .postCategoryId .p{
 } */
