@@ -93,6 +93,7 @@ func ProcessAndReplyChat() {
 
 func processMsg(msg WsChatPayload) {
 	newNotif := true
+	fmt.Println("msg:", msg)
 	rows, err := db.Prepare("INSERT INTO messages(senderID,receiverID,messageTime,content,seen) VALUES(?,?,?,?,?);")
 	if err != nil {
 		log.Fatal(err)

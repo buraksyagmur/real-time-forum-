@@ -29,12 +29,12 @@ type WsUserListPayload struct {
 }
 
 type userStatus struct {
-	Nickname string `json:"nickname"`
-	LoggedIn bool   `json:"status"`
-	UserID   int    `json:"userID"`
-	MsgCheck bool   `json:"msgcheck"`
-
-	withoutlet bool
+	Nickname     string `json:"nickname"`
+	LoggedIn     bool   `json:"status"`
+	UserID       int    `json:"userID"`
+	MsgCheck     bool   `json:"msgcheck"`
+	Notification string `json:"noti"`
+	withoutlet   bool
 }
 
 var (
@@ -75,6 +75,7 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 			ChangeNotif(userListPayload.UserID, userListPayload.ContactID)
 			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
 			conn.WriteJSON(creatingChatResponse)
+			updateUList()
 		} else if err == nil {
 			userListPayload.Conn = *conn
 			userListPayloadChan <- userListPayload
@@ -134,7 +135,7 @@ func updateUList() {
 	var userListResponse WsUserListResponse
 	userListResponse.Label = "update"
 
-	rows, err := db.Query(`SELECT nickname, loggedIn, userID   FROM users`)
+	rows, err := db.Query(`SELECT nickname, loggedIn, userID ,notifications  FROM users`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -145,21 +146,21 @@ func updateUList() {
 		var loggedInDB bool
 		var UserIDDB int
 		var msgcheck bool
-
-		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB)
+		var notifications string
+		rows.Scan(&nicknameDB, &loggedInDB, &UserIDDB, &notifications)
 		userStatusElement := struct {
-			Nickname string `json:"nickname"`
-			LoggedIn bool   `json:"status"`
-			UserID   int    `json:"userID"`
-			MsgCheck bool   `json:"msgcheck"`
-
-			withoutlet bool
+			Nickname     string `json:"nickname"`
+			LoggedIn     bool   `json:"status"`
+			UserID       int    `json:"userID"`
+			MsgCheck     bool   `json:"msgcheck"`
+			Notification string `json:"noti"`
+			withoutlet   bool
 		}{
 			nicknameDB,
 			loggedInDB,
 			UserIDDB,
 			msgcheck,
-
+			notifications,
 			false,
 		}
 		tempUserStatus = append(tempUserStatus, userStatusElement)

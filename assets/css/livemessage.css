@@ -178,7 +178,9 @@
 .col-2 ul li.online::before {
     background: greenyellow;
 }
-
+.nameButtons.notif {
+    background: red;
+}
 .col-2 ul li.offline::before {
     background: tomato;
 }

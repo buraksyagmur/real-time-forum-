@@ -8,13 +8,13 @@ let open = false
 let loadMsg = false
 
 function throttle(fn, wait) {
-  let time = Date.now();
-  return function() {
-    if (time + wait < Date.now()) {
-      fn();
-      time = Date.now();
+    let time = Date.now();
+    return function () {
+        if (time + wait < Date.now()) {
+            fn();
+            time = Date.now();
+        }
     }
-  }
 }
 
 document.addEventListener("DOMContentLoaded", function (e) {
@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
     userListSocket.onclose = () => console.log("Bye user list");
     userListSocket.onerror = (err) => console.log("user list ws Error!");
     userListSocket.onmessage = (msg) => {
+        let arrayOfUsers = []
+        let arr
         const resp = JSON.parse(msg.data);
         if (resp.label === "update") {
             console.log(resp.online_users);
@@ -31,7 +33,9 @@ document.addEventListener("DOMContentLoaded", function (e) {
             // remove list item
             uList.textContent = "";
             // add new list item
-            for (const { nickname, status, userID, msgcheck } of resp.online_users) {
+            for (const { nickname, status, userID, msgcheck, noti } of resp.online_users) {
+
+                arrayOfUsers.push(userID)
                 const nicknameItem = document.createElement("li");
                 const chatBoxButton = document.createElement("button")
                 chatBoxButton.classList = "nameButtons"
@@ -39,10 +43,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatBoxForm.addEventListener("submit", showChatHandler)
                 chatBoxButton.setAttribute("type", "submit")
                 chatBoxButton.value = userID
+                chatBoxButton.id = `ContactID-${userID}`
                 chatBoxButton.addEventListener("click", function (e) {
                     if (open == false) {
                         open = true
                         usID = chatBoxButton.value
+                        chatBox.id = `chatbox-${usID}`
                         chatBox.style.display = "block"
                         window.onclick = function (event) {
                             open = false
@@ -68,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 let userNick = document.querySelector(".Profilenickname") // reg userNick is null
                 chatBoxButton.textContent = `${nickname}`;
                 if (chatBoxButton.textContent == userNick.textContent) {
-
+                    arr = noti.split(",")
                     nicknameItem.style.display = "none"
                 }
                 if (status == false) {
@@ -84,22 +90,28 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
 
             }
+            let not = checkArr(arr, arrayOfUsers)
+            console.log("NOT ARRAY", not, "arr:", arr, "arrayOfUsers", arrayOfUsers)
+            if (not.length > 0) {
+                notiDisplay(not)
+
+            }
             // if button already exists do not create another
 
-            if  (document.querySelector(".closeChat")) {
-                
+            if (document.querySelector(".closeChat")) {
+
             } else {
                 const closeChatBox = document.createElement("button")
                 closeChatBox.textContent = "End Chat"
                 closeChatBox.classList = "closeChat"
                 chatBox.append(closeChatBox)
             }
-            
+
 
         }
         if (resp.label == "chatBox") {
             if (msgArea.firstElementChild == null) {
-                msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250)); 
+                msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250));
             }
             console.log("CONTENT", resp.content)
             let js = JSON.parse(resp.content)
@@ -144,9 +156,9 @@ document.addEventListener("DOMContentLoaded", function (e) {
     }
 })
 let prevScrollTop = 0;
-const loadMsgCallback = function() {
-    return function() {
-         // msgArea.addEventListener("scroll", function(e) {
+const loadMsgCallback = function () {
+    return function () {
+        // msgArea.addEventListener("scroll", function(e) {
         // console.log("scrolling");
         // console.log(`msgArea.scrollTop = ${msgArea.scrollTop} load msg when value === 0 `);
         if (prevScrollTop < msgArea.scrollTop) {
@@ -159,11 +171,11 @@ const loadMsgCallback = function() {
                 loadPrevMsgsHandler();
             }
         }
-        prevScrollTop = msgArea.scrollTop; 
+        prevScrollTop = msgArea.scrollTop;
     }
 }
 
-const loadPrevMsgsHandler = function() {
+const loadPrevMsgsHandler = function () {
     let payloadObj = {};
     let profileid = document.querySelector(".Profileid")
     payloadObj["label"] = "createChat";
@@ -215,4 +227,24 @@ const SubChatHandler = function (e) {
     chatSocket.send(JSON.stringify(chatPayloadObj));
 
 }
+function checkArr(arr, userArr) {
+    for (let i = 0; i < arr.length; i++) {
+        arr[i] = parseInt(arr[i])
+    }
+    const intersection = arr.filter(element => userArr.includes(element));
+    return intersection
+}
+function notiDisplay(arr) {
+
+    for (let i = 0; i < arr.length; i++) {
+        let x = document.querySelector("#ContactID-" + arr[i])
+        if (x != null) {
+            let k = document.querySelector(`#chatbox-${arr[i]}`)
+            if (k == null) {
+                x.classList.add("notif")
+            }
+        }
+    }
+}
+
 export default userListSocket;
