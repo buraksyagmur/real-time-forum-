@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                             open = false
                             if (event.target.className == "closeChat") {
                                 chatBox.style.display = "none"
+                                chatBox.id= "chatbox"
                                 loadMsg = false
                                 while (msgArea.firstChild) {
                                     msgArea.removeChild(msgArea.firstChild)
@@ -64,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     }
                     if (open == true) {
                         usID = chatBoxButton.value
+                        chatBox.id = `chatbox-${usID}`
                         loadMsg = false
                         while (msgArea.firstChild) {
                             msgArea.removeChild(msgArea.firstChild)
