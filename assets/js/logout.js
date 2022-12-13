@@ -2,8 +2,7 @@ import userListSocket from "./userList.js";
 import { chatSocket } from "./chat.js";
 const logoutUrl = location.origin + "/logout/";
 console.log(logoutUrl);
-const logoutHandler = function (e) {
-    e.preventDefault();
+const logoutHandler = function () {
     fetch(logoutUrl)
         .then(() => {
             // get cookie val
@@ -58,13 +57,5 @@ const logoutBtn = document.createElement("button");
 logoutBtn.textContent = "Logout";
 const logoutDiv = document.querySelector("#logout");
 logoutBtn.addEventListener("click", logoutHandler);
-// window.addEventListener("beforeunload", alert("Please logout before closing"));
-window.addEventListener('beforeunload', (e) => {
-    const profileid = document.querySelector(".Profileid")
-    if (profileid) {
-        // logoutHandler;
-    // alert(`You have been logged out. Please login again to continue`);
-    e.returnValue = `Please logout before you leave`;
-    }
-  });
+
 export default logoutBtn;
