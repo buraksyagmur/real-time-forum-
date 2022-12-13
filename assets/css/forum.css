@@ -2,7 +2,6 @@
 .postPage {
     width: 50%;
     float: left;
-    height: 100%;
     max-width: 50%;
     padding-left: 2%;
     overflow: hidden;
@@ -12,14 +11,16 @@
 
 /* the section left section named profile */
 .profile {
-    height: 12%;
-    padding-top: 2%;
+    padding: 1%;
+    height: 120vh;
+    color: white;
+    font-size: 2vw;
+    overflow: hidden;
+    max-height: 90px;
     margin-top: 4.2%;
-    padding-left: 3%;
-    padding-right: 3%;
-    padding-bottom: 2%;
-    background-color: azure;
-    /* display: none; */
+    min-height: 130px;
+    border-style: double;
+    background-color: rgba(0, 0, 0, .6);
 }
 
 .Profileid {
@@ -199,7 +200,7 @@ select#category {
 #allPost {
     height: auto;
     min-height: 10%;
-    max-height: 435px;
+    max-height: 380px;
     max-width: 90%;
     padding-top: 5%;
     padding-left: 3%;
@@ -231,3 +232,13 @@ select#category {
 
 /* .postCategoryId .p{
 } */
+
+
+@media only screen and (max-width: 700px) {
+
+    .profile {
+        min-height: 80px;
+        font-size: 3vw;
+    }
+
+}
