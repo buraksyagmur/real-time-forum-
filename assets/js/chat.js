@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         if (resp.label === "created_room") {
             console.log(`chat room created between ${resp.sender_id} and ${resp.receiver_id}`);
         } else if (resp.label === "msgIncoming") {
-            console.log("recievedChatMsg")
+            console.log("recievedChatMsg", resp)
             let msgrow = document.createElement("div")
             let msgtext = document.createElement("p")
             msgrow.className = "msg-row"
@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
             msgtext.textContent = resp.content
             msgrow.append(msgtext)
             msgArea.append(msgrow)
+            var userlist = document.querySelector(".user-list")
+            var targetUser = document.querySelector(`#li${resp.contactID}`)
+            userlist.insertBefore(targetUser, userlist.firstChild)
+
 
         }
 

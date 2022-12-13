@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
                 arrayOfUsers.push(userID)
                 const nicknameItem = document.createElement("li");
+                nicknameItem.id = "li"+userID
                 const chatBoxButton = document.createElement("button")
                 chatBoxButton.classList = "nameButtons"
                 const chatBoxForm = document.createElement("form")
@@ -113,7 +114,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
             if (msgArea.firstElementChild == null) {
                 msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250));
             }
-            console.log("CONTENT", resp.content)
             let js = JSON.parse(resp.content)
             if (js != null) {
                 for (let i = 0; i < js.length; i++) {
@@ -211,6 +211,9 @@ const SubChatHandler = function (e) {
     msgrow.className = "msg-row2"
     msgtext.className = "msg-text"
     msgtext.textContent = chatInput.value
+    let userlist = document.querySelector(".user-list")
+    let targetUser = document.querySelector(`#li${usID}`)
+    userlist.insertBefore(targetUser, userlist.firstChild)
     msgrow.append(msgtext)
     msgArea.append(msgrow)
     // ***********************NEED TO UPDATE USERLIST *********************
