@@ -20,6 +20,7 @@
     max-height: 90px;
     margin-top: 4.2%;
     min-height: 130px;
+    border-radius: 15px;
     border-style: double;
     background-color: rgba(0, 0, 0, .6);
 }
@@ -115,8 +116,14 @@
 
 /* ---------------------------------------------/ the third left section named just form /------------------------------------------- */
 
-/* .newPostFormSection{
-} */
+.newPostFormSection {
+    padding: 10px;
+    margin-top: 2%;
+    color: white;
+    border-radius: 15px;
+    border-style: double;
+    background-color: rgba(0, 0, 0, .6);
+}
 
 /* .newPostTitlesArea{
 } */
@@ -200,15 +207,19 @@ select#category {
 
 #allPost {
     height: auto;
+    margin-top: 2%;
+    color: white;
     min-height: 10%;
-    max-height: 380px;
-    max-width: 90%;
+    max-width: 100%;
     padding-top: 5%;
     padding-left: 3%;
-    padding-right: 3%;
-    padding-bottom: 5%;
     overflow: scroll;
-    background-color: aqua;
+    padding-right: 3%;
+    max-height: 340px;
+    padding-bottom: 5%;
+    border-radius: 15px;
+    border-style: double;
+    background-color: rgba(0, 0, 0, .6);
 }
 
 /* .singlePostDiv{

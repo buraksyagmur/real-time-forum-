@@ -66,14 +66,28 @@
 
 .msgArea {
     border: none;
-    padding: 5px;
-    width: 300px;
+    /* padding: 5px; */
+    width: auto;
     height: auto;
     min-height: 50px;
     /* max-height: 600px; */
     max-height: 300px;
     overflow: scroll;
     /* font: 24px/36px sans-serif; */
+
+    margin-top: 2%;
+    color: white;
+    min-height: 10%;
+    /* max-width: 100%; */
+    padding-top: 5%;
+    padding-left: 3%;
+    /* overflow: scroll; */
+    padding-right: 3%;
+    /* max-height: 340px; */
+    padding-bottom: 5%;
+    border-radius: 15px;
+    border-style: double;
+    background-color: rgba(0, 0, 0, .6);
 }
 
 
@@ -116,7 +130,7 @@
 /* wright you mesage here */
 .col-1 input {
     border: 0;
-    width: 100%;
+    width: 95%;
     outline: none;
     color: #fff;
     font-size: 12px;
@@ -131,13 +145,31 @@
 
 .closeChat {
     position: relative;
-    left: 80%;
+    left: 70%;
+    top: 92px;
 }
 
 /* ----------------------------------------------------------Friend List------------------------------- */
 .col-2 {
-    flex-basis: 250px;
-    background: #79b333;
+    /* flex-basis: 250px; */
+    /* background: #79b333; */
+
+    border: none;
+    width: auto;
+    height: auto;
+    min-height: 50px;
+    max-height: 300px;
+    /* overflow: scroll; */
+    margin-top: 2%;
+    color: white;
+    min-height: 10%;
+    padding-top: 5%;
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-bottom: 5%;
+    border-radius: 15px;
+    border-style: double;
+    background-color: rgba(0, 0, 0, .6);
 }
 
 .col-2 h3 {
