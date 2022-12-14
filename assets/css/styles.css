@@ -8,11 +8,16 @@
     /* overflow-y: hidden; */
 }
 
+html {
+    height: 100vh;
+    width: 100%;
+}
+
 body {
     /*THIS CSS SECTION IS FOR THE BODY OF THE MAIN PAGE*/
     flex-direction: column;
     height: 100vh;
-    /* overflow: hidden; */
+    overflow: hidden;
     background-color: rgb(250, 234, 214);
     /* For browsers that don't support gradients*/
     background: grey;

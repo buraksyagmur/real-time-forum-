@@ -1,5 +1,6 @@
 /* the main left section */
 .postPage {
+    opacity: 0;
     width: 50%;
     float: left;
     max-width: 50%;

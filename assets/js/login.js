@@ -30,16 +30,23 @@ document.addEventListener("DOMContentLoaded", function () {
             // update user list after a user login
 
             if (resp.pass) {
-                let user = JSON.parse(resp.content) 
-                createProfile("p",user.userID, "id")
+                let user = JSON.parse(resp.content)
+                createProfile("p", user.userID, "id")
                 updateChat()
-                createProfile("p",user.nickname, "nickname")
-                createProfile("p",user.age, "age")
-                createProfile("p",user.gender, "gender")
-                createProfile("p",user.firstname, "firstname")
-                createProfile("p",user.lastname, "lastname")
-                createProfile("p",user.email, "email")
+                createProfile("p", user.nickname, "nickname")
+                createProfile("p", user.age, "age")
+                createProfile("p", user.gender, "gender")
+                createProfile("p", user.firstname, "firstname")
+                createProfile("p", user.lastname, "lastname")
+                createProfile("p", user.email, "email")
                 profile.style.display = "block"
+
+                // ------------------------------------------------------------------------------------------------
+                //this is the only place where i made changes and in logout.js
+                document.querySelector(".postPage").style.opacity = 1
+                document.querySelector(".container").style.opacity = 1
+                // ------------------------------------------------------------------------------------------------
+
                 const splitScreen = document.querySelector(".container")
                 const signPage = document.querySelector("#userPopUpPOne")
                 signPage.style.display = "none"
@@ -67,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 uListPayload["cookie_value"] = resp.cookie.sid;
                 console.log("login UL sending: ", uListPayload);
                 userListSocket.send(JSON.stringify(uListPayload));
-            
+
                 // user is online and avalible to chat
                 let chatPayloadObj = {};
                 chatPayloadObj["label"] = "user-online";
@@ -97,10 +104,10 @@ const loginHandler = function (e) {
 };
 
 export const updateChat = function () {
-   let userID = document.querySelector(".Profileid")
+    let userID = document.querySelector(".Profileid")
     let chatpayloadObj = {}
     chatpayloadObj["label"] = "updateChat";
-    chatpayloadObj["sender_id"] =parseInt(userID.textContent) 
+    chatpayloadObj["sender_id"] = parseInt(userID.textContent)
     chatSocket.send(JSON.stringify(chatpayloadObj));
 };
 
@@ -145,10 +152,10 @@ loginSubmit.setAttribute("type", "submit");
 loginSubmitDiv.append(loginSubmit);
 
 loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
-export function createProfile(type, userAttr,str){
+export function createProfile(type, userAttr, str) {
     let newelement = document.createElement(type)
-    newelement.textContent= userAttr
-    newelement.classList ="Profile"+ str
+    newelement.textContent = userAttr
+    newelement.classList = "Profile" + str
     profile.append(newelement)
 }
 // export default {loginForm,updateChat, createProfile};

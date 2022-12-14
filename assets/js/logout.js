@@ -15,8 +15,15 @@ const logoutHandler = function () {
                 while (profile.firstChild) {
                     profile.removeChild(profile.firstChild)
                 }
+
                 // remove cookie
                 document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                // ------------------------------------------------------------------------------------------------
+                //this is the only place where i made changes and in login.js
+                document.querySelector(".postPage").style.opacity = 0
+                document.querySelector(".container").style.opacity = 0
+
+                // ------------------------------------------------------------------------------------------------
 
                 // update user list after a user logout
                 let chatPayload = {};
@@ -57,7 +64,7 @@ const logoutBtn = document.createElement("button");
 logoutBtn.textContent = "Logout";
 const logoutDiv = document.querySelector("#logout");
 logoutBtn.addEventListener("click", logoutHandler);
-window.addEventListener("beforeunload", function(e) {
+window.addEventListener("beforeunload", function (e) {
     const profileid = document.querySelector(".Profileid")
     if (profileid) {
         e.returnValue = "Please logout before you leave"; // probably show the default msg
