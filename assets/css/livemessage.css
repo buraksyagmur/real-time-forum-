@@ -174,9 +174,9 @@
 
 .col-2 h3 {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 0px;
     font-weight: 400;
-    color: #453f96
+    color: #838287;
 }
 
 .col-2 ul {
@@ -184,7 +184,18 @@
     padding: 30px;
 }
 
+.user-list {
+    padding: 10px;
+    height: auto;
+    min-height: 10px;
+    max-height: 90px;
+    overflow: scroll;
+    display: grid;
+    background-color: orange;
+}
+
 .col-2 ul li {
+    display: inline-flex;
     list-style: none;
     padding: 5px;
 }
@@ -205,6 +216,7 @@
     border-radius: 50%;
     margin-right: 10px;
     display: inline-block;
+    padding: 4px;
 }
 
 .col-2 ul li.online::before {
