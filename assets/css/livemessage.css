@@ -1,26 +1,14 @@
 .container {
-    /* top: 0px;
-    right: 0vw;
-    z-index: -0;
-    width: 50%;
-    height: 100vh;
-    float: right;
-    display: none;
-    color: #fff;
-    position: sticky;
-    align-items: center;
-    flex-direction: column;
-    background-image: linear-gradient(to right, #1c00f2, #453f96); */
-    /* ------------------------------------------------------------ */
     margin-top: 2%;
     right: 0vw;
     z-index: -0;
     width: 50%;
-    height: 87vh;
+    height: 84vh;
     float: right;
     opacity: 0;
     color: #fff;
     position: initial;
+    border-radius: 15px;
     align-items: center;
     flex-direction: column;
     background-image: linear-gradient(to right, #29292b, #453f96);
@@ -37,7 +25,7 @@
 }
 
 .friendListArea {
-    margin-top: 0%;
+    margin: 5%;
     padding-bottom: 1px;
     text-align: justify;
     align-items: center;
@@ -49,9 +37,9 @@
     width: 90%;
     display: flex;
     min-width: 250px;
-    background: #b7babf;
     align-self: center;
-    /* overflow: hidden; */
+    border-radius: 15px;
+    background: #b7babf;
 }
 
 
@@ -59,6 +47,8 @@
 .col-1 {
     flex: 1;
     display: none;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
     background: #66d1d8;
 }
 
@@ -135,8 +125,13 @@
     color: #fff;
     font-size: 12px;
     font-weight: 300;
+    margin-left: 9px;
     padding: 20px 40px;
     background: #d80606;
+}
+
+button.submitMsg {
+    margin-left: 20%;
 }
 
 ::placeholder {
