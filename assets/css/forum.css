@@ -209,13 +209,45 @@ select#category {
 }
 
 #allComments {
+    width: 80%;
     height: auto;
+    margin: auto;
+    margin-top: 10px;
     min-height: 85px;
     max-height: 150px;
     margin-left: 30px;
     overflow-y: scroll;
+    margin-bottom: 10px;
     border-radius: 10px;
     background-color: beige;
+}
+
+.creatingCommentForm {
+    margin: auto;
+    width: 99%;
+}
+
+.creatingCommentRespondDiv {
+    text-decoration: underline;
+}
+
+.commentInputDiv {
+    margin: auto;
+    width: 70%;
+}
+
+.commentInput {
+    background: lightgray;
+    margin: auto;
+}
+
+.commentSubmitButtonDiv {
+    text-align: end;
+}
+
+.commentSubmitButton {
+    margin: auto;
+    width: auto;
 }
 
 .singleComment {
@@ -228,6 +260,23 @@ select#category {
     border-radius: 10px;
     word-wrap: break-word;
     background-color: bisque;
+}
+
+.singleCommentContent {
+    padding: 0%;
+    margin-left: 5px;
+    border-radius: 2px;
+}
+
+.singleCommentContent p {
+    padding: 2%;
+    margin: auto;
+}
+
+.singleCommentAuthor {
+    padding: 2%;
+    margin: auto;
+    text-align: right;
 }
 
 /* ---------------------------------------------/ the final section named just DIV /----------------------------------------------------- */
@@ -254,6 +303,9 @@ select#category {
 }
 
 .singlePostDiv {
+    margin: 2%;
+    padding: 2%;
+    border-radius: 3px;
     background-color: azure;
 }
 
@@ -264,17 +316,29 @@ select#category {
 /*.titleButtonForm {
 } */
 
-/*.postContent{
-} */
+.postContent {
+    padding: 0%;
+    margin-left: 5px;
+    border-radius: 2px;
+    background-color: gainsboro;
+}
 
-/*.postContent .p{
-} */
+.postContent p {
+    padding: 2%;
+    margin: auto;
+}
 
-/*.postCategoryId{
-} */
+.postCategoryId {
+    padding-top: 5px;
+    margin-left: 5px;
+    width: auto;
+}
 
-/* .postCategoryId .p{
-} */
+.postCategoryId p {
+    padding: 2%;
+    margin: auto;
+    text-align: right;
+}
 
 
 @media only screen and (max-width: 700px) {
