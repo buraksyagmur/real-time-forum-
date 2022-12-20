@@ -95,14 +95,18 @@
     font-weight: 300;
     border-radius: 8px;
     padding: 20px, 40px;
+    word-wrap: break-word;
     background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
 }
+
 
 .msg-text h2 {
     font-size: 22px;
     font-weight: 400;
     margin-bottom: 10px;
 }
+
 
 .msg-img {
     width: 60px;
@@ -119,7 +123,8 @@
 }
 
 /* wright you mesage here */
-.col-1 input {
+/* .col-1 input { */
+.chatInput {
     border: 0;
     width: 95%;
     outline: none;

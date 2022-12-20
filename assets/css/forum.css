@@ -194,19 +194,41 @@ select#category {
     top: 55%;
     left: -70%;
     z-index: 1;
-    width: 70%;
+    width: 50%;
     height: auto;
     min-height: 0%;
     max-height: 35%;
     transition: 0.5s;
     overflow-y: scroll;
     position: absolute;
+    border-radius: 10px;
     background-color: gray;
     background-color: rgba(0, 0, 0, .6);
     color: white;
     padding: 1%;
 }
 
+#allComments {
+    height: auto;
+    min-height: 85px;
+    max-height: 150px;
+    margin-left: 30px;
+    overflow-y: scroll;
+    border-radius: 10px;
+    background-color: beige;
+}
+
+.singleComment {
+    height: auto;
+    margin: 10px;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 6px;
+    margin-left: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+    background-color: bisque;
+}
 
 /* ---------------------------------------------/ the final section named just DIV /----------------------------------------------------- */
 
