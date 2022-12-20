@@ -1,24 +1,30 @@
 /* the main left section */
 .postPage {
     opacity: 0;
-    width: 50%;
+    width: 47%;
     float: left;
-    max-width: 50%;
-    padding-left: 2%;
+    height: 84vh;
+    max-width: 47%;
+    margin-top: 1%;
     overflow: hidden;
-    padding-right: 2%;
-    overflow-y: hidden;
+    margin-left: 0.3%;
+    padding-left: 0.3%;
+    padding-right: 0.3%;
+    border-radius: 15px;
+    flex-direction: column;
+    /* background-color: greenyellow; */
+    /* overflow-y: hidden; */
 }
 
 /* the section left section named profile */
 .profile {
-    padding: 1%;
+    padding: 2%;
     height: 120vh;
     color: white;
     font-size: 2vw;
     overflow: hidden;
     max-height: 90px;
-    margin-top: 4.2%;
+    /* margin-top: 4.2%; */
     min-height: 130px;
     border-radius: 15px;
     border-style: double;
@@ -117,8 +123,10 @@
 /* ---------------------------------------------/ the third left section named just form /------------------------------------------- */
 
 .newPostFormSection {
-    padding: 10px;
-    margin-top: 2%;
+    padding: 1%;
+    margin-top: 1%;
+    max-width: 70%;
+    margin: auto;
     color: white;
     border-radius: 15px;
     border-style: double;
@@ -191,7 +199,7 @@ select#category {
     min-height: 0%;
     max-height: 35%;
     transition: 0.5s;
-    overflow-y: hidden;
+    overflow-y: scroll;
     position: absolute;
     background-color: gray;
     background-color: rgba(0, 0, 0, .6);
@@ -206,25 +214,26 @@ select#category {
 } */
 
 #allPost {
+    margin: auto;
     height: auto;
-    margin-top: 2%;
+    margin-top: 1%;
     color: white;
+    max-width: 90%;
     min-height: 10%;
-    max-width: 100%;
-    padding-top: 5%;
-    padding-left: 3%;
+    padding-top: 1.5%;
+    padding-left: 1.5%;
     overflow: scroll;
     padding-right: 3%;
-    max-height: 340px;
+    max-height: 325px;
     padding-bottom: 5%;
     border-radius: 15px;
     border-style: double;
     background-color: rgba(0, 0, 0, .6);
 }
 
-/* .singlePostDiv{
-
-} */
+.singlePostDiv {
+    background-color: azure;
+}
 
 
 /*.postTitle{

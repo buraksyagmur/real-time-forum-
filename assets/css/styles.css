@@ -199,15 +199,27 @@ li a:hover:not(.active) {
     display: none;
     overflow: auto;
     position: fixed;
+    align-items: center;
     background-color: rgb(0, 0, 0);
     background-color: rgba(0, 0, 0, 0.4);
 }
 
 .userPopUpP-content {
+     /* this is for the Register PopUp Form */
     width: 60%;
     margin: 50px auto;
     border: #a99567;
     border: 1px solid #999;
+}
+
+.formPage {
+    /* this is for both Sign In/Register PopUp Forms */
+    margin: 25px;
+    padding: 25px;
+    display: block;
+    background: #eee;
+    box-shadow: 0 2px 5px #f5f5f5;
+    /* float: left */
 }
 
 h2,
@@ -221,14 +233,6 @@ span {
     color: #666;
     display: block;
     padding: 0 0 5px;
-}
-
-.formPage {
-    margin: 25px;
-    padding: 25px;
-    background: #eee;
-    box-shadow: 0 2px 5px #f5f5f5;
-    /* float: left */
 }
 
 input,
@@ -293,4 +297,3 @@ button.button:hover {
 
 
 /* --------------- */
-
