@@ -15,6 +15,7 @@ import (
 type WsUserListResponse struct {
 	Label       string       `json:"label"`
 	Content     string       `json:"content"`
+	RealUser    int          `json:"realUser"`
 	OnlineUsers []userStatus `json:"online_users"`
 }
 
@@ -79,6 +80,7 @@ func readUserListPayloadFromWs(conn *websocket.Conn) {
 			}
 			ChangeNotif(userListPayload.UserID, userListPayload.ContactID)
 			creatingChatResponse.Content = sortMessages(userListPayload.UserID, userListPayload.ContactID)
+			creatingChatResponse.RealUser = userListPayload.UserID
 			conn.WriteJSON(creatingChatResponse)
 			updateUList()
 		} else if err == nil {
@@ -171,6 +173,7 @@ func updateUList() {
 		tempUserStatus = append(tempUserStatus, userStatusElement)
 	}
 	userListResponse.OnlineUsers = UserListSort(tempUserStatus)
+	userListResponse.RealUser = loggedInUid
 	broadcast(userListResponse)
 }
 

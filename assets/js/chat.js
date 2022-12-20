@@ -40,10 +40,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
             msgrow.append(msgtext)
             msgArea.append(msgrow)
             targetUserId= resp.contactID
-            var userlist = document.querySelector(".user-list")
-           var targetUser = document.querySelector(`#li${resp.contactID}`)
-            console.log("targetuser:", targetUser)
-            userlist.insertBefore(targetUser, userlist.firstChild)
+        //     var userlist = document.querySelector(".user-list")
+        //    var targetUser = document.querySelector(`#li${resp.contactID}`)
+        //     console.log("targetuser:", targetUser)
+        //     userlist.insertBefore(targetUser, userlist.firstChild)
 
 
         }

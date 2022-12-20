@@ -6,7 +6,7 @@ const msgArea = document.querySelector(".msgArea")
 let usID
 let open = false
 let loadMsg = false
-
+var realTargetUser = targetUserId
 function throttle(fn, wait) {
     let time = Date.now();
     return function () {
@@ -18,6 +18,7 @@ function throttle(fn, wait) {
 }
 
 document.addEventListener("DOMContentLoaded", function (e) {
+    realTargetUser = targetUserId
     // userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
     console.log("JS attempt to connect to user list");
     userListSocket.onopen = () => console.log("user list connected");
@@ -28,11 +29,14 @@ document.addEventListener("DOMContentLoaded", function (e) {
         let arr
         const resp = JSON.parse(msg.data);
         if (resp.label === "update") {
+            let profileid= document.querySelector(".Profileid")
+            if (resp.realUser == parseInt(profileid.textContent)   ){
             console.log(resp.online_users);
             const uList = document.querySelector(".user-list");
             // remove list item
             uList.textContent = "";
             // add new list item
+           
             for (const { nickname, status, userID, msgcheck, noti } of resp.online_users) {
 
                 arrayOfUsers.push(userID)
@@ -103,20 +107,42 @@ document.addEventListener("DOMContentLoaded", function (e) {
             if (document.querySelector(".closeChat")) {
 
             } else {
+                
                 const closeChatBox = document.createElement("button")
                 closeChatBox.textContent = "End Chat"
                 closeChatBox.classList = "closeChat"
                 chatBox.append(closeChatBox)
             }
 
-            console.log("CHECKING IMPORTED USER-1", targetUserId)
-            if (targetUserId != null) {
-                console.log("CHECKING IMPORTED USER-2", targetUserId)
-                let userlist = document.querySelector(".user-list")
-                let targetUser = document.querySelector(`#li${targetUserId}`)
-                userlist.insertBefore(targetUser, userlist.firstChild)
+            console.log("CHECKING IMPORTED USER-1", realTargetUser)
+            if (realTargetUser != null) {
+                console.log("CHECKING IMPORTED USER-2", realTargetUser)
+                // let userlist = document.querySelector(".user-list")
+                // let targetUser = document.querySelector(`#li${realTargetUser}`)
+                // userlist.insertBefore(targetUser, userlist.firstChild)
+            }
+        }else {
+            for (const { nickname, status, userID, msgcheck, noti } of resp.online_users) {
+                arrayOfUsers.push(userID)
+                let userNick = document.querySelector(".Profilenickname")
+                if (nickname == userNick.textContent) {
+                    arr = noti.split(",")
+                }
+                let singleList = document.querySelector("#li"+userID)
+                console.log("SINGLELIST",singleList)
+                if (status == false){
+                    singleList.classList = "offline"
+                }else if (status == true){
+                    singleList.classList = "online"
+                }
+            }
+            let not = checkArr(arr, arrayOfUsers)
+            if (not.length > 0) {
+                notiDisplay(not)
+
             }
         }
+    }
         if (resp.label == "chatBox") {
             if (msgArea.firstElementChild == null) {
                 msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250));
@@ -218,9 +244,10 @@ const SubChatHandler = function (e) {
     msgrow.className = "msg-row2"
     msgtext.className = "msg-text"
     msgtext.textContent = chatInput.value
-    let userlist = document.querySelector(".user-list")
-    let targetUser = document.querySelector(`#li${usID}`)
-    userlist.insertBefore(targetUser, userlist.firstChild)
+    // let userlist = document.querySelector(".user-list")
+    // realTargetUser=usID
+    // let targetUser = document.querySelector(`#li${usID}`)
+    // userlist.insertBefore(targetUser, userlist.firstChild)
     msgrow.append(msgtext)
     msgArea.append(msgrow)
     // ***********************NEED TO UPDATE USERLIST *********************
