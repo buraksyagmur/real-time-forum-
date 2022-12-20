@@ -227,9 +227,9 @@ function CreateCommentForm(value) {
     commentLabelDiv.append(commentLabel);
     const commentInputDiv = document.createElement('div');
     commentInputDiv.className = "commentInputDiv"
-    const commentInput = document.createElement('input');
+    const commentInput = document.createElement('textarea');
     commentInput.className = "commentInput"
-    commentInput.setAttribute("type", "text");
+    // commentInput.setAttribute("type", "text");
     commentInput.setAttribute("name", "comment");
     commentInput.setAttribute("placeholder", "type here...");
     commentInput.setAttribute("id", "comment");

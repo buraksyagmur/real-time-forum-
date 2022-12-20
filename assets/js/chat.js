@@ -1,5 +1,5 @@
 export const chatSocket = new WebSocket("ws://localhost:8080/chatWs/");
-export var targetUser = null
+export var targetUserId = null
 export const chatForm = document.createElement("form");
 const msgArea = document.querySelector(".msgArea")
 chatForm.id = "chat-form";
@@ -39,8 +39,9 @@ document.addEventListener("DOMContentLoaded", function (e) {
             msgtext.textContent = resp.content
             msgrow.append(msgtext)
             msgArea.append(msgrow)
+            targetUserId= resp.contactID
             var userlist = document.querySelector(".user-list")
-            targetUser = document.querySelector(`#li${resp.contactID}`)
+           var targetUser = document.querySelector(`#li${resp.contactID}`)
             console.log("targetuser:", targetUser)
             userlist.insertBefore(targetUser, userlist.firstChild)
 

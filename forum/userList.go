@@ -37,6 +37,11 @@ type userStatus struct {
 	withoutlet   bool
 }
 
+type userSort struct {
+	usID  int
+	msgID int
+}
+
 var (
 	PageMsgMap          = make(map[int]int)
 	userListPayloadChan = make(chan WsUserListPayload)
@@ -294,17 +299,41 @@ func sortMessages(sendID, recID int) string {
 
 func sortConversations() []int {
 	var allCon []int
-	rows, err := db.Query("SELECT receiverID FROM messages WHERE senderID= ?;", loggedInUid)
+	var allCon3 []userSort
+	rows, err := db.Query("SELECT receiverID,messageID FROM messages WHERE senderID= ?;", loggedInUid)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var recID int
-		rows.Scan(&recID)
-		allCon = append(allCon, recID)
+		var allCon2 userSort
+		rows.Scan(&allCon2.usID, &allCon2.msgID)
+		allCon3 = append(allCon3, allCon2)
 
 	}
+	rows2, err2 := db.Query("SELECT senderID,messageID FROM messages WHERE receiverID= ?;", loggedInUid)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+	defer rows2.Close()
+	for rows2.Next() {
+		var allCon2 userSort
+		rows2.Scan(&allCon2.usID, &allCon2.msgID)
+		allCon3 = append(allCon3, allCon2)
+
+	}
+	for k := 0; k < 100; k++ {
+		for i := 0; i < len(allCon3)-1; i++ {
+			if allCon3[i].msgID > allCon3[i+1].msgID {
+				allCon3[i], allCon3[i+1] = allCon3[i+1], allCon3[i]
+			}
+		}
+	}
+	for _, id := range allCon3 {
+		allCon = append(allCon, id.usID)
+	}
+	fmt.Println(allCon3)
+	// allCon = append(allCon, recID)
 	for i := 0; i < len(allCon)/2; i++ {
 		allCon[i], allCon[len(allCon)-(i+1)] = allCon[len(allCon)-(i+1)], allCon[i]
 	}

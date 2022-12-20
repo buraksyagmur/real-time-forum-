@@ -1,5 +1,5 @@
 // import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
-import { chatSocket, targetUser } from "./chat.js";
+import { chatSocket, targetUserId } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
 const msgArea = document.querySelector(".msgArea")
@@ -109,10 +109,11 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatBox.append(closeChatBox)
             }
 
-            console.log("CHECKING IMPORTED USER-1", targetUser)
-            if (targetUser != null) {
-                console.log("CHECKING IMPORTED USER-2", targetUser)
+            console.log("CHECKING IMPORTED USER-1", targetUserId)
+            if (targetUserId != null) {
+                console.log("CHECKING IMPORTED USER-2", targetUserId)
                 let userlist = document.querySelector(".user-list")
+                let targetUser = document.querySelector(`#li${targetUserId}`)
                 userlist.insertBefore(targetUser, userlist.firstChild)
             }
         }
@@ -144,8 +145,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
             }
             if (document.querySelector(".chatInput") == null) {
                 console.log("creating chat input")
-                const chatInput = document.createElement("input")
-                chatInput.setAttribute("type", "text")
+                const chatInput = document.createElement("textarea")
+                // chatInput.setAttribute("type", "text")
                 const chatForm = document.createElement("form")
                 const submitChat = document.createElement("button")
                 chatForm.addEventListener("submit", SubChatHandler)
