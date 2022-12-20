@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
             navbar.children[0].style.display = "none"
             navbar.children[1].style.display = "none"
             navbar.children[2].style.display = "block"
+            document.querySelector(".postPage").style.opacity = 1
+            document.querySelector(".container").style.opacity = 1
             const signPage = document.querySelector("#userPopUpPOne")
             signPage.style.display = "none"
             splitScreen.style.display = "flex"

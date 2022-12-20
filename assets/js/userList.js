@@ -1,5 +1,5 @@
 // import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
-import { chatSocket } from "./chat.js";
+import { chatSocket, targetUser } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
 const msgArea = document.querySelector(".msgArea")
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
                 arrayOfUsers.push(userID)
                 const nicknameItem = document.createElement("li");
-                nicknameItem.id = "li"+userID
+                nicknameItem.id = "li" + userID
                 const chatBoxButton = document.createElement("button")
                 chatBoxButton.classList = "nameButtons"
                 const chatBoxForm = document.createElement("form")
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                             open = false
                             if (event.target.className == "closeChat") {
                                 chatBox.style.display = "none"
-                                chatBox.id= "chatbox"
+                                chatBox.id = "chatbox"
                                 loadMsg = false
                                 while (msgArea.firstChild) {
                                     msgArea.removeChild(msgArea.firstChild)
@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
             }
             let not = checkArr(arr, arrayOfUsers)
-            console.log("NOT ARRAY", not, "arr:", arr, "arrayOfUsers", arrayOfUsers)
             if (not.length > 0) {
                 notiDisplay(not)
 
@@ -110,7 +109,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatBox.append(closeChatBox)
             }
 
-
+            console.log("CHECKING IMPORTED USER-1", targetUser)
+            if (targetUser != null) {
+                console.log("CHECKING IMPORTED USER-2", targetUser)
+                let userlist = document.querySelector(".user-list")
+                userlist.insertBefore(targetUser, userlist.firstChild)
+            }
         }
         if (resp.label == "chatBox") {
             if (msgArea.firstElementChild == null) {

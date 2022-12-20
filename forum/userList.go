@@ -222,7 +222,7 @@ loop2:
 	userStatusDBArr = append(userStatusDBArr, letter...)
 	userStatusDBArr = append(userStatusDBArr, notLetter...)
 
-	fmt.Printf("UL nicknames: %v\n", userStatusDBArr)
+	// fmt.Printf("UL nicknames: %v\n", userStatusDBArr)
 	return userStatusDBArr
 }
 
