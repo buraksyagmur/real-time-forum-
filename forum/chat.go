@@ -102,6 +102,7 @@ func processMsg(msg WsChatPayload) {
 	rows.Exec(msg.SenderId, msg.ReceiverId, time.Now(), msg.Content, false)
 	fmt.Println("msg saved successfully")
 	notif := FindNotification(msg.ReceiverId)
+	fmt.Println("OLD NOTIFICATION ARRAY", notif)
 	if notif != nil {
 		for _, not := range notif {
 			if not == msg.SenderId {
@@ -138,8 +139,12 @@ func FindNotification(userID int) []int {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	rows.Scan(&notifi)
+	for rows.Next() {
+		rows.Scan(&notifi)
+	}
+	fmt.Println("notifi:", notifi)
 	if notifi == "" {
+		fmt.Println("CANT FOUND NOTIFICATION")
 		return nil
 	}
 	arr := strings.Split(notifi, ",")

@@ -360,9 +360,9 @@ func ChangeNotif(curUserID, senderID int) {
 	var newArr []int
 	notif := FindNotification(curUserID)
 	newArr = append(newArr, notif...)
-	for _, in := range newArr {
+	for index, in := range newArr {
 		if in == senderID {
-			newArr = remove(newArr, in)
+			newArr = remove(newArr, index)
 		}
 	}
 	slcNotif := make([]string, len(newArr))

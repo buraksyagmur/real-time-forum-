@@ -244,10 +244,10 @@ const SubChatHandler = function (e) {
     msgrow.className = "msg-row2"
     msgtext.className = "msg-text"
     msgtext.textContent = chatInput.value
-    // let userlist = document.querySelector(".user-list")
-    // realTargetUser=usID
-    // let targetUser = document.querySelector(`#li${usID}`)
-    // userlist.insertBefore(targetUser, userlist.firstChild)
+    let userlist = document.querySelector(".user-list")
+    realTargetUser=usID
+    let targetUser = document.querySelector(`#li${usID}`)
+    userlist.insertBefore(targetUser, userlist.firstChild)
     msgrow.append(msgtext)
     msgArea.append(msgrow)
     // ***********************NEED TO UPDATE USERLIST *********************
