@@ -12,6 +12,8 @@ func main() {
 	forum.InitDB()
 	go forum.ProcessAndReplyUserList()
 	go forum.ProcessAndReplyChat()
+	// forum.DeleteAllComments()
+	// forum.DeleteAllPosts()
 	// ChatHub := forum.NewHub()
 	// go ChatHub.Run()
 	// go forum.ChatHub.Run()

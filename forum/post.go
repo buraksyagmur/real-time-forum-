@@ -24,7 +24,7 @@ type Ind struct {
 
 type IndCom struct {
 	Index       int          `json:"indexCom"`
-	CommentInfo WsComPayload `json:"comInfo"`
+	CommentInfo WsComPayload `json:"comIn"`
 }
 
 type WsPostPayload struct {
@@ -53,7 +53,7 @@ func findAllPosts() []Ind {
 	var pos []WsPostPayload
 	var everyPost []Ind
 	var id int
-	rows, err := db.Query("SELECT postID,title,content,category,postTime FROM posts GROUP BY postID;")
+	rows, err := db.Query("SELECT postID,title,content,category,postTime,userID FROM posts GROUP BY postID;")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,9 +63,11 @@ func findAllPosts() []Ind {
 	for rows.Next() {
 		var po WsPostPayload
 		var postTime time.Time
-		rows.Scan(&id, &(po.Title), &(po.Content), &(po.Category), &postTime)
+		var usiD int
+		rows.Scan(&id, &(po.Title), &(po.Content), &(po.Category), &postTime, &usiD)
 		po.PostTime = postTime.Format("Mon 02-01-2006 15:04:05")
 		po.CommentOfPost = findAllComments(id)
+		po.UserID = FindUserName(usiD)
 		pos = append(pos, po)
 	}
 	for i := 0; i < len(pos); i++ {
@@ -100,10 +102,10 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	firstResponse.Content = string(firstJson)
 	conn.WriteJSON(firstResponse)
-	lastCon= conn
+	lastCon = conn
 	postComWsArr = append(postComWsArr, conn)
 	ListenToPostWs()
-	
+
 }
 
 func ListenToPostWs() {
@@ -118,7 +120,7 @@ func ListenToPostWs() {
 			if postPayload.Label == "post" {
 				fmt.Printf("payload received: %v\n", postPayload)
 				ProcessAndReplyPost(lastCon, postPayload)
-			} else if postPayload.Label == "Createcomment" {		
+			} else if postPayload.Label == "Createcomment" {
 				ProcessAndReplyPost(lastCon, postPayload)
 			} else if postPayload.Label == "showComment" {
 				ProcessAndReplyPost(lastCon, postPayload)
@@ -131,12 +133,16 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 	if postPayload.Label == "post" {
 		fmt.Printf("post - title:%s, cat:%s, Content:%s", postPayload.Title, postPayload.Category, postPayload.Content)
 
-		rows, err := db.Prepare("INSERT INTO posts(title,content,category,postTime) VALUES(?,?,?,?);")
+		rows, err := db.Prepare("INSERT INTO posts(title,content,category,postTime,userID) VALUES(?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer rows.Close()
-		rows.Exec(postPayload.Title, postPayload.Content, postPayload.Category, time.Now())
+		intId, err := strconv.Atoi(postPayload.UserID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		rows.Exec(postPayload.Title, postPayload.Content, postPayload.Category, time.Now(), intId)
 		fmt.Println("Post saved successfully")
 		var successResponse WsPostResponse
 		successResponse.Label = "post"
@@ -151,7 +157,7 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		broadcastPost(successResponse)
 
 	} else if postPayload.Label == "Createcomment" {
-		rows, err := db.Prepare("INSERT INTO comments (content, postID, comTime) VALUES (?,?,?);")
+		rows, err := db.Prepare("INSERT INTO comments (content, postID, comTime,userID) VALUES (?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -159,7 +165,11 @@ func ProcessAndReplyPost(conn *websocket.Conn, postPayload WsPostPayload) {
 		var comUnmars WsComPayload
 		json.Unmarshal([]byte(postPayload.CommentOfPost), &comUnmars)
 		comTime := time.Now()
-		rows.Exec(comUnmars.Comment, postPayload.PostID, comTime)
+		intId, err := strconv.Atoi(postPayload.UserID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		rows.Exec(comUnmars.Comment, postPayload.PostID, comTime, intId)
 		fmt.Println("comment saved successfully")
 		var successResponse WsPostResponse
 		successResponse.Label = "Createcomment"
@@ -195,7 +205,8 @@ func findAllComments(postID int) string {
 	var com []WsComPayload
 	var everyCom []IndCom
 	var timeofCom time.Time
-	rows, err := db.Query("SELECT content, comTime FROM comments WHERE postID = ?;", postID)
+
+	rows, err := db.Query("SELECT content, comTime,userID FROM comments WHERE postID = ?;", postID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -204,7 +215,9 @@ func findAllComments(postID int) string {
 	defer rows.Close()
 	for rows.Next() {
 		var co WsComPayload
-		rows.Scan(&(co.Comment), timeofCom)
+		var usiD int
+		rows.Scan(&(co.Comment), timeofCom, &(usiD))
+		co.UserID = FindUserName(usiD)
 		co.ComTime = timeofCom.Format("Mon 02-01-2006 15:04:05")
 		com = append(com, co)
 	}
@@ -225,4 +238,16 @@ func broadcastPost(response WsPostResponse) {
 	for _, postConns := range postComWsArr {
 		postConns.WriteJSON(response)
 	}
+}
+func FindUserName(usID int) string {
+	var usname string
+	stmt, err := db.Query("SELECT nickname FROM users WHERE userID = ?;", usID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	for stmt.Next() {
+		stmt.Scan(&usname)
+	}
+	return usname
 }

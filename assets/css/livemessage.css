@@ -154,7 +154,6 @@ button.submitMsg {
 .col-2 {
     /* flex-basis: 250px; */
     /* background: #79b333; */
-
     border: none;
     width: auto;
     height: auto;
@@ -187,6 +186,7 @@ button.submitMsg {
 
 .user-list {
     padding: 10px;
+    width: 100%;
     height: auto;
     min-height: 10px;
     max-height: 90px;

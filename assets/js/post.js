@@ -119,6 +119,8 @@ const PostHandler = function (e) {
     const formFields = new FormData(e.target);
     const payloadObj = Object.fromEntries(formFields.entries());
     payloadObj["label"] = "post";
+    let profid = document.querySelector(".Profileid").textContent
+    payloadObj["userID"] = document.querySelector(".Profileid").textContent
     console.log("checking target", payloadObj)
     postSocket.send(JSON.stringify(payloadObj));
 };
@@ -136,9 +138,9 @@ titleLabel.setAttribute("for", "title");
 titleLabelDiv.append(titleLabel);
 const titleInputDiv = document.createElement('div');
 titleInputDiv.className = "newPostTitleInputDiv"
-const titleInput = document.createElement('input');
+const titleInput = document.createElement('textarea');
 titleInput.className = "newPostInput"
-titleInput.setAttribute("type", "text");
+titleInput.setAttribute("maxlength", 60);
 titleInput.setAttribute("name", "title");
 titleInput.setAttribute("id", "title");
 titleInputDiv.append(titleInput);
@@ -184,9 +186,8 @@ contLabel.setAttribute("for", "content");
 contLabelDiv.append(contLabel);
 const contInputDiv = document.createElement('div');
 contInputDiv.className = "newPostContentInputArea"
-const contInput = document.createElement('input');
+const contInput = document.createElement('textarea');
 contInput.className = "newPostContentInputBox"
-contInput.setAttribute("type", "text");
 contInput.setAttribute("name", "content");
 contInput.setAttribute("id", "content");
 contInputDiv.append(contInput);
@@ -206,6 +207,7 @@ const commentHandler = function (e) {
     const payloadObjCom = {}
     payloadObj["label"] = "Createcomment";
     payloadObj["postID"] = (parseInt(e.submitter.value) + 1) + ""
+    payloadObj["userID"] = document.querySelector(".Profileid").textContent
     payloadObjCom["comment"] = e.target[0].value
     let strCom = JSON.stringify(payloadObjCom)
     payloadObj["commentOfPost"] = strCom
@@ -284,7 +286,7 @@ function CreateComments(arr, value) {
             let commenTextNode = document.createTextNode(comJson[i].comInfo.comment)
             // let commenTextNode = document.createTextNode(" comment")
             // let comUserIdtextNode = document.createTextNode(comJson[i].comInfo.userID)
-            let comUserIdtextNode = document.createTextNode(" userID ")
+            let comUserIdtextNode = document.createTextNode(comJson[i].comInfo.userID)
             commentText.appendChild(commenTextNode)
             comUserIdText.appendChild(comUserIdtextNode)
             comContentDiv.append(commentText)
