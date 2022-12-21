@@ -15,6 +15,7 @@ type WsChatResponse struct {
 	Label     string `json:"label"`
 	Content   string `json:"content"`
 	UserID    int    `json:"userID"`
+	Sender    string `json:"sender"`
 	ContactID int    `json:"contactID"`
 }
 
@@ -69,6 +70,8 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 			// saving websocket to map
 			chatWsMap[chatPayload.SenderId] = conn
 		} else if err == nil && chatPayload.Label == "typing" {
+			fmt.Printf("typing: chatPayload sender id: %d\n", chatPayload.SenderId)
+			fmt.Printf("typing: chatPayload ReceiverId: %d\n", chatPayload.ReceiverId)
 			// receiver is online
 			if userListWsMap[chatPayload.ReceiverId] != nil {
 				chatPayloadChan <- chatPayload
@@ -95,9 +98,14 @@ func ProcessAndReplyChat() {
 				fmt.Println("failed to send message")
 			}
 		} else if receivedChatPayload.Label == "typing" {
+			findCurUser(receivedChatPayload.SenderId)
 			responseChatPayload.Label = "sender-typing"
 			responseChatPayload.UserID = receivedChatPayload.ReceiverId
+			responseChatPayload.Sender = curUser.Nickname
 			responseChatPayload.ContactID = receivedChatPayload.SenderId
+			fmt.Printf("typing: responseChatPayload sender id: %d\n", responseChatPayload.ContactID)
+			fmt.Printf("typing: responseChatPayload sender name: %s\n", responseChatPayload.Sender)
+			fmt.Printf("typing: responseChatPayload ReceiverId: %d\n", responseChatPayload.UserID)
 			receiverConn := chatWsMap[receivedChatPayload.ReceiverId]
 			err := receiverConn.WriteJSON(responseChatPayload)
 			if err != nil {

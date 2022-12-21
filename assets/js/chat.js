@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
     chatSocket.onmessage = (msg) => {
         const resp = JSON.parse(msg.data);
         if (resp.label === "created_room") {
-            console.log(`chat room created between ${resp.sender_id} and ${resp.receiver_id}`);
+            // console.log(`chat room created between ${resp.sender_id} and ${resp.receiver_id}`);
         } else if (resp.label === "msgIncoming") {
             console.log("recievedChatMsg", resp)
             let msgrow = document.createElement("div")
@@ -49,8 +49,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
             const chatBox = document.querySelector(".chatBox");
             const typingDiv = document.createElement("div");
             const typing = document.createElement("p");
-            console.log(`${resp.sender_id} is typing... to ${resp.receiver_id}`);
-            typing.textContent = `${resp.sender_id} is typing...`;
+            console.log(`${resp.sender} with id ${resp.contactID} is typing... to ${resp.userID}`);
+            typing.textContent = `${resp.sender} with id ${resp.contactID} is typing...`;
         }
     }
 })
