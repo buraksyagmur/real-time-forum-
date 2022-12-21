@@ -153,9 +153,12 @@ loginSubmitDiv.append(loginSubmit);
 
 loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputDiv, loginSubmitDiv);
 export function createProfile(type, userAttr, str) {
+    let desc = document.createElement("p")
+    desc.textContent= str + ": " 
     let newelement = document.createElement(type)
     newelement.textContent = userAttr
     newelement.classList = "Profile" + str
-    profile.append(newelement)
+    desc.append(newelement)
+    profile.append(desc)
 }
 // export default {loginForm,updateChat, createProfile};
