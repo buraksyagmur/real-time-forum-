@@ -68,6 +68,11 @@ func readChatPayloadFromWs(conn *websocket.Conn) {
 		} else if err == nil && chatPayload.Label == "updateChat" {
 			// saving websocket to map
 			chatWsMap[chatPayload.SenderId] = conn
+		} else if err == nil && chatPayload.Label == "typing" {
+			// receiver is online
+			if userListWsMap[chatPayload.ReceiverId] != nil {
+				chatPayloadChan <- chatPayload
+			}
 		}
 	}
 }
@@ -78,16 +83,28 @@ func ProcessAndReplyChat() {
 
 		var responseChatPayload WsChatResponse
 
-		responseChatPayload.Label = "msgIncoming"
-		responseChatPayload.UserID = receivedChatPayload.ReceiverId
-		responseChatPayload.ContactID = receivedChatPayload.SenderId
-		responseChatPayload.Content = receivedChatPayload.Content
-		receiverConn := chatWsMap[receivedChatPayload.ReceiverId]
-		err := receiverConn.WriteJSON(responseChatPayload)
-		updateUList()
-		if err != nil {
-			fmt.Println("failed to send message")
+		if receivedChatPayload.Label == "chat" {
+			responseChatPayload.Label = "msgIncoming"
+			responseChatPayload.UserID = receivedChatPayload.ReceiverId
+			responseChatPayload.ContactID = receivedChatPayload.SenderId
+			responseChatPayload.Content = receivedChatPayload.Content
+			receiverConn := chatWsMap[receivedChatPayload.ReceiverId]
+			err := receiverConn.WriteJSON(responseChatPayload)
+			updateUList()
+			if err != nil {
+				fmt.Println("failed to send message")
+			}
+		} else if receivedChatPayload.Label == "typing" {
+			responseChatPayload.Label = "sender-typing"
+			responseChatPayload.UserID = receivedChatPayload.ReceiverId
+			responseChatPayload.ContactID = receivedChatPayload.SenderId
+			receiverConn := chatWsMap[receivedChatPayload.ReceiverId]
+			err := receiverConn.WriteJSON(responseChatPayload)
+			if err != nil {
+				fmt.Println("failed to send message")
+			}
 		}
+
 	}
 }
 

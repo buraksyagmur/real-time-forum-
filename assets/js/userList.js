@@ -180,6 +180,16 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatInput.classList = "chatInput"
                 chatForm.append(chatInput, submitChat)
                 chatBox.append(chatForm)
+
+                chatInput.addEventListener("input", function(e) {
+                    const profileid = document.querySelector(".Profileid");
+                    let typingPayloadObj = {};
+                    typingPayloadObj["label"] = "typing";
+                    typingPayloadObj["sender_id"] = parseInt(profileid.textContent)
+                    typingPayloadObj["receiver_id"] = parseInt(usID)
+                    console.log(`${typingPayloadObj["sender_id"]} is Typing, and sends to ${typingPayloadObj["receiver_id"]}`);
+                    chatSocket.send(JSON.stringify(typingPayloadObj));
+                });
             } else {
                 console.log("chatinput already exist")
             }
