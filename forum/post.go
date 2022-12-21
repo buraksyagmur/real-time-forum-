@@ -24,7 +24,7 @@ type Ind struct {
 
 type IndCom struct {
 	Index       int          `json:"indexCom"`
-	CommentInfo WsComPayload `json:"comIn"`
+	CommentInfo WsComPayload `json:"comInfo"`
 }
 
 type WsPostPayload struct {
@@ -46,8 +46,10 @@ type WsComPayload struct {
 	ComTime string `json:"comTime"`
 }
 
-var postComWsArr []*websocket.Conn
-var lastCon *websocket.Conn
+var (
+	postComWsArr []*websocket.Conn
+	lastCon      *websocket.Conn
+)
 
 func findAllPosts() []Ind {
 	var pos []WsPostPayload
@@ -105,7 +107,6 @@ func PostWsEndpoint(w http.ResponseWriter, r *http.Request) {
 	lastCon = conn
 	postComWsArr = append(postComWsArr, conn)
 	ListenToPostWs()
-
 }
 
 func ListenToPostWs() {
@@ -116,7 +117,6 @@ func ListenToPostWs() {
 	for {
 		err := lastCon.ReadJSON(&postPayload)
 		if err == nil {
-
 			if postPayload.Label == "post" {
 				fmt.Printf("payload received: %v\n", postPayload)
 				ProcessAndReplyPost(lastCon, postPayload)
@@ -202,6 +202,7 @@ func findAllComments(postID int) string {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
+	fmt.Println("postid", postID)
 	var com []WsComPayload
 	var everyCom []IndCom
 	var timeofCom time.Time
@@ -216,7 +217,8 @@ func findAllComments(postID int) string {
 	for rows.Next() {
 		var co WsComPayload
 		var usiD int
-		rows.Scan(&(co.Comment), timeofCom, &(usiD))
+		rows.Scan(&(co.Comment), &timeofCom, &usiD)
+		fmt.Println("username", FindUserName(usiD), "usid", usiD)
 		co.UserID = FindUserName(usiD)
 		co.ComTime = timeofCom.Format("Mon 02-01-2006 15:04:05")
 		com = append(com, co)
@@ -227,6 +229,7 @@ func findAllComments(postID int) string {
 		singleCom.CommentInfo = com[i]
 		everyCom = append(everyCom, singleCom)
 	}
+	fmt.Println("everycomment", everyCom)
 	j, err := json.Marshal(everyCom)
 	if err != nil {
 		log.Fatal(err)
@@ -239,6 +242,7 @@ func broadcastPost(response WsPostResponse) {
 		postConns.WriteJSON(response)
 	}
 }
+
 func FindUserName(usID int) string {
 	var usname string
 	stmt, err := db.Query("SELECT nickname FROM users WHERE userID = ?;", usID)

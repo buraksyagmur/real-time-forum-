@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const comment = document.querySelector(".comment")
                 let newCom = CreateComments(jsonFile, parseInt(commentPostId) - 1)
                 //    comment.append(newCom)
+                console.log("NEWCOM",newCom)
                 comment.insertBefore(newCom, comment.children[1])
             }
         } else if (resp.label === "showComment") {
@@ -272,6 +273,7 @@ function CreateComments(arr, value) {
         const allComments = document.createElement("div")
         allComments.id = "allComments"
         for (let i = 0; i < comJson.length; i++) {
+            console.log("cominfo", comJson[i].comInfo)
             const comDiv = document.createElement("div")
             const comContentDiv = document.createElement("div");
             const comUserIdDiv = document.createElement("div");
