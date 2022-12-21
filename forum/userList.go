@@ -172,9 +172,9 @@ func updateUList() {
 		}
 		tempUserStatus = append(tempUserStatus, userStatusElement)
 	}
-	// for ind, x := range tempUserStatus {
-	// 	fmt.Println("index:", ind, "user:", x)
-	// }
+	for ind, x := range tempUserStatus {
+		fmt.Println("index:", ind, "user:", x)
+	}
 	userListResponse.OnlineUsers = UserListSort(tempUserStatus)
 	userListResponse.RealUser = loggedInUid
 	broadcast(userListResponse)
@@ -187,6 +187,7 @@ func UserListSort(tempUserStatus []userStatus) []userStatus {
 	var notLetter []userStatus
 	var msgHistory []userStatus
 	var counter int
+	var msgcheckcounter int
 	for i := 0; i < len(tempUserStatus); i++ {
 		for k := 0; k < len(topOfTheList); k++ {
 			if tempUserStatus[i].UserID == topOfTheList[k] {
@@ -195,13 +196,17 @@ func UserListSort(tempUserStatus []userStatus) []userStatus {
 			}
 		}
 	}
+	for ind, x := range tempUserStatus {
+		fmt.Println("index:", ind, "user:", x.MsgCheck)
+	}
 	for i := 0; i < len(tempUserStatus); i++ {
 		if strings.Title(tempUserStatus[i].Nickname)[0] < 64 || strings.Title(tempUserStatus[i].Nickname)[0] > 91 {
 			tempUserStatus[i].withoutlet = true
 		}
 		if tempUserStatus[i].MsgCheck {
-			msgHistory = append(msgHistory, tempUserStatus[topOfTheList[counter]-1])
-			counter++
+			msgHistory = append(msgHistory, tempUserStatus[topOfTheList[msgcheckcounter]-1])
+			msgcheckcounter++
+			fmt.Println(msgHistory, msgcheckcounter, "---msgHistor")
 		} else if !tempUserStatus[i].withoutlet {
 			letter = append(letter, tempUserStatus[i])
 		} else {
@@ -226,7 +231,7 @@ loop2:
 		if strings.Title(notLetter[i].Nickname)[0] > strings.Title(notLetter[i+1].Nickname)[0] {
 			notLetter[i], notLetter[i+1] = notLetter[i+1], notLetter[i]
 		}
-		if counter != 2 && i == len(notLetter)-2 {
+		if counter2 != 2 && i == len(notLetter)-2 {
 			counter2++
 			goto loop2
 		}
@@ -234,7 +239,7 @@ loop2:
 	userStatusDBArr = append(userStatusDBArr, msgHistory...)
 	userStatusDBArr = append(userStatusDBArr, letter...)
 	userStatusDBArr = append(userStatusDBArr, notLetter...)
-
+	fmt.Println("last status", userStatusDBArr)
 	// fmt.Printf("UL nicknames: %v\n", userStatusDBArr)
 	return userStatusDBArr
 }
