@@ -172,6 +172,9 @@ func updateUList() {
 		}
 		tempUserStatus = append(tempUserStatus, userStatusElement)
 	}
+	// for ind, x := range tempUserStatus {
+	// 	fmt.Println("index:", ind, "user:", x)
+	// }
 	userListResponse.OnlineUsers = UserListSort(tempUserStatus)
 	userListResponse.RealUser = loggedInUid
 	broadcast(userListResponse)
@@ -183,11 +186,12 @@ func UserListSort(tempUserStatus []userStatus) []userStatus {
 	var letter []userStatus
 	var notLetter []userStatus
 	var msgHistory []userStatus
+	var counter int
 	for i := 0; i < len(tempUserStatus); i++ {
 		for k := 0; k < len(topOfTheList); k++ {
 			if tempUserStatus[i].UserID == topOfTheList[k] {
 				tempUserStatus[i].MsgCheck = true
-				tempUserStatus[k], tempUserStatus[i] = tempUserStatus[i], tempUserStatus[k]
+				// tempUserStatus[k], tempUserStatus[i] = tempUserStatus[i], tempUserStatus[k]
 			}
 		}
 	}
@@ -196,7 +200,8 @@ func UserListSort(tempUserStatus []userStatus) []userStatus {
 			tempUserStatus[i].withoutlet = true
 		}
 		if tempUserStatus[i].MsgCheck {
-			msgHistory = append(msgHistory, tempUserStatus[i])
+			msgHistory = append(msgHistory, tempUserStatus[topOfTheList[counter]-1])
+			counter++
 		} else if !tempUserStatus[i].withoutlet {
 			letter = append(letter, tempUserStatus[i])
 		} else {
@@ -204,7 +209,7 @@ func UserListSort(tempUserStatus []userStatus) []userStatus {
 		}
 
 	}
-	counter := 0
+
 loop:
 	for i := 0; i < len(letter)-1; i++ {
 		if strings.Title(letter[i].Nickname)[0] > strings.Title(letter[i+1].Nickname)[0] {
@@ -327,7 +332,7 @@ func sortConversations() []int {
 	}
 	for k := 0; k < 100; k++ {
 		for i := 0; i < len(allCon3)-1; i++ {
-			if allCon3[i].msgID > allCon3[i+1].msgID {
+			if allCon3[i].msgID < allCon3[i+1].msgID {
 				allCon3[i], allCon3[i+1] = allCon3[i+1], allCon3[i]
 			}
 		}
@@ -335,11 +340,11 @@ func sortConversations() []int {
 	for _, id := range allCon3 {
 		allCon = append(allCon, id.usID)
 	}
-	fmt.Println(allCon3)
+	fmt.Println("check all cons", allCon3)
 	// allCon = append(allCon, recID)
-	for i := 0; i < len(allCon)/2; i++ {
-		allCon[i], allCon[len(allCon)-(i+1)] = allCon[len(allCon)-(i+1)], allCon[i]
-	}
+	// for i := 0; i < len(allCon)/2; i++ {
+	// 	allCon[i], allCon[len(allCon)-(i+1)] = allCon[len(allCon)-(i+1)], allCon[i]
+	// }
 	var lastOne []int
 	for _, v := range allCon {
 		skip := false
@@ -353,6 +358,7 @@ func sortConversations() []int {
 			lastOne = append(lastOne, v)
 		}
 	}
+	fmt.Println("sorted cons", lastOne)
 	return lastOne
 }
 

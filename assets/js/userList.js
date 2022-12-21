@@ -89,9 +89,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 } else {
                     nicknameItem.classList = "online"
                 }
-                if (msgcheck == false) {
-                    nicknameItem.classList.add("alphab")
-                }
+
                 nicknameItem.append(chatBoxForm)
                 uList.append(nicknameItem);
 
