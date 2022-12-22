@@ -51,13 +51,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
             const typingText = document.querySelector(".typing-text");
             console.log(`${resp.sender} with id ${resp.userID} is typing... to ${resp.contactID}`);
             typingText.textContent = `${resp.sender} is typing`;
-            typingDiv.style.opacity = 1;
-            setTimeout(() => typingDiv.style.opacity = 0, 5000);
-            // typingDiv.classList.add("show");
-            // typingText.classList.add("show");
-            // setTimeout(() => typingDiv.classList.add("hide"), 5000);
-            // typingText.classList.add("show");
-            // setTimeout(() => typingText.classList.add("hide"), 10000);
+            // typingDiv.style.opacity = 1;
+            // setTimeout(() => typingDiv.style.opacity = 0, 5000);
+            typingDiv.classList.add("show");
+            setTimeout(() => typingDiv.classList.remove("show"), 5000);
         }
     }
 })
