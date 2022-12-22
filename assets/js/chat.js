@@ -34,19 +34,37 @@ document.addEventListener("DOMContentLoaded", function (e) {
             console.log("recievedChatMsg", resp)
             let msgrow = document.createElement("div")
             let msgtext = document.createElement("p")
+            let timeOfMsg = document.createElement("p")
+            timeOfMsg.classList = "timeofmsg"
+            timeOfMsg.textContent=  timenow()
+            timeOfMsg.style.fontSize = "9px"
             msgrow.className = "msg-row"
             msgtext.className = "msg-text"
             msgtext.textContent = resp.content
             msgrow.append(msgtext)
+            msgrow.append(timeOfMsg)
             msgArea.append(msgrow)
-            targetUserId= resp.contactID
-        //     var userlist = document.querySelector(".user-list")
-        //    var targetUser = document.querySelector(`#li${resp.contactID}`)
-        //     console.log("targetuser:", targetUser)
-        //     userlist.insertBefore(targetUser, userlist.firstChild)
+            targetUserId = resp.contactID
+            //     var userlist = document.querySelector(".user-list")
+            //    var targetUser = document.querySelector(`#li${resp.contactID}`)
+            //     console.log("targetuser:", targetUser)
+            //     userlist.insertBefore(targetUser, userlist.firstChild)
 
 
         }
 
     }
 })
+export function timenow() {
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    // console.log(getMonth(date));
+    var currentdate = new Date();
+    var datetime =
+        monthNames[currentdate.getMonth()] + " "
+        + currentdate.getDate() + " "
+        + currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":"
+        + currentdate.getSeconds();
+    return datetime
+}

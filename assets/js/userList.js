@@ -1,5 +1,5 @@
 // import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
-import { chatSocket, targetUserId } from "./chat.js";
+import { chatSocket, targetUserId, timenow} from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
 const msgArea = document.querySelector(".msgArea")
@@ -246,7 +246,12 @@ const SubChatHandler = function (e) {
     realTargetUser=usID
     let targetUser = document.querySelector(`#li${usID}`)
     userlist.insertBefore(targetUser, userlist.firstChild)
+    let timeOfMsg = document.createElement("p")
+    timeOfMsg.classList = "timeofmsg"
+    timeOfMsg.textContent=  timenow()
+    timeOfMsg.style.fontSize = "9px"
     msgrow.append(msgtext)
+    msgrow.append(timeOfMsg)
     msgArea.append(msgrow)
     // ***********************NEED TO UPDATE USERLIST *********************
     // let userlist = document.querySelector(".user-list")
