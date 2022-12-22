@@ -52,12 +52,23 @@
     justify-content: space-around;
 }
 
-#typing-div {
-    display: block;
+.typing-div {
+    display: flex;
     margin: 1rem;
     font-size: 12px;
+    opacity: 0;
 }
 
+.typing-text {
+    color: red;
+}
+
+.show {
+    opacity: 1;
+}
+.hide {
+    opacity: 0;
+}
 /* The main chat area (colum 1) */
 .col-1 {
     flex: 1;

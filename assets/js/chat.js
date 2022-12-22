@@ -47,9 +47,17 @@ document.addEventListener("DOMContentLoaded", function (e) {
         } else if (resp.label === "sender-typing") {
             // display typing-in-progress
             // const chatBox = document.querySelector(".chatbox");
-            const typing = document.querySelector("#typing");
+            const typingDiv = document.querySelector(".typing-div");
+            const typingText = document.querySelector(".typing-text");
             console.log(`${resp.sender} with id ${resp.userID} is typing... to ${resp.contactID}`);
-            typing.textContent = `${resp.sender} with id ${resp.userID} is typing...`;
+            typingText.textContent = `${resp.sender} is typing`;
+            typingDiv.style.opacity = 1;
+            setTimeout(() => typingDiv.style.opacity = 0, 5000);
+            // typingDiv.classList.add("show");
+            // typingText.classList.add("show");
+            // setTimeout(() => typingDiv.classList.add("hide"), 5000);
+            // typingText.classList.add("show");
+            // setTimeout(() => typingText.classList.add("hide"), 10000);
         }
     }
 })

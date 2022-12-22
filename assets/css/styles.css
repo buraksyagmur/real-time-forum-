@@ -118,10 +118,6 @@ li a:hover:not(.active) {
     justify-content: center;
 }
 
-.show {
-    opacity: 0.7;
-}
-
 #curentPost {
     width: 50%;
     padding-top: 1vh;

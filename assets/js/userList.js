@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 const chatInput = document.createElement("textarea")
                 // chatInput.setAttribute("type", "text")
                 const chatFormDiv = document.createElement("div");
-                chatFormDiv.id = "chat-form-div";
+                chatFormDiv.classList.add("chat-form-div");
                 const chatForm = document.createElement("form")
                 const submitChat = document.createElement("button")
                 chatForm.addEventListener("submit", SubChatHandler)
@@ -185,10 +185,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatFormDiv.append(chatForm)
 
                 const typingDiv = document.createElement("div");
-                const typing = document.createElement("p");
-                typingDiv.id = "typing-div";
-                typing.id = "typing";
-                typingDiv.append(typing);
+                const typingText = document.createElement("p");
+                typingDiv.classList.add("typing-div");
+                typingText.classList.add("typing-text");
+                typingDiv.append(typingText);
 
                 chatBox.append(chatFormDiv, typingDiv);
 
