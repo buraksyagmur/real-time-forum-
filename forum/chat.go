@@ -14,9 +14,9 @@ import (
 type WsChatResponse struct {
 	Label     string `json:"label"`
 	Content   string `json:"content"`
-	UserID    int    `json:"userID"`
+	UserID    int    `json:"userID"` // sender
 	Sender    string `json:"sender"`
-	ContactID int    `json:"contactID"`
+	ContactID int    `json:"contactID"` // receiver
 }
 
 type MessageArray struct {
@@ -88,8 +88,8 @@ func ProcessAndReplyChat() {
 
 		if receivedChatPayload.Label == "chat" {
 			responseChatPayload.Label = "msgIncoming"
-			responseChatPayload.UserID = receivedChatPayload.ReceiverId
-			responseChatPayload.ContactID = receivedChatPayload.SenderId
+			responseChatPayload.UserID = receivedChatPayload.SenderId
+			responseChatPayload.ContactID = receivedChatPayload.ReceiverId
 			responseChatPayload.Content = receivedChatPayload.Content
 			receiverConn := chatWsMap[receivedChatPayload.ReceiverId]
 			err := receiverConn.WriteJSON(responseChatPayload)
@@ -100,12 +100,12 @@ func ProcessAndReplyChat() {
 		} else if receivedChatPayload.Label == "typing" {
 			findCurUser(receivedChatPayload.SenderId)
 			responseChatPayload.Label = "sender-typing"
-			responseChatPayload.UserID = receivedChatPayload.ReceiverId
+			responseChatPayload.UserID = receivedChatPayload.SenderId
+			responseChatPayload.ContactID = receivedChatPayload.ReceiverId
 			responseChatPayload.Sender = curUser.Nickname
-			responseChatPayload.ContactID = receivedChatPayload.SenderId
-			fmt.Printf("typing: responseChatPayload sender id: %d\n", responseChatPayload.ContactID)
+			fmt.Printf("typing: responseChatPayload sender id: %d\n", responseChatPayload.UserID)
 			fmt.Printf("typing: responseChatPayload sender name: %s\n", responseChatPayload.Sender)
-			fmt.Printf("typing: responseChatPayload ReceiverId: %d\n", responseChatPayload.UserID)
+			fmt.Printf("typing: responseChatPayload ReceiverId: %d\n", responseChatPayload.ContactID)
 			receiverConn := chatWsMap[receivedChatPayload.ReceiverId]
 			err := receiverConn.WriteJSON(responseChatPayload)
 			if err != nil {

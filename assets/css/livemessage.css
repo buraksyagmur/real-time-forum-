@@ -43,6 +43,20 @@
     background: #b7babf;
 }
 
+.chat-form-div {
+    
+}
+
+#chat-form {
+    display: flex;
+    justify-content: space-around;
+}
+
+#typing-div {
+    display: block;
+    margin: 1rem;
+    font-size: 12px;
+}
 
 /* The main chat area (colum 1) */
 .col-1 {
@@ -137,7 +151,9 @@
 }
 
 button.submitMsg {
-    margin-left: 20%;
+    /* margin-left: 20%; */
+    border-radius: 15px;
+    margin-bottom: 5%;
 }
 
 ::placeholder {
@@ -188,8 +204,8 @@ button.submitMsg {
 .user-list {
     padding: 10px;
     height: auto;
-    min-height: 10px;
-    max-height: 90px;
+    min-height: 90px;
+    max-height: 180px;
     overflow: scroll;
     display: grid;
     background-color: orange;

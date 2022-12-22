@@ -46,11 +46,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
         //     userlist.insertBefore(targetUser, userlist.firstChild)
         } else if (resp.label === "sender-typing") {
             // display typing-in-progress
-            const chatBox = document.querySelector(".chatBox");
-            const typingDiv = document.createElement("div");
-            const typing = document.createElement("p");
-            console.log(`${resp.sender} with id ${resp.contactID} is typing... to ${resp.userID}`);
-            typing.textContent = `${resp.sender} with id ${resp.contactID} is typing...`;
+            // const chatBox = document.querySelector(".chatbox");
+            const typing = document.querySelector("#typing");
+            console.log(`${resp.sender} with id ${resp.userID} is typing... to ${resp.contactID}`);
+            typing.textContent = `${resp.sender} with id ${resp.userID} is typing...`;
         }
     }
 })
