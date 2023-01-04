@@ -35,17 +35,17 @@ document.addEventListener("DOMContentLoaded", function () {
             navbar.children[1].style.display = "block"
             navbar.children[2].style.display = "none"
         } else if (resp.label === "reg") {
-            console.log("uid: ", resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
-            document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
+            // console.log("uid: ", resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
+            // document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
 
-            navbar.children[0].style.display = "none"
-            navbar.children[1].style.display = "none"
-            navbar.children[2].style.display = "block"
-            document.querySelector(".postPage").style.opacity = 1
-            document.querySelector(".container").style.opacity = 1
-            const signPage = document.querySelector("#userPopUpPOne")
-            signPage.style.display = "none"
-            splitScreen.style.display = "flex"
+            // navbar.children[0].style.display = "none"
+            // navbar.children[1].style.display = "none"
+            // navbar.children[2].style.display = "block"
+            // document.querySelector(".postPage").style.opacity = 1
+            // document.querySelector(".container").style.opacity = 1
+            // const signPage = document.querySelector("#userPopUpPOne")
+            // signPage.style.display = "none"
+            // splitScreen.style.display = "flex"
             if (resp.pass) {
                 //create profile
                 let user = JSON.parse(resp.content)
