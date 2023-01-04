@@ -16,8 +16,25 @@
     /* overflow-y: hidden; */
 }
 
+.profileImage {
+    padding: 2%;
+    height: 120vh;
+    color: white;
+    font-size: 2vw;
+    float: right;
+    overflow: hidden;
+    max-height: 90px;
+    /* margin-top: 4.2%; */
+    min-height: 130px;
+    border-radius: 15px;
+    width: 50%;
+    border-style: double;
+    background-color: rgba(0, 0, 0, .6);
+}
+
 /* the section left section named profile */
 .profile {
+    width: 50%;
     padding: 2%;
     height: 120vh;
     color: white;
@@ -31,92 +48,59 @@
     background-color: rgba(0, 0, 0, .6);
 }
 
+.childOfProfile {
+    height: 15%;
+    font-size: small;
+}
+
+
 .Profileid {
-    width: auto;
-    height: auto;
-    padding: 6px;
     color: brown;
-    display: block;
-    margin-left: 0%;
-    position: absolute;
-    text-align: center;
-    background: black;
-    margin-block-end: 0%;
+    margin-bottom: auto;
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 .Profilenickname {
-    width: auto;
-    height: auto;
-    padding: 0px;
-    display: block;
-    margin-left: 10%;
-    position: absolute;
-    text-align: center;
-    margin-block-end: 0%;
-    color: crimson;
+    color: brown;
+    margin-bottom: auto;
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 .Profileage {
-    width: auto;
-    height: auto;
-    padding: 0px;
-    display: block;
-    margin-left: 20%;
-    position: absolute;
-    text-align: center;
-    margin-block-end: 0%;
-    color: aqua;
+    color: brown;
+    margin-bottom: auto;
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 .Profilegender {
-    width: auto;
-    height: auto;
-    padding: 0px;
-    display: block;
-    margin-left: 30%;
-    position: absolute;
-    text-align: center;
-    margin-block-end: 0%;
-    color: blue;
+    color: brown;
+    margin-bottom: auto;
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 .Profilefirstname {
-    width: auto;
-    height: auto;
-    padding: 0px;
-    display: block;
-    margin-left: 0%;
-    margin-top: 4%;
-    position: absolute;
-    text-align: center;
-    margin-block-end: 0%;
-    color: blueviolet;
+    color: brown;
+    margin-bottom: auto;
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 .Profilelastname {
-    width: auto;
-    height: auto;
-    padding: 0px;
-    display: block;
-    margin-left: 10%;
-    margin-top: 4%;
-    position: absolute;
-    text-align: center;
-    margin-block-end: 0%;
-    color: chartreuse;
+    color: brown;
+    margin-bottom: auto;
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 .Profileemail {
-    width: auto;
-    height: auto;
-    padding: 0px;
-    display: block;
-    margin-left: 20%;
-    margin-top: 4%;
-    position: absolute;
-    text-align: center;
-    margin-block-end: 0%;
-    color: darkgreen;
+    color: brown;
+    margin-bottom: auto;
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 
@@ -257,6 +241,8 @@ select#category {
 
 .commentSubmitButtonDiv {
     text-align: end;
+    display: inline;
+    float: right;
 }
 
 .commentSubmitButton {
@@ -359,15 +345,11 @@ select#category {
 }
 
 .postCategoryId p {
-    padding: 2%;
     margin: auto;
-    text-align: right;
 }
 
-.postAuthorId {
-    size: 0vh;
-    height: 0px;
-    margin: 0px;
+.postAuthorId p {
+    color: black;
 }
 
 .postAuthorId p {

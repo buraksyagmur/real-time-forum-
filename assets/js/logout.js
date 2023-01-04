@@ -65,7 +65,7 @@ logoutBtn.textContent = "Logout";
 const logoutDiv = document.querySelector("#logout");
 logoutBtn.addEventListener("click", logoutHandler);
 window.addEventListener("beforeunload", function (e) {
-    const profileid = document.querySelector(".Profileid")
+    const profileid = document.querySelector(".ProfileID")
     if (profileid) {
         e.returnValue = "Please logout before you leave"; // probably show the default msg
         // e.returnValue = logoutHandler();

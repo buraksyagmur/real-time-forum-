@@ -110,7 +110,13 @@ function createPost(arr) {
         contentDiv.append(contentText)
         categoryDiv.append(categoryText)
         userIdDiv.append(userIdText)
-        postDiv.append(titleForm, contentDiv, categoryDiv, userIdDiv)
+        categoryDiv.style.display = "inline-block"
+        userIdDiv.style.display = "inline-block"
+        userIdDiv.style.float = "right"
+        const bottomline = document.createElement("div");
+        bottomline.className = "bottomline";
+        bottomline.append(categoryDiv, userIdDiv);
+        postDiv.append(titleForm, contentDiv, bottomline)
         allPost.append(postDiv)
     }
     DisplayPost.appendChild(allPost)
@@ -120,8 +126,8 @@ const PostHandler = function (e) {
     const formFields = new FormData(e.target);
     const payloadObj = Object.fromEntries(formFields.entries());
     payloadObj["label"] = "post";
-    let profid = document.querySelector(".Profileid").textContent
-    payloadObj["userID"] = document.querySelector(".Profileid").textContent
+    let profid = document.querySelector(".ProfileID").textContent
+    payloadObj["userID"] = document.querySelector(".ProfileID").textContent
     console.log("checking target", payloadObj)
     postSocket.send(JSON.stringify(payloadObj));
 };
@@ -238,7 +244,7 @@ const commentHandler = function (e) {
     const payloadObjCom = {}
     payloadObj["label"] = "Createcomment";
     payloadObj["postID"] = (parseInt(e.submitter.value) + 1) + ""
-    payloadObj["userID"] = document.querySelector(".Profileid").textContent
+    payloadObj["userID"] = document.querySelector(".ProfileID").textContent
     payloadObjCom["comment"] = e.target[0].value
     let strCom = JSON.stringify(payloadObjCom)
     payloadObj["commentOfPost"] = strCom

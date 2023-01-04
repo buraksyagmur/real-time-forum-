@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         let arr
         const resp = JSON.parse(msg.data);
         if (resp.label === "update") {
-            let profileid= document.querySelector(".Profileid")
+            let profileid= document.querySelector(".ProfileID")
             if (resp.realUser == parseInt(profileid.textContent)   ){
             console.log(resp.online_users);
             const uList = document.querySelector(".user-list");
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
                 })
                 chatBoxForm.append(chatBoxButton)
-                let userNick = document.querySelector(".Profilenickname") // reg userNick is null
+                let userNick = document.querySelector(".ProfileNickname") // reg userNick is null
                 chatBoxButton.textContent = `${nickname}`;
                 if (chatBoxButton.textContent == userNick.textContent) {
                     arr = noti.split(",")
@@ -208,7 +208,7 @@ const loadMsgCallback = function () {
 
 const loadPrevMsgsHandler = function () {
     let payloadObj = {};
-    let profileid = document.querySelector(".Profileid")
+    let profileid = document.querySelector(".ProfileID")
     payloadObj["label"] = "createChat";
     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
@@ -219,7 +219,7 @@ const loadPrevMsgsHandler = function () {
 const showChatHandler = function (e) {
     e.preventDefault();
     let payloadObj = {}
-    let profileid = document.querySelector(".Profileid")
+    let profileid = document.querySelector(".ProfileID")
     payloadObj["label"] = "createChat";
     payloadObj["userID"] = parseInt(profileid.textContent) /* after login change to loggedUserID */
     payloadObj["contactID"] = parseInt(usID)
@@ -235,7 +235,7 @@ const showChatHandler = function (e) {
 const SubChatHandler = function (e) {
     e.preventDefault();
     let chatPayloadObj = {};
-    let profileid = document.querySelector(".Profileid")
+    let profileid = document.querySelector(".ProfileID")
     let chatInput = document.querySelector(".chatInput")
     let msgrow = document.createElement("div")
     let msgtext = document.createElement("p")
