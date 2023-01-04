@@ -348,9 +348,14 @@ select#category {
 }
 
 .postCategoryId {
-    padding-top: 5px;
+    /* padding-top: 5px;
     margin-left: 5px;
-    width: auto;
+    width: auto; */
+    max-inline-size: fit-content;
+    padding-top: 1px;
+    position: initial;
+    display: flex;
+
 }
 
 .postCategoryId p {
