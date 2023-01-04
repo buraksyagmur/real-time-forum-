@@ -150,7 +150,7 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(regPayload.NickName, ageStr, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, cryptPw, true)
+		stmt.Exec(regPayload.NickName, ageStr, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, cryptPw, false)
 
 		if regPayload.NickName != "" && ageStr != "" && regPayload.Gender != "" && regPayload.FirstName != "" && regPayload.LastName != "" && regPayload.Email != "" && cryptPw != nil {
 
@@ -178,7 +178,7 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 				log.Fatal(err)
 			}
 			successResponse.Content = string(userJson)
-			successResponse.Cookie = genCookie(conn, userID)
+			// successResponse.Cookie = genCookie(conn, userID)
 			conn.WriteJSON(successResponse)
 		} else {
 			var failedResponse WsRegisterResponse

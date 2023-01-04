@@ -127,7 +127,7 @@ const nameInputDiv = document.createElement('div');
 nameInput = document.createElement('input');
 nameInput.setAttribute("type", "text");
 nameInput.setAttribute("name", "name");
-nameInput.setAttribute("id", "name");
+nameInput.setAttribute("id", "signInName");
 nameInput.setAttribute("placeholder", "eg: deathstar123 or abc@def.com")
 nameInputDiv.append(nameInput);
 

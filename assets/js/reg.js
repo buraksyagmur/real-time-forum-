@@ -49,25 +49,25 @@ document.addEventListener("DOMContentLoaded", function () {
             if (resp.pass) {
                 //create profile
                 let user = JSON.parse(resp.content)
-                const profile = document.querySelector(".profile")
-                const screen = document.querySelector(".blankScreen")
-                createProfile("p", user.userID, "id")
-                updateChat()
-                createProfile("p", user.nickname, "nickname")
-                createProfile("p", user.age, "age")
-                createProfile("p", user.gender, "gender")
-                createProfile("p", user.firstname, "name")
-                createProfile("p", user.lastname, "lastname")
-                createProfile("p", user.email, "email")
-                profile.style.display = "block"
-                screen.style.height = 0
-                while (screen.firstChild) {
-                    screen.removeChild(screen.firstChild)
-                }
+                // const profile = document.querySelector(".profile")
+                // const screen = document.querySelector(".blankScreen")
+                // createProfile("p", user.userID, "id")
+                // updateChat()
+                // createProfile("p", user.nickname, "nickname")
+                // createProfile("p", user.age, "age")
+                // createProfile("p", user.gender, "gender")
+                // createProfile("p", user.firstname, "name")
+                // createProfile("p", user.lastname, "lastname")
+                // createProfile("p", user.email, "email")
+                // profile.style.display = "block"
+                // screen.style.height = 0
+                // while (screen.firstChild) {
+                //     screen.removeChild(screen.firstChild)
+                // }
                 // hide the login and reg btn, show the logout btn
-                navbar.children[0].style.display = "none"
-                navbar.children[1].style.display = "none"
-                navbar.children[2].style.display = "block"
+                // navbar.children[0].style.display = "none"
+                // navbar.children[1].style.display = "none"
+                // navbar.children[2].style.display = "block"
 
                 // clear input fields
                 RnameInput.value = "";
@@ -84,21 +84,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 // close the popup
                 const regPopup = document.querySelector("#userPopUpPTwo");
                 regPopup.style.display = "none";
+                const logPopup = document.querySelector("#userPopUpPOne")
+                logPopup.style.display = "block"
+                const signInName = document.querySelector("#signInName")
+                signInName.value = user.nickname
 
                 // update user list after a user reg
-                let uListPayload = {};
-                uListPayload["label"] = "login-reg-update";
-                uListPayload["cookie_value"] = resp.cookie.sid;
-                console.log("reg UL sending: ", uListPayload);
-                userListSocket.send(JSON.stringify(uListPayload));
+                // let uListPayload = {};
+                // uListPayload["label"] = "login-reg-update";
+                // uListPayload["cookie_value"] = resp.cookie.sid;
+                // console.log("reg UL sending: ", uListPayload);
+                // userListSocket.send(JSON.stringify(uListPayload));
 
                 // user is online and avalible to chat
-                let chatPayloadObj = {};
-                chatPayloadObj["label"] = "user-online";
-                console.log(`reg chat uid: ${resp.cookie.uid}`);
-                chatPayloadObj["sender_id"] = (resp.cookie.uid);
-                console.log("reg chat: ", chatPayloadObj);
-                chatSocket.send(JSON.stringify(chatPayloadObj));
+                // let chatPayloadObj = {};
+                // chatPayloadObj["label"] = "user-online";
+                // console.log(`reg chat uid: ${resp.cookie.uid}`);
+                // chatPayloadObj["sender_id"] = (resp.cookie.uid);
+                // console.log("reg chat: ", chatPayloadObj);
+                // chatSocket.send(JSON.stringify(chatPayloadObj));
             } else {
                 displayMsgDiv.classList.add("display-msg");
                 displayMsg.id = "reg-msg";
