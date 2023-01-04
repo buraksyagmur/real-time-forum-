@@ -37,7 +37,7 @@ func loginFailed(conn *websocket.Conn) {
 	fmt.Println("Login Failed")
 	var failedResponse WsLoginResponse
 	failedResponse.Label = "login"
-	failedResponse.Content = "Please check your credentials"
+	failedResponse.Content = "ERROR - Please check your credentials"
 	failedResponse.Pass = false
 	conn.WriteJSON(failedResponse)
 	return

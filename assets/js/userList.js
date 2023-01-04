@@ -1,8 +1,11 @@
 // import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
-import { chatSocket, targetUserId, timenow} from "./chat.js";
+import { chatSocket, targetUserId, timenow } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
 const msgArea = document.querySelector(".msgArea")
+const userdiv= document.querySelector(".usernamediv")
+let usname = document.createElement("p")
+userdiv.appendChild(usname)
 let usID
 let open = false
 let loadMsg = false
@@ -29,119 +32,126 @@ document.addEventListener("DOMContentLoaded", function (e) {
         let arr
         const resp = JSON.parse(msg.data);
         if (resp.label === "update") {
-            let profileid= document.querySelector(".ProfileID")
-            if (resp.realUser == parseInt(profileid.textContent)   ){
-            console.log(resp.online_users);
-            const uList = document.querySelector(".user-list");
-            // remove list item
-            uList.textContent = "";
-            // add new list item
-           
-            for (const { nickname, status, userID, msgcheck, noti } of resp.online_users) {
+            let profileid = document.querySelector(".ProfileID")
+            if (resp.realUser == parseInt(profileid.textContent)) {
+                console.log(resp.online_users);
+                const uList = document.querySelector(".user-list");
+                // remove list item
+                uList.textContent = "";
+                // add new list item
 
-                arrayOfUsers.push(userID)
-                const nicknameItem = document.createElement("li");
-                nicknameItem.id = "li" + userID
-                const chatBoxButton = document.createElement("button")
-                chatBoxButton.classList = "nameButtons"
-                const chatBoxForm = document.createElement("form")
-                chatBoxForm.addEventListener("submit", showChatHandler)
-                chatBoxButton.setAttribute("type", "submit")
-                chatBoxButton.value = userID
-                chatBoxButton.id = `ContactID-${userID}`
-                chatBoxButton.addEventListener("click", function (e) {
-                    if (open == false) {
-                        open = true
-                        usID = chatBoxButton.value
-                        chatBox.id = `chatbox-${usID}`
-                        chatBox.style.display = "block"
-                        window.onclick = function (event) {
-                            open = false
-                            if (event.target.className == "closeChat") {
-                                chatBox.style.display = "none"
-                                chatBox.id = "chatbox"
-                                loadMsg = false
-                                while (msgArea.firstChild) {
-                                    msgArea.removeChild(msgArea.firstChild)
+                for (const { nickname, status, userID, msgcheck, noti } of resp.online_users) {
+
+                    arrayOfUsers.push(userID)
+                    const nicknameItem = document.createElement("li");
+                    nicknameItem.id = "li" + userID
+                    const chatBoxButton = document.createElement("button")
+                    chatBoxButton.classList = "nameButtons"
+                    const chatBoxForm = document.createElement("form")
+                    chatBoxForm.addEventListener("submit", showChatHandler)
+                    chatBoxButton.setAttribute("type", "submit")
+                    chatBoxButton.value = userID
+                    chatBoxButton.id = `ContactID-${userID}`
+                    chatBoxButton.addEventListener("click", function (e) {
+                        if (open == false) {
+                            open = true
+                            usID = chatBoxButton.value
+                            usname.textContent = chatBoxButton.textContent 
+                            chatBox.id = `chatbox-${usID}`
+                            chatBox.style.display = "block"
+                            window.onclick = function (event) {
+                                // console.log("buttonhere clicked")
+                                // scr()
+                                open = false
+                                if (event.target.className == "closeChat") {
+                                    chatBox.style.display = "none"
+                                    chatBox.id = "chatbox"
+                                    loadMsg = false
+                                    while (msgArea.firstChild) {
+                                        msgArea.removeChild(msgArea.firstChild)
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (open == true) {
-                        usID = chatBoxButton.value
-                        chatBox.id = `chatbox-${usID}`
-                        loadMsg = false
-                        while (msgArea.firstChild) {
-                            msgArea.removeChild(msgArea.firstChild)
+                        if (open == true) {
+                            usID = chatBoxButton.value
+                            chatBox.id = `chatbox-${usID}`
+                            usname.textContent = chatBoxButton.textContent 
+                            loadMsg = false
+                            while (msgArea.firstChild) {
+                                msgArea.removeChild(msgArea.firstChild)
+                            }
                         }
+
+                    })
+                    chatBoxForm.append(chatBoxButton)
+                    let userNick = document.querySelector(".ProfileNickname") // reg userNick is null
+                    chatBoxButton.textContent = `${nickname}`;
+                    if (chatBoxButton.textContent == userNick.textContent) {
+                        arr = noti.split(",")
+                        nicknameItem.style.display = "none"
+                    }
+                    if (status == false) {
+                        nicknameItem.classList = "offline"
+                    } else {
+                        nicknameItem.classList = "online"
                     }
 
-                })
-                chatBoxForm.append(chatBoxButton)
-                let userNick = document.querySelector(".ProfileNickname") // reg userNick is null
-                chatBoxButton.textContent = `${nickname}`;
-                if (chatBoxButton.textContent == userNick.textContent) {
-                    arr = noti.split(",")
-                    nicknameItem.style.display = "none"
+                    nicknameItem.append(chatBoxForm)
+                    uList.append(nicknameItem);
+
+
                 }
-                if (status == false) {
-                    nicknameItem.classList = "offline"
+                let not = checkArr(arr, arrayOfUsers)
+                if (not.length > 0) {
+                    notiDisplay(not)
+
+                }
+                // if button already exists do not create another
+
+                if (document.querySelector(".closeChat")) {
+
                 } else {
-                    nicknameItem.classList = "online"
+
+                    const closeChatBox = document.createElement("button")
+                    closeChatBox.textContent = "End Chat"
+                    closeChatBox.classList = "closeChat"
+                    chatBox.append(closeChatBox)
                 }
 
-                nicknameItem.append(chatBoxForm)
-                uList.append(nicknameItem);
-
-
-            }
-            let not = checkArr(arr, arrayOfUsers)
-            if (not.length > 0) {
-                notiDisplay(not)
-
-            }
-            // if button already exists do not create another
-
-            if (document.querySelector(".closeChat")) {
-
+                console.log("CHECKING IMPORTED USER-1", realTargetUser)
+                if (realTargetUser != null) {
+                    console.log("CHECKING IMPORTED USER-2", realTargetUser)
+                    // let userlist = document.querySelector(".user-list")
+                    // let targetUser = document.querySelector(`#li${realTargetUser}`)
+                    // userlist.insertBefore(targetUser, userlist.firstChild)
+                }
             } else {
-                
-                const closeChatBox = document.createElement("button")
-                closeChatBox.textContent = "End Chat"
-                closeChatBox.classList = "closeChat"
-                chatBox.append(closeChatBox)
-            }
-
-            console.log("CHECKING IMPORTED USER-1", realTargetUser)
-            if (realTargetUser != null) {
-                console.log("CHECKING IMPORTED USER-2", realTargetUser)
-                // let userlist = document.querySelector(".user-list")
-                // let targetUser = document.querySelector(`#li${realTargetUser}`)
-                // userlist.insertBefore(targetUser, userlist.firstChild)
-            }
-        }else {
-            for (const { nickname, status, userID, msgcheck, noti } of resp.online_users) {
-                arrayOfUsers.push(userID)
-                let userNick = document.querySelector(".Profilenickname")
-                if (nickname == userNick.textContent) {
-                    arr = noti.split(",")
+                for (const { nickname, status, userID, msgcheck, noti } of resp.online_users) {
+                    arrayOfUsers.push(userID)
+                    let userNick = document.querySelector(".ProfileNickname")
+                    if (nickname == userNick.textContent) {
+                        arr = noti.split(",")
+                    }
+                    let singleList = document.querySelector("#li" + userID)
+                    console.log("SINGLELIST", singleList)
+                    if (status == false) {
+                        singleList.classList = "offline"
+                    } else if (status == true) {
+                        singleList.classList = "online"
+                    }
                 }
-                let singleList = document.querySelector("#li"+userID)
-                console.log("SINGLELIST",singleList)
-                if (status == false){
-                    singleList.classList = "offline"
-                }else if (status == true){
-                    singleList.classList = "online"
-                }
-            }
-            let not = checkArr(arr, arrayOfUsers)
-            if (not.length > 0) {
-                notiDisplay(not)
+                let not = checkArr(arr, arrayOfUsers)
+                if (not.length > 0) {
+                    notiDisplay(not)
 
+                }
             }
         }
-    }
         if (resp.label == "chatBox") {
+            // console.log("labelhere")
+            // scr()
+
             if (msgArea.firstElementChild == null) {
                 msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250));
             }
@@ -243,12 +253,12 @@ const SubChatHandler = function (e) {
     msgtext.className = "msg-text"
     msgtext.textContent = chatInput.value
     let userlist = document.querySelector(".user-list")
-    realTargetUser=usID
+    realTargetUser = usID
     let targetUser = document.querySelector(`#li${usID}`)
     userlist.insertBefore(targetUser, userlist.firstChild)
     let timeOfMsg = document.createElement("p")
     timeOfMsg.classList = "timeofmsg"
-    timeOfMsg.textContent=  timenow()
+    timeOfMsg.textContent = timenow()
     timeOfMsg.style.fontSize = "9px"
     msgrow.append(msgtext)
     msgrow.append(timeOfMsg)
@@ -286,5 +296,12 @@ function notiDisplay(arr) {
         }
     }
 }
-
+// function scr() {
+//     console.log("AUTO SCROLLLLL")
+//     console.log("first", msgArea.scrollTop)
+//     console.log("height", msgArea.scrollHeight)
+//     console.log("width", msgArea.scrollWidth)
+//     msgArea.scrollTop = msgArea.scrollHeight;
+//     console.log("second", msgArea.scrollTop)
+// }
 export default userListSocket;

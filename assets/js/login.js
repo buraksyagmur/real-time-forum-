@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayMsgDiv.classList.add("display-msg");
                 displayMsg.id = "login-msg";
                 displayMsg.textContent = `${resp.content}`;
+                displayMsg.style.color = "red"
                 displayMsgDiv.append(displayMsg);
             }
         }
