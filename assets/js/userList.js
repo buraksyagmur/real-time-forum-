@@ -1,5 +1,5 @@
 // import throttle from '/assets/js/node_modules/lodash-es/throttle.js';
-import { chatSocket, targetUserId } from "./chat.js";
+import { chatSocket, targetUserId, genTypingDiv } from "./chat.js";
 const userListSocket = new WebSocket("ws://localhost:8080/userListWs/")
 const chatBox = document.querySelector(".col-1")
 const msgArea = document.querySelector(".msgArea")
@@ -184,15 +184,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 chatForm.append(chatInput, submitChat)
                 chatFormDiv.append(chatForm)
 
-                const typingDiv = document.createElement("div");
-                const typingText = document.createElement("p");
-                typingDiv.classList.add("typing-div");
-                typingText.classList.add("typing-text");
-                typingDiv.append(typingText);
-
+                let typingDiv = genTypingDiv();
+                
                 chatBox.append(chatFormDiv, typingDiv);
 
                 chatInput.addEventListener("input", function(e) {
+                    // console.log("input event");
                     const profileid = document.querySelector(".Profileid");
                     let typingPayloadObj = {};
                     typingPayloadObj["label"] = "typing";
@@ -201,12 +198,23 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     console.log(`${typingPayloadObj["sender_id"]} is Typing, and sends to ${typingPayloadObj["receiver_id"]}`);
                     chatSocket.send(JSON.stringify(typingPayloadObj));
                 });
+                chatInput.addEventListener("blur", function(e) {
+                    console.log("blur event");
+                    const profileid = document.querySelector(".Profileid");
+                    let stopTypingPayloadObj = {};
+                    stopTypingPayloadObj["label"] = "stop-typing";
+                    stopTypingPayloadObj["sender_id"] = parseInt(profileid.textContent)
+                    stopTypingPayloadObj["receiver_id"] = parseInt(usID)
+                    console.log(`${stopTypingPayloadObj["sender_id"]} has stopped Typing, and stop sending to ${stopTypingPayloadObj["receiver_id"]}`);
+                    chatSocket.send(JSON.stringify(stopTypingPayloadObj));
+                });
             } else {
                 console.log("chatinput already exist")
             }
         }
     }
 })
+
 let prevScrollTop = 0;
 const loadMsgCallback = function () {
     return function () {
