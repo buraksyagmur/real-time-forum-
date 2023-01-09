@@ -32,25 +32,48 @@
     background-color: rgba(0, 0, 0, .6);
 }
 
+.profileTitle {
+    font-size: 3vh;
+    text-align: center;
+    font-family: Big Caslon;
+    position: relative;
+}
+
 /* the section left section named profile */
 .profile {
     width: 50%;
-    padding: 2%;
-    height: 120vh;
+    height: 20vh;
     color: white;
-    font-size: 2vw;
-    overflow: hidden;
-    max-height: 90px;
-    /* margin-top: 4.2%; */
-    min-height: 130px;
+    overflow: scroll;
     border-radius: 15px;
     border-style: double;
     background-color: rgba(0, 0, 0, .6);
 }
 
 .childOfProfile {
+    /* height: 11%; */
+    /* height: 2vh; */
+    padding-left: 5%;
+}
+
+.childOfProfile p {
     height: 15%;
+    /* font-size: small; */
+}
+
+.childOfProfile p:first-child {
+    color: black;
+    font-weight: bold;
+    font-size: initial;
+    margin-bottom: 0px;
+    height: auto;
+}
+
+.childOfProfile p:nth-child(2) {
+    margin-bottom: 0px;
+    font-weight: bold;
     font-size: small;
+    height: auto;
 }
 
 
@@ -107,14 +130,19 @@
 /* ---------------------------------------------/ the third left section named just form /------------------------------------------- */
 
 .newPostFormSection {
-    padding: 5%;
-    margin-top: 1%;
+    padding-left: 5%;
+    padding-top: 1%;
+    padding-bottom: 1.5%;
+    height: 33%;
+    font-size: 2vh;
     max-width: 70%;
     margin: auto;
     color: white;
     border-radius: 15px;
     border-style: double;
     background-color: rgba(0, 0, 0, .6);
+    margin-top: 1%;
+    overflow: scroll;
 }
 
 .newPostTitlesArea {
@@ -135,7 +163,7 @@
 
 .newPostInput {
     width: 80%;
-    margin-bottom: 5%;
+    margin-bottom: 2.5%;
 }
 
 input#title {
@@ -168,13 +196,14 @@ select#category {
 }  */
 
 
-/* <div>{
-    ;-----------> maybe somthing like newPostContentInputArea
-} */
+.newPostContentInputArea {
+    margin: 0%;
+}
 
-/* <div>{
-    ;-----------> maybe somthing like newPostContentInputBox
-} */
+.newPostContentInputBox {
+    width: 90%;
+    margin-bottom: 2.5%;
+}
 
 /* <div>{
     ;-----------> maybe somthing like newPostSubmitButtonDiv
@@ -361,8 +390,8 @@ select#category {
 @media only screen and (max-width: 700px) {
 
     .profile {
-        min-height: 80px;
-        font-size: 3vw;
+        min-height: 90px;
+        /* font-size: 3vw; */
     }
 
 }

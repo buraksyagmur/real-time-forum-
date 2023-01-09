@@ -156,6 +156,7 @@ loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputD
 export function createProfile(type, userAttr, str) {
     let div = document.createElement("div")
     div.className = "childOfProfile"
+    
     let desc = document.createElement("p")
     desc.textContent = str + ": "
     let newelement = document.createElement(type)
