@@ -86,13 +86,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 regPopup.style.display = "none";
                 const logPopup = document.querySelector("#userPopUpPOne")
                 logPopup.style.display = "block"
+                // let actMsg = document.querySelector(".activation")
+                // actMsg.style.display = "block"
+                // actMsg.classList.add("display-msg");
+   
                 const signInName = document.querySelector("#signInName")
                 signInName.value = user.nickname
 
                 // update user list after a user reg
                 // let uListPayload = {};
                 // uListPayload["label"] = "login-reg-update";
-                // uListPayload["cookie_value"] = resp.cookie.sid;
+                // // uListPayload["cookie_value"] = resp.cookie.sid;
                 // console.log("reg UL sending: ", uListPayload);
                 // userListSocket.send(JSON.stringify(uListPayload));
 

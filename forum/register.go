@@ -115,6 +115,7 @@ func listenToRegWs(conn *websocket.Conn) {
 
 func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 	var emailCheck string
+	var nicknameCheck string
 	dob, err := time.Parse("2006-01-02", regPayload.Age)
 	if err != nil {
 		log.Fatal(err)
@@ -132,16 +133,43 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 			regPayload.FirstName, regPayload.LastName, regPayload.NickName,
 			ageStr, regPayload.Email, cryptPw, regPayload.Gender)
 		// checking duplicate
-		rows2, err := db.Query(`SELECT email FROM users WHERE email = ?`, regPayload.Email)
+		rows2, err := db.Query(`SELECT nickname FROM users WHERE email = ?`, regPayload.Email)
 		if err != nil {
 			log.Fatal(err)
 			// return false
 		}
 		defer rows2.Close()
-		rows2.Scan(&emailCheck)
-		if emailCheck != "" {
-			fmt.Println("already registered")
+		for rows2.Next() {
+			rows2.Scan(&emailCheck)
+			if len(emailCheck) != 0 {
+				fmt.Println("already registered")
+				var failedResponse WsRegisterResponse
+				failedResponse.Label = "reg"
+				failedResponse.Content = "ERROR - This email already taken"
+				failedResponse.Pass = false
+				conn.WriteJSON(failedResponse)
+				return
+				// return false
+			}
+		}
+		rows5, err := db.Query(`SELECT email FROM users WHERE nickname = ?`, regPayload.NickName)
+		if err != nil {
+			log.Fatal(err)
 			// return false
+		}
+		defer rows5.Close()
+		for rows5.Next() {
+			rows5.Scan(&nicknameCheck)
+			if len(nicknameCheck) != 0 {
+				fmt.Println("already registered")
+				var failedResponse WsRegisterResponse
+				failedResponse.Label = "reg"
+				failedResponse.Content = "ERROR - This nickname already taken"
+				failedResponse.Pass = false
+				conn.WriteJSON(failedResponse)
+				return
+				// return false
+			}
 		}
 		// insert newuser  into database
 		fmt.Printf("%s creating user\n", regPayload.NickName)
