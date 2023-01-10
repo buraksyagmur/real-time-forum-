@@ -35,6 +35,12 @@
     height: 99px;
 }
 
+.userProfilImageReg {
+    margin-top: 5px;
+    width: 99px;
+    height: 99px;
+}
+
 .profileTitle {
     font-size: 3vh;
     text-align: center;
