@@ -28,6 +28,7 @@ type WsRegisterPayload struct {
 	Email     string `json:"email"`
 	Password  string `json:"pw"`
 	Gender    string `json:"gender_option"`
+	ProfilePicture string `json:"pp_option"`
 }
 
 type User struct {
@@ -38,6 +39,7 @@ type User struct {
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Email     string `json:"email"`
+	ProfilePicture string `json:"pp"`
 	LoggedIn  bool
 }
 
@@ -56,14 +58,14 @@ func findCurUser(userid int) {
 	// var curLastName string
 	// var curEmail string
 	// var curLoggedIn bool
-	rows, err := db.Query(`SELECT nickname, age, gender, firstname, lastname, email, loggedIn FROM users WHERE userID = ?`, userid)
+	rows, err := db.Query(`SELECT nickname, age, gender, firstname, lastname, email,loggedIn,profilepicture FROM users WHERE userID = ?`, userid)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		// rows3.Scan(&id, &curNickname, &curAge, &curGender, &curFirstName, &curLastName, &curEmail, &pw, &curLoggedIn)
-		rows.Scan(&curUser.Nickname, &curUser.Age, &curUser.Gender, &curUser.FirstName, &curUser.LastName, &curUser.Email, &curUser.LoggedIn)
+		rows.Scan(&curUser.Nickname, &curUser.Age, &curUser.Gender, &curUser.FirstName, &curUser.LastName, &curUser.Email, &curUser.LoggedIn, &curUser.ProfilePicture)
 	}
 	// curUser.Nickname = curNickname
 	// curUser.Age = curAge
@@ -173,12 +175,12 @@ func ProcessAndReplyReg(conn *websocket.Conn, regPayload WsRegisterPayload) {
 		}
 		// insert newuser  into database
 		fmt.Printf("%s creating user\n", regPayload.NickName)
-		stmt, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn) VALUES(?,?,?,?,?,?,?,?);")
+		stmt, err := db.Prepare("INSERT INTO users(nickname,age,gender,firstname,lastname,email,password, loggedIn, profilepicture) VALUES(?,?,?,?,?,?,?,?,?);")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		stmt.Exec(regPayload.NickName, ageStr, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, cryptPw, false)
+		stmt.Exec(regPayload.NickName, ageStr, regPayload.Gender, regPayload.FirstName, regPayload.LastName, regPayload.Email, cryptPw, false,regPayload.ProfilePicture)
 
 		if regPayload.NickName != "" && ageStr != "" && regPayload.Gender != "" && regPayload.FirstName != "" && regPayload.LastName != "" && regPayload.Email != "" && cryptPw != nil {
 
