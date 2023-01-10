@@ -6,18 +6,22 @@ const msgArea = document.querySelector(".msgArea")
 const userdiv = document.querySelector(".usernamediv")
 let usname = document.createElement("p")
 userdiv.appendChild(usname)
+let first = 0
 let usID
 let open = false
 let loadMsg = false
+let timerId = undefined
 var realTargetUser = targetUserId
 function throttle(fn, wait) {
-    let time = Date.now();
-    return function () {
-        if (time + wait < Date.now()) {
-            fn();
-            time = Date.now();
-        }
+    if (timerId) {
+        return
     }
+
+    fn()
+
+    timerId = setTimeout(function () {
+        timerId = undefined
+    }, wait)
 }
 
 document.addEventListener("DOMContentLoaded", function (e) {
@@ -71,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                                     chatBox.style.display = "none"
                                     chatBox.id = "chatbox"
                                     loadMsg = false
+                                    first = 0
                                     while (msgArea.firstChild) {
                                         msgArea.removeChild(msgArea.firstChild)
                                     }
@@ -250,10 +255,11 @@ document.addEventListener("DOMContentLoaded", function (e) {
             // scr()
 
             if (msgArea.firstElementChild == null) {
-                msgArea.addEventListener("scroll", throttle(loadMsgCallback(), 250));
+                msgArea.addEventListener("scroll", () => {throttle(loadMsgCallback, 200)});
             }
             let js = JSON.parse(resp.content)
             if (js != null) {
+                let prevScrollHeight = msgArea.scrollHeight
                 for (let i = 0; i < js.length; i++) {
                     let singleMsg = document.createElement("div")
                     let msgContent = document.createElement("p")
@@ -271,8 +277,16 @@ document.addEventListener("DOMContentLoaded", function (e) {
                     singleMsg.append(msgContent)
                     singleMsg.append(timeOfMsg)
                     msgArea.insertBefore(singleMsg, msgArea.firstChild)
+                    
                     // msgArea.append(singleMsg)
                 }
+                if (first == 0) {
+                    first++
+                    msgArea.scrollTop = msgArea.scrollHeight
+                } else {
+                    msgArea.scrollTop = msgArea.scrollHeight - prevScrollHeight
+                }
+                console.log(msgArea.scrollTop)    
             }
             if (document.querySelector(".chatInput") == null) {
                 console.log("creating chat input")
@@ -293,24 +307,15 @@ document.addEventListener("DOMContentLoaded", function (e) {
         }
     }
 })
-let prevScrollTop = 0;
+
 const loadMsgCallback = function () {
-    return function () {
-        // msgArea.addEventListener("scroll", function(e) {
-        // console.log("scrolling");
-        // console.log(`msgArea.scrollTop = ${msgArea.scrollTop} load msg when value === 0 `);
-        if (prevScrollTop < msgArea.scrollTop) {
-            console.log("scrolling down");
-        } else if (prevScrollTop > msgArea.scrollTop) {
-            console.log("scrolling up");
-            if (msgArea.scrollTop <= 2) {
-                // console.log(`Loading msg ... msgArea.scrollTop = ${msgArea.scrollTop} load msg when value <= 20 `);
-                loadMsg = true
-                loadPrevMsgsHandler();
-            }
-        }
-        prevScrollTop = msgArea.scrollTop;
-    }
+        console.log("scrolling", msgArea.scrollTop)
+        if (msgArea.scrollTop <= 100) {
+            // console.log(`Loading msg ... msgArea.scrollTop = ${msgArea.scrollTop} load msg when value <= 20 `);
+            loadMsg = true
+            loadPrevMsgsHandler();
+            
+        }  
 }
 
 const loadPrevMsgsHandler = function () {
