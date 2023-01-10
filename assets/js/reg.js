@@ -233,7 +233,7 @@ selectforPp.onchange = function () {
     PreviewPP.src = "./assets/images/" + nmb + ".png"
 }
 
-for (let i = 0; i < 15; i++) {
+for (let i = 0; i < 14; i++) {
     let opt = document.createElement("option");
     opt.setAttribute("name", "pp_option");
     opt.setAttribute("value", i);
