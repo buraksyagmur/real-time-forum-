@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
 const loadMsgCallback = function () {
         console.log("scrolling", msgArea.scrollTop)
-        if (msgArea.scrollTop <= 100) {
+        if (msgArea.scrollTop <= 200) {
             // console.log(`Loading msg ... msgArea.scrollTop = ${msgArea.scrollTop} load msg when value <= 20 `);
             loadMsg = true
             loadPrevMsgsHandler();

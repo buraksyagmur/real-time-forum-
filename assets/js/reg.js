@@ -110,6 +110,7 @@ RnameInput.setAttribute("type", "text");
 RnameInput.setAttribute("name", "name");
 RnameInput.setAttribute("id", "name");
 RnameInput.setAttribute("placeholder", "eg: Nick");
+RnameInput.setAttribute("required", "");
 RnameInputDiv.append(RnameInput);
 //last name label
 const RLastnameLabelDiv = document.createElement('div');
@@ -124,6 +125,7 @@ RLastnameInput.setAttribute("type", "text");
 RLastnameInput.setAttribute("name", "lastname");
 RLastnameInput.setAttribute("id", "lastname");
 RLastnameInput.setAttribute("placeholder", "eg: Smith");
+RLastnameInput.setAttribute("required", "");
 RLastnameInputDiv.append(RLastnameInput);
 // Nickname label
 const RNicknameLabelDiv = document.createElement('div');
@@ -138,6 +140,7 @@ RNicknameInput.setAttribute("type", "text");
 RNicknameInput.setAttribute("name", "nickname");
 RNicknameInput.setAttribute("id", "nickname");
 RNicknameInput.setAttribute("placeholder", "eg:deathstar123 ");
+RNicknameInput.setAttribute("required", "");
 RNicknameInputDiv.append(RNicknameInput);
 //  Age label
 const RAgeLabelDiv = document.createElement('div');
@@ -151,6 +154,7 @@ RAgeInput = document.createElement('input');
 RAgeInput.setAttribute("type", "date");
 RAgeInput.setAttribute("name", "age");
 RAgeInput.setAttribute("id", "age");
+RAgeInput.setAttribute("required", "");
 RAgeInputDiv.append(RAgeInput);
 //  Gender label
 
@@ -167,6 +171,7 @@ REmailInput.setAttribute("type", "email");
 REmailInput.setAttribute("name", "email");
 REmailInput.setAttribute("id", "email");
 REmailInput.setAttribute("placeholder", "eg: deathstar@123.com");
+REmailInput.setAttribute("required", "");
 REmailInputDiv.append(REmailInput);
 // pw label
 const RpwLabelDiv = document.createElement('div');
@@ -180,6 +185,7 @@ RpwInput = document.createElement('input');
 RpwInput.setAttribute("type", "password");
 RpwInput.setAttribute("name", "pw");
 RpwInput.setAttribute("id", "pw");
+RpwInput.setAttribute("required", "");
 RpwInputDiv.append(RpwInput);
 
 //gender
