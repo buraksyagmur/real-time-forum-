@@ -17,19 +17,22 @@
 }
 
 .profileImage {
-    padding: 2%;
-    height: 120vh;
+
+    width: 99px;
+    float: left;
+    height: 99px;
     color: white;
-    font-size: 2vw;
-    float: right;
+    margin-top: 4vh;
     overflow: hidden;
-    max-height: 90px;
-    /* margin-top: 4.2%; */
-    min-height: 130px;
-    border-radius: 15px;
-    width: 50%;
+    border-radius: 50%;
     border-style: double;
     background-color: rgba(0, 0, 0, .6);
+}
+
+.userProfilImage {
+    width: 99px;
+    float: left;
+    height: 99px;
 }
 
 .profileTitle {

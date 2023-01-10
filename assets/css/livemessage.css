@@ -143,6 +143,7 @@
     padding: 20px 40px;
     border-style: double;
     background: #7d7777;
+    border: 2px solid #1c87c9;
 }
 
 button.submitMsg {
