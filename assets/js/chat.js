@@ -66,8 +66,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
         //     userlist.insertBefore(targetUser, userlist.firstChild)
         } else if (resp.label === "sender-typing") {
             // display typing-in-progress
-			if (animationID === null && running === false) {
-				console.log("fired");
+			const chatboxOpened = document.querySelector("#chatbox-" + resp.userID);
+			const chatboxClosed = document.querySelector("#chatbox");
+			console.log("chatboxOpened" ,chatboxOpened);
+			console.log("chatboxClosed", chatboxClosed);
+			if (chatboxOpened !== null && chatboxClosed === null && animationID === null && running === false) {
+				console.log("start running");
 				// const chatBox = document.querySelector(".chatbox");
 				const typingDiv = document.querySelector(".typing-div");
 				typingDiv.classList.add("show");
