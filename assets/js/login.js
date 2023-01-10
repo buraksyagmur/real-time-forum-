@@ -30,7 +30,14 @@ document.addEventListener("DOMContentLoaded", function () {
             // update user list after a user login
 
             if (resp.pass) {
+              
                 let user = JSON.parse(resp.content)
+                console.log(user)
+                let pictureArea = document.querySelector(".profileImage")
+                let picture = document.createElement("img")
+                picture.src = "./assets/images/" + user.pp + ".png"
+                picture.className = "userProfilImage"
+                pictureArea.appendChild(picture)
                 createProfile("p", user.userID, "ID")
                 updateChat()
                 createProfile("p", user.nickname, "Nickname")
@@ -156,7 +163,7 @@ loginForm.append(displayMsgDiv, nameLabelDiv, nameInputDiv, pwLabelDiv, pwInputD
 export function createProfile(type, userAttr, str) {
     let div = document.createElement("div")
     div.className = "childOfProfile"
-    
+
     let desc = document.createElement("p")
     desc.textContent = str + ": "
     let newelement = document.createElement(type)

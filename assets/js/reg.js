@@ -19,8 +19,6 @@ let GenderOpt1 = null;
 let GenderOpt2 = null;
 let GenderOpt3 = null;
 let GenderOpt4 = null;
-
-
 document.addEventListener("DOMContentLoaded", function () {
     regSocket = new WebSocket("ws://localhost:8080/regWs/");
     console.log("JS attempt to connect to reg");
@@ -35,39 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
             navbar.children[1].style.display = "block"
             navbar.children[2].style.display = "none"
         } else if (resp.label === "reg") {
-            // console.log("uid: ", resp.cookie.uid, "sid: ", resp.cookie.sid, "age: ", resp.cookie.max_age);
-            // document.cookie = `session=${resp.cookie.sid}; max-age=${resp.cookie.max_age}`;
-
-            // navbar.children[0].style.display = "none"
-            // navbar.children[1].style.display = "none"
-            // navbar.children[2].style.display = "block"
-            // document.querySelector(".postPage").style.opacity = 1
-            // document.querySelector(".container").style.opacity = 1
-            // const signPage = document.querySelector("#userPopUpPOne")
-            // signPage.style.display = "none"
-            // splitScreen.style.display = "flex"
             if (resp.pass) {
                 //create profile
                 let user = JSON.parse(resp.content)
-                // const profile = document.querySelector(".profile")
-                // const screen = document.querySelector(".blankScreen")
-                // createProfile("p", user.userID, "id")
-                // updateChat()
-                // createProfile("p", user.nickname, "nickname")
-                // createProfile("p", user.age, "age")
-                // createProfile("p", user.gender, "gender")
-                // createProfile("p", user.firstname, "name")
-                // createProfile("p", user.lastname, "lastname")
-                // createProfile("p", user.email, "email")
-                // profile.style.display = "block"
-                // screen.style.height = 0
-                // while (screen.firstChild) {
-                //     screen.removeChild(screen.firstChild)
-                // }
-                // hide the login and reg btn, show the logout btn
-                // navbar.children[0].style.display = "none"
-                // navbar.children[1].style.display = "none"
-                // navbar.children[2].style.display = "block"
 
                 // clear input fields
                 RnameInput.value = "";
@@ -86,10 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 regPopup.style.display = "none";
                 const logPopup = document.querySelector("#userPopUpPOne")
                 logPopup.style.display = "block"
-                // let actMsg = document.querySelector(".activation")
-                // actMsg.style.display = "block"
-                // actMsg.classList.add("display-msg");
-   
+
                 const signInName = document.querySelector("#signInName")
                 signInName.value = user.nickname
 
@@ -218,7 +183,13 @@ RpwInput.setAttribute("id", "pw");
 RpwInputDiv.append(RpwInput);
 
 //gender
+const GenderTitle = document.createElement('div');
+GenderTitle.className = "GenderTitle"
+GenderTitle.textContent = "Please Select Your Gender"
+// const RnameLabel = document.createElement('label');
+// RnameLabel.textContent = "Select you Gender:";
 const RgenderDiv = document.createElement('select');
+
 RgenderDiv.setAttribute("name", "gender_option")
 GenderOpt1 = document.createElement("option");
 GenderOpt2 = document.createElement("option");
@@ -239,53 +210,33 @@ GenderOpt4.textContent = "Other";
 RgenderDiv.setAttribute("id", "genderOption");
 RgenderDiv.append(GenderOpt1, GenderOpt2, GenderOpt3, GenderOpt4)
 
-// -----------------------
-// const RgenderDiv = document.createElement('div');
-// const RgenderOptionDiv = document.createElement('div');
-// const RgenderLabel = document.createElement("label");
-// RgenderLabel.textContent= "Please choose your gender";
-// RgenderLabel.setAttribute("for","gender");
-// RgenderDiv.append(RgenderLabel);
-// RgenderInputOpt1= document.createElement("input");
-// RgenderInputOpt2= document.createElement("input");
-// RgenderInputOpt3= document.createElement("input");
-// RgenderInputOpt4= document.createElement("input");
-// const RgenderLabelOpt1= document.createElement("label");
-// const RgenderLabelOpt2= document.createElement("label");
-// const RgenderLabelOpt3= document.createElement("label");
-// const RgenderLabelOpt4= document.createElement("label");
-// RgenderInputOpt1.setAttribute("type","radio");
-// RgenderInputOpt2.setAttribute("type","radio");
-// RgenderInputOpt3.setAttribute("type","radio");
-// RgenderInputOpt4.setAttribute("type","radio");
-// RgenderInputOpt1.setAttribute("name","gender_option");
-// RgenderInputOpt2.setAttribute("name","gender_option");
-// RgenderInputOpt3.setAttribute("name","gender_option");
-// RgenderInputOpt4.setAttribute("name","gender_option");
-// RgenderInputOpt1.setAttribute("id","male");
-// RgenderInputOpt2.setAttribute("id","female");
-// RgenderInputOpt3.setAttribute("id","other");
-// RgenderInputOpt4.setAttribute("id","prefernot");
-// RgenderInputOpt1.setAttribute("value","male");
-// RgenderInputOpt2.setAttribute("value","female");
-// RgenderInputOpt3.setAttribute("value","other");
-// RgenderInputOpt4.setAttribute("value","prefernot");
-// RgenderLabelOpt1.setAttribute("for","male");
-// RgenderLabelOpt2.setAttribute("for","female");
-// RgenderLabelOpt3.setAttribute("for","other");
-// RgenderLabelOpt4.setAttribute("for","prefernot");
-// RgenderLabelOpt1.textContent= "Male";
-// RgenderLabelOpt2.textContent= "Female";
-// RgenderLabelOpt3.textContent= "Other";
-// RgenderLabelOpt4.textContent= "Prefer not to say";
-// RgenderOptionDiv.append(
-//     RgenderInputOpt1,RgenderLabelOpt1,
-//     RgenderInputOpt2,RgenderLabelOpt2,
-//     RgenderInputOpt3,RgenderLabelOpt3,
-//     RgenderInputOpt4,RgenderLabelOpt4);
+const pictureTitle = document.createElement("div");
+pictureTitle.className = "picturetitle"
+pictureTitle.textContent = "Please Select A Profil Picture"
+const selectforPp = document.createElement("select");
+selectforPp.setAttribute("id", "selectPP");
+selectforPp.setAttribute("name", "pp_option");
+const PreviewPPDiv = document.createElement("div")
+const PreviewPP = document.createElement("img")
+PreviewPP.className = "userProfilImageReg"
+PreviewPP.src = "./assets/images/0.png"
+PreviewPPDiv.append(PreviewPP)
+selectforPp.onchange = function () {
+    let sourc = selectforPp.options[selectforPp.selectedIndex].value
+    let nmb = sourc.replace("option ", "")
+    PreviewPP.src = "./assets/images/" + nmb + ".png"
+}
 
-// RgenderOptionDiv.setAttribute("id", "gender");
-//----------------------
+for (let i = 0; i < 15; i++) {
+    let opt = document.createElement("option");
+    opt.setAttribute("name", "pp_option");
+    opt.setAttribute("value", i);
+    opt.textContent = "option " + i;
+    selectforPp.appendChild(opt);
+
+}
+
+
 const regSubmitDiv = document.createElement('div');
 const regSubmit = document.createElement("button");
 regSubmit.textContent = "Register";
@@ -306,6 +257,10 @@ RegisterForm.append(
     REmailInputDiv,
     RpwLabelDiv,
     RpwInputDiv,
+    GenderTitle,
     RgenderDiv,
+    pictureTitle,
+    selectforPp,
+    PreviewPPDiv,
     regSubmitDiv);
 export default RegisterForm;

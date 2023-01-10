@@ -55,6 +55,8 @@ const logoutHandler = function () {
                 navbar.children[0].style.display = "block"
                 navbar.children[1].style.display = "block"
                 navbar.children[2].style.display = "none"
+                let pictureArea = document.querySelector(".profileImage")
+                pictureArea.removeChild[pictureArea.firstChild]
             }
         })
 }
